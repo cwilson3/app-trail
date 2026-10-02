@@ -1,6 +1,6 @@
 {
   "name": "app-trail-playwright",
-  "version": "1.0.0",
+  "version": "0.9.3-beta",
   "private": true,
   "description": "API and E2E tests for AppTrail. Kept self-contained so this directory can be moved into its own repository.",
   "scripts": {

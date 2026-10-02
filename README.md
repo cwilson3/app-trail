@@ -1,10 +1,36 @@
+<!-- markdownlint-configure-file {
+  "MD033": false
+} -->
+
 # AppTrail
 
-A single-page job application tracker. One HTML file, no build step, no dependencies —
-your data lives in a folder of its own, outside the repository
-(see [Where your data lives](#where-your-data-lives)).
+<div align="center">
 
-## Run it
+  [![Version](https://img.shields.io/static/v1?label=AppTrail&message=v0.9.3-beta&labelColor=1abba9&color=f4f4f4&style=flat)](#apptrail)
+  [![Playwright Version](https://img.shields.io/badge/Playwright-1.63.0-brightgreen.svg?logo=playwright)](https://playwright.dev/docs/intro)
+  [![TypeScript Version](https://img.shields.io/badge/TypeScript-7.0.2-blue.svg?logo=typescript)](https://www.typescriptlang.org/)
+
+  [About](#about) •
+  [Getting Started](#getting-started) •
+  [Your Data](#where-your-data-lives) •
+  [Files](#files) •
+  [Sending the table to Notes](#sending-the-table-to-notes) •
+  [Testing](#testing) •
+  [Adding a job from its URL](#adding-a-job-from-its-url) •
+  [Single File, Two writers](#single-file-two-writers) •
+  [The table](#the-table) •
+  [Themes](#themes) •
+  [The detail card](#the-detail-card) •
+  [Data format](#data-format) •
+  [License](#license)
+
+</div>
+
+## About
+
+As my brother said "So you made a clickable nerd web page thing instead of a spreadsheet to track the job applications?" Yes. Yes I did. AppTrail is a light weight single-page job application tracker. One HTML file, no build step. Your data lives in a folder of its own, outside the repository (see [Where your data lives](#where-your-data-lives)).
+
+## Getting Started
 
 **With the local backend (recommended)** — every edit is written straight to your `data.json`:
 
@@ -123,34 +149,30 @@ can grant it later under **System Settings → Privacy & Security → Automation
 Opened without the server there is nothing to call, so **Note** copies the same
 table to the clipboard instead, ready to paste into the note yourself.
 
-## Tests
+## Testing
+
+Unit, type checks and API tests run on every PR. Running locally is possible as well. To run unit tests locally from the root directory run the following commands after installing dependencies (`npm install`):
 
 ```sh
-npm install     # vitest + jsdom, dev only
 npm test        # or npm run test:watch
 ```
+
+To run the API tests locally, install the Playwright project's own dependencies and run its `api` project from `app-trail-playwright/`:
+
+```sh
+cd app-trail-playwright
+npm install
+npm run test:api     # npm run report opens the last HTML report
+```
+
+The API tests make HTTP calls only, so no browsers need installing for them.
+Playwright starts the server itself on port 8788 (override with `APP_TRAIL_PORT`)
+with a throwaway data folder in `.test-run/`, so your own tracker is never touched.
+See [`app-trail-playwright/README.md`](app-trail-playwright/README.md) for the E2E and page-load suites.
 
 The server-side modules are tested directly: `server.test.js` builds the
 request handler with `createApp()` over an in-memory filesystem, so no port is
 opened and nothing touches the disk.
-
-The page's tests — `filters`, `dataset`, `sync`, `unload`, `model` and `ui` —
-cover the table filter, imported datasets, staying in step with `data.json`,
-the model behind the table and the card, and the controls. There is nothing
-to `import` — the app is one HTML file with no build step — so
-`src/test-support/loadIndexApp.js` parses `src/index.html` into a fresh jsdom window
-for every test, runs the page's scripts in order with a single line added that
-hands chosen internals back out, and answers `fetch` with a stand-in for
-`server.js` built from `routes.js`. The window is closed when the test ends, so
-nothing one test's page set up can reach the next. `index.html` carries nothing
-for the tests' benefit, and the code under test is the code that ships. The
-cost of that arrangement is that coverage tooling has no file to attribute the
-lines to.
-
-What the harness cannot see — where the popover lands, a real reload, the File
-System Access path, the server under a real browser — belongs in the
-Playwright project, `app-trail-playwright/`, whose API tests run every route
-against a real server and check each answer against `spec.yml`.
 
 ## Adding a job from its URL
 
@@ -195,7 +217,7 @@ weeks later once it 404s. So the import also writes
 `jds/<company>-<role>.md` — the posting's own words, converted to markdown.
 
 - **Structure survives.** Boards publish descriptions as HTML, so `<h2>`
-  becomes `##` and `<li>` becomes `- ` rather than flattening into a wall of
+  becomes `##` and `<li>` becomes `-` rather than flattening into a wall of
   paragraphs. Where only flat text is available the headings are inferred back,
   conservatively.
 - **Sections are named consistently where they can be.** "You may be a good
@@ -216,9 +238,9 @@ beside it.
 
 A job imported while the tracker is open shows up in the table on its own — the
 server tells the page, and the page merges it in without disturbing whatever
-you were editing. See [Two writers, one file](#two-writers-one-file).
+you were editing. See below: [Single file, Two writers](#single-file-two-writers).
 
-## Two writers, one file
+## Single file, Two writers
 
 Two things write `data.json`: the page you have open, and the importer. Neither
 can see the other, and the page holds the whole document in memory — so without
