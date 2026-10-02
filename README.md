@@ -19,10 +19,14 @@
   [Adding a job from its URL](#adding-a-job-from-its-url) •
   [Single File, Two writers](#single-file-two-writers) •
   [The table](#the-table) •
+  [Flow](#flow) •
   [Themes](#themes) •
   [The detail card](#the-detail-card) •
   [Data format](#data-format) •
   [License](#license)
+
+  <img src="docs/images/tracker.png" width="900"
+       alt="The AppTrail tracker: a table of job applications with columns for company, role title, posted and applied dates, status, interest, round and salary ranges">
 
 </div>
 
@@ -303,6 +307,44 @@ applications" whenever something is hidden.
 Your filter is remembered in the browser, like the theme and width settings.
 Adding an application clears any filter that would have hidden the new blank
 row, so it never disappears the moment you create it.
+
+## Flow
+
+**Flow** is the second view in the sidebar — the view you are on lives in the URL,
+so `#flow` opens straight onto it. It draws every application as a ribbon
+through the pipeline, carried as far up the ladder as its status and its rounds
+say it got, then out to where it stands now:
+
+> Applied · Screen · Interview · Final · Offer
+
+<div align="center">
+
+  <img src="docs/images/flow.png" width="900"
+       alt="The Flow view: a Sankey diagram of 25 applications moving through applied, screen, interview, final and offer, branching out to in-progress, rejected, ghosted, withdrawn, closed and accepted">
+
+</div>
+
+- **Rounds only count once they are real.** A round is counted when it has a
+  date or has started, so the blank *Screen* that **Add Round** leaves behind
+  doesn't push an application a stage further than it actually went.
+  *Interview 1–5* and *Take-home* land on Interview, *Offer Call* on Offer, and
+  *Other* no higher than Screen.
+- **Where each one ended up.** Three endings mean it is still in play — *In
+  progress*, *Awaiting response* and *Ready to apply* — and the rest are the
+  closed statuses, ordered good news first, then bad, then the ones nobody
+  decided. One you haven't applied to branches off at the start as *Not
+  applied*.
+- **Hover for the number.** A ribbon reads "Screen → Interview · 14
+  applications · 67% of Screen"; a block gives its own total and its share of
+  everything tracked. **Show as a table** puts the same from/to counts in a
+  table under the diagram.
+- **It always shows everything.** The Tracker's filter doesn't narrow the
+  pipeline, so the counts are of every application you have, not of the rows
+  the table happens to be showing.
+
+The diagram follows the table rather than a snapshot of it: add an application,
+move a status or finish a round and it redraws — including changes that arrive
+from `/job-from-url` while you have the page open.
 
 ## Themes
 
