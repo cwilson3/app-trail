@@ -1,0 +1,167 @@
+{
+  "version": 1,
+  "savedAt": null,
+  "applications": [
+    {
+      "id": "smp10001",
+      "num": 1,
+      "company": "Aurora Systems",
+      "postedOn": "2026-07-28",
+      "appliedOn": "2026-08-04",
+      "lastUpdate": "2026-08-29",
+      "status": "Interview",
+      "awaiting": "2026-09-08",
+      "appliedVia": "Referral",
+      "roleTitle": "Senior Frontend Engineer",
+      "companyType": "Startup",
+      "industry": "Developer Tools",
+      "roleType": "Full-time",
+      "postedRange": {
+        "min": 155000,
+        "max": 185000
+      },
+      "localRange": {
+        "min": 150000,
+        "max": 178000
+      },
+      "myRange": {
+        "min": 170000,
+        "max": 190000
+      },
+      "jobLink": "https://jobs.aurorasystems.example.com/postings/senior-frontend-engineer",
+      "companyWebsite": "https://aurorasystems.example.com",
+      "systemOfRecord": "Greenhouse",
+      "rounds": [
+        {
+          "id": "smp10001r1",
+          "type": "Screen",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "people": [
+            {
+              "id": "smp10001p1",
+              "firstContact": "2026-08-07",
+              "contactType": "Email",
+              "name": "R. Okafor",
+              "role": "Technical Recruiter",
+              "email": "r.okafor@example.com",
+              "phone": "",
+              "result": "Moved to tech screen",
+              "note": "Team is 6 engineers, hybrid 2 days",
+              "endDate": "2026-08-12",
+              "endType": "Moved Forward",
+              "endNotes": "Scheduling with hiring manager"
+            }
+          ]
+        },
+        {
+          "id": "smp10001r2",
+          "type": "Interview 1",
+          "status": "Scheduled",
+          "end": "Pending",
+          "people": [
+            {
+              "id": "smp10001p2",
+              "firstContact": "2026-08-29",
+              "contactType": "Video",
+              "name": "D. Halvorsen",
+              "role": "Engineering Manager",
+              "email": "dh@example.com",
+              "phone": "",
+              "result": "",
+              "note": "60 min system design",
+              "endDate": "",
+              "endType": "Pending",
+              "endNotes": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "smp10002",
+      "num": 2,
+      "company": "Brightline Health",
+      "postedOn": "2026-07-09",
+      "appliedOn": "2026-07-21",
+      "lastUpdate": "2026-08-15",
+      "status": "Rejected",
+      "awaiting": "",
+      "appliedVia": "Company portal",
+      "roleTitle": "Staff Software Engineer",
+      "companyType": "Enterprise",
+      "industry": "Healthcare",
+      "roleType": "Full-time",
+      "postedRange": {
+        "min": 180000,
+        "max": 210000
+      },
+      "localRange": {
+        "min": 180000,
+        "max": 210000
+      },
+      "myRange": {
+        "min": 195000,
+        "max": 205000
+      },
+      "jobLink": "https://www.linkedin.com/jobs/view/3987654321/",
+      "companyWebsite": "https://www.brightlinehealth.example.org",
+      "systemOfRecord": "Workday",
+      "rounds": [
+        {
+          "id": "smp10002r1",
+          "type": "Screen",
+          "status": "Completed",
+          "end": "Rejected",
+          "people": [
+            {
+              "id": "smp10002p1",
+              "firstContact": "2026-07-29",
+              "contactType": "Phone",
+              "name": "M. Chen",
+              "role": "Recruiter",
+              "email": "",
+              "phone": "555-0142",
+              "result": "Closed the req",
+              "note": "Headcount frozen mid-process",
+              "endDate": "2026-08-15",
+              "endType": "Rejected",
+              "endNotes": "Asked to be kept in mind for Q1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "smp10003",
+      "num": 3,
+      "company": "Cardinal Labs",
+      "postedOn": "",
+      "appliedOn": "2026-08-26",
+      "lastUpdate": "2026-08-26",
+      "status": "Applied",
+      "awaiting": "2026-09-10",
+      "appliedVia": "LinkedIn",
+      "roleTitle": "Platform Engineer",
+      "companyType": "Mid-market",
+      "industry": "Logistics",
+      "roleType": "Contract-to-hire",
+      "postedRange": {
+        "min": 165000,
+        "max": 180000
+      },
+      "localRange": {
+        "min": 158000,
+        "max": 172000
+      },
+      "myRange": {
+        "min": 175000,
+        "max": 185000
+      },
+      "jobLink": "https://cardinallabs.example.com/careers/platform-engineer",
+      "companyWebsite": "https://cardinallabs.example.com",
+      "systemOfRecord": "Lever",
+      "rounds": []
+    }
+  ]
+}

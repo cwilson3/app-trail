@@ -1,0 +1,1072 @@
+{
+  "version": 1,
+  "savedAt": null,
+  "applications": [
+    {
+      "id": "hsr0001",
+      "num": 1,
+      "company": "Bubs' Concession Stand",
+      "postedOn": "2026-08-24",
+      "appliedOn": "2026-08-27",
+      "lastUpdate": "2026-09-29",
+      "status": "Interview",
+      "interest": "High",
+      "awaiting": "2026-10-06",
+      "appliedVia": "Company Site",
+      "roleTitle": "Senior QA Engineer, Point of Sale",
+      "companyType": "Small Business",
+      "industry": "Retail",
+      "roleType": "Full-time",
+      "workSetting": "On-Site",
+      "postedRange": {
+        "min": 110000,
+        "max": 130000
+      },
+      "localRange": {
+        "min": 105000,
+        "max": 124000
+      },
+      "myRange": {
+        "min": 125000,
+        "max": 135000
+      },
+      "jobLink": "https://bubs.example.com/jobs/senior-qa-pos",
+      "companyWebsite": "https://bubs.example.com",
+      "systemOfRecord": "Email",
+      "rounds": [
+        {
+          "id": "hsr0001r1",
+          "type": "Screen",
+          "date": "2026-09-08",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "hsr0001p1",
+              "firstContact": "2026-09-01",
+              "contactType": "Phone",
+              "name": "Bubs",
+              "role": "Owner & CEO",
+              "email": "bubs@bubs.example.com",
+              "phone": "555-0201",
+              "result": "Advanced",
+              "note": "Offered to throw in a free shirt if I took the job",
+              "endDate": "2026-09-08",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "hsr0001r2",
+          "type": "Interview 1",
+          "date": "2026-10-06",
+          "time": "14:00",
+          "status": "Scheduled",
+          "end": "Pending",
+          "notes": "Live exercise: find the bugs in the cash register",
+          "people": [
+            {
+              "id": "hsr0001p2",
+              "firstContact": "2026-09-29",
+              "contactType": "In-person",
+              "name": "Bubs",
+              "role": "Owner & CEO",
+              "email": "bubs@bubs.example.com",
+              "phone": "",
+              "result": "",
+              "note": "",
+              "endDate": "",
+              "endType": "Pending",
+              "endNotes": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hsr0002",
+      "num": 2,
+      "company": "Strong Badia the Free",
+      "postedOn": "2026-07-27",
+      "appliedOn": "2026-07-28",
+      "lastUpdate": "2026-09-30",
+      "status": "Offer",
+      "interest": "High",
+      "awaiting": "2026-10-03",
+      "appliedVia": "Referral",
+      "roleTitle": "Lead SDET, Email Checking Platform",
+      "companyType": "Startup",
+      "industry": "Media",
+      "roleType": "Full-time",
+      "workSetting": "Remote",
+      "postedRange": {
+        "min": 175000,
+        "max": 200000
+      },
+      "localRange": {
+        "min": 168000,
+        "max": 190000
+      },
+      "myRange": {
+        "min": 195000,
+        "max": 210000
+      },
+      "jobLink": "https://strongbadia.example.com/jobs/lead-sdet",
+      "companyWebsite": "https://strongbadia.example.com",
+      "systemOfRecord": "Lever",
+      "rounds": [
+        {
+          "id": "hsr0002r1",
+          "type": "Screen",
+          "date": "2026-08-05",
+          "time": "11:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "hsr0002p1",
+              "firstContact": "2026-07-30",
+              "contactType": "Video",
+              "name": "The Cheat",
+              "role": "Talent Acquisition",
+              "email": "thecheat@strongbadia.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Answered every question with noises; somehow very clear",
+              "endDate": "2026-08-05",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "hsr0002r2",
+          "type": "Interview 1",
+          "date": "2026-08-19",
+          "time": "15:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "Code review of the email-checking script",
+          "people": [
+            {
+              "id": "hsr0002p2",
+              "firstContact": "2026-08-07",
+              "contactType": "Video",
+              "name": "Strong Bad",
+              "role": "CTO",
+              "email": "strongbad@strongbadia.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Typed every question in all caps",
+              "endDate": "2026-08-19",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "hsr0002r3",
+          "type": "Final",
+          "date": "2026-09-09",
+          "time": "13:00",
+          "status": "Completed",
+          "end": "Offer",
+          "notes": "In person, at the Stick",
+          "people": [
+            {
+              "id": "hsr0002p3",
+              "firstContact": "2026-08-25",
+              "contactType": "In-person",
+              "name": "Strong Bad",
+              "role": "CTO",
+              "email": "strongbad@strongbadia.example.com",
+              "phone": "",
+              "result": "Offer extended",
+              "note": "",
+              "endDate": "2026-09-30",
+              "endType": "Offer",
+              "endNotes": "Offer includes an upgrade from the Lappy 486"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hsr0003",
+      "num": 3,
+      "company": "Videlectrix",
+      "postedOn": "2026-07-06",
+      "appliedOn": "2026-07-08",
+      "lastUpdate": "2026-08-12",
+      "status": "Rejected",
+      "interest": "Moderate",
+      "awaiting": "",
+      "appliedVia": "LinkedIn",
+      "roleTitle": "Game Test Engineer, Peasant's Quest",
+      "companyType": "Private Company",
+      "industry": "Video Games",
+      "roleType": "Full-time",
+      "workSetting": "Hybrid",
+      "postedRange": {
+        "min": 90000,
+        "max": 110000
+      },
+      "localRange": {
+        "min": 86000,
+        "max": 104000
+      },
+      "myRange": {
+        "min": 100000,
+        "max": 115000
+      },
+      "jobLink": "https://videlectrix.example.com/jobs/game-test-engineer",
+      "companyWebsite": "https://videlectrix.example.com",
+      "systemOfRecord": "Greenhouse",
+      "rounds": [
+        {
+          "id": "hsr0003r1",
+          "type": "Screen",
+          "date": "2026-07-15",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "hsr0003p1",
+              "firstContact": "2026-07-10",
+              "contactType": "LinkedIn",
+              "name": "Rather Dashing",
+              "role": "Producer",
+              "email": "dashing@videlectrix.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Kept bringing up his burninated cottage",
+              "endDate": "2026-07-15",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "hsr0003r2",
+          "type": "Take-home",
+          "date": "2026-07-29",
+          "time": "",
+          "status": "Completed",
+          "end": "Rejected",
+          "notes": "Find every way to get burninated on the first screen",
+          "people": [
+            {
+              "id": "hsr0003p2",
+              "firstContact": "2026-07-16",
+              "contactType": "Email",
+              "name": "Rather Dashing",
+              "role": "Producer",
+              "email": "dashing@videlectrix.example.com",
+              "phone": "",
+              "result": "",
+              "note": "",
+              "endDate": "2026-08-12",
+              "endType": "Rejected",
+              "endNotes": "Rejected: missed the Kerrek bug"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hsr0004",
+      "num": 4,
+      "company": "Cheat Commandos HQ",
+      "postedOn": "2026-09-10",
+      "appliedOn": "2026-09-12",
+      "lastUpdate": "2026-09-28",
+      "status": "Phone Screen",
+      "interest": "Moderate",
+      "awaiting": "2026-10-03",
+      "appliedVia": "Recruiter",
+      "roleTitle": "Automation Engineer, Action Figure QA",
+      "companyType": "Enterprise",
+      "industry": "Toys",
+      "roleType": "Full-time",
+      "workSetting": "Hybrid",
+      "postedRange": {
+        "min": 115000,
+        "max": 135000
+      },
+      "localRange": {
+        "min": 110000,
+        "max": 128000
+      },
+      "myRange": {
+        "min": 130000,
+        "max": 140000
+      },
+      "jobLink": "https://cheatcommandos.example.com/careers/automation-engineer",
+      "companyWebsite": "https://cheatcommandos.example.com",
+      "systemOfRecord": "Workday",
+      "rounds": [
+        {
+          "id": "hsr0004r1",
+          "type": "Screen",
+          "date": "2026-10-03",
+          "time": "11:00",
+          "status": "Scheduled",
+          "end": "Pending",
+          "notes": "",
+          "people": [
+            {
+              "id": "hsr0004p1",
+              "firstContact": "2026-09-25",
+              "contactType": "Phone",
+              "name": "Gunhaver",
+              "role": "Commander",
+              "email": "gunhaver@cheatcommandos.example.com",
+              "phone": "555-0214",
+              "result": "",
+              "note": "Ends every call with 'Buy all our playsets and toys!'",
+              "endDate": "",
+              "endType": "Pending",
+              "endNotes": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hsr0005",
+      "num": 5,
+      "company": "Free Country USA High School",
+      "postedOn": "2026-06-15",
+      "appliedOn": "2026-06-17",
+      "lastUpdate": "2026-08-01",
+      "status": "Ghosted",
+      "interest": "Low",
+      "awaiting": "",
+      "appliedVia": "Indeed",
+      "roleTitle": "Test Coordinator, Athletics Systems",
+      "companyType": "Government",
+      "industry": "Education",
+      "roleType": "Full-time",
+      "workSetting": "On-Site",
+      "postedRange": {
+        "min": 68000,
+        "max": 80000
+      },
+      "localRange": {
+        "min": 65000,
+        "max": 76000
+      },
+      "myRange": {
+        "min": 75000,
+        "max": 82000
+      },
+      "jobLink": "https://fcusahs.example.com/jobs/test-coordinator",
+      "companyWebsite": "https://fcusahs.example.com",
+      "systemOfRecord": "Indeed",
+      "rounds": [
+        {
+          "id": "hsr0005r1",
+          "type": "Screen",
+          "date": "2026-06-26",
+          "time": "09:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "hsr0005p1",
+              "firstContact": "2026-06-20",
+              "contactType": "Phone",
+              "name": "Coach Z",
+              "role": "Athletic Director",
+              "email": "coachz@fcusahs.example.com",
+              "phone": "555-0225",
+              "result": "Advanced",
+              "note": "Kept calling it a 'jorb'",
+              "endDate": "2026-06-26",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "hsr0005r2",
+          "type": "Interview 1",
+          "date": "2026-07-10",
+          "time": "15:30",
+          "status": "Completed",
+          "end": "No Response",
+          "notes": "Held in the locker room",
+          "people": [
+            {
+              "id": "hsr0005p2",
+              "firstContact": "2026-06-30",
+              "contactType": "In-person",
+              "name": "Coach Z",
+              "role": "Athletic Director",
+              "email": "coachz@fcusahs.example.com",
+              "phone": "",
+              "result": "",
+              "note": "",
+              "endDate": "2026-08-01",
+              "endType": "No Response",
+              "endNotes": "Voicemail box full"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hsr0006",
+      "num": 6,
+      "company": "The King of Town's Castle",
+      "postedOn": "2026-07-20",
+      "appliedOn": "2026-07-22",
+      "lastUpdate": "2026-08-20",
+      "status": "Withdrawn",
+      "interest": "Low",
+      "awaiting": "",
+      "appliedVia": "Company Site",
+      "roleTitle": "QA Lead, Royal Food Tasting",
+      "companyType": "Government",
+      "industry": "Hospitality",
+      "roleType": "Full-time",
+      "workSetting": "On-Site",
+      "postedRange": {
+        "min": 95000,
+        "max": 115000
+      },
+      "localRange": {
+        "min": 90000,
+        "max": 110000
+      },
+      "myRange": {
+        "min": 105000,
+        "max": 120000
+      },
+      "jobLink": "https://kingoftown.example.com/careers/qa-lead",
+      "companyWebsite": "https://kingoftown.example.com",
+      "systemOfRecord": "Company Portal",
+      "rounds": [
+        {
+          "id": "hsr0006r1",
+          "type": "Screen",
+          "date": "2026-08-03",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "hsr0006p1",
+              "firstContact": "2026-07-25",
+              "contactType": "Email",
+              "name": "The Poopsmith",
+              "role": "Royal Recruiter",
+              "email": "poopsmith@kingoftown.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Has taken a vow of silence; all feedback in writing",
+              "endDate": "2026-08-03",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "hsr0006r2",
+          "type": "Interview 1",
+          "date": "2026-08-20",
+          "time": "12:00",
+          "status": "Cancelled",
+          "end": "Withdrawn",
+          "notes": "",
+          "people": [
+            {
+              "id": "hsr0006p2",
+              "firstContact": "2026-08-05",
+              "contactType": "In-person",
+              "name": "The King of Town",
+              "role": "CEO",
+              "email": "king@kingoftown.example.com",
+              "phone": "",
+              "result": "",
+              "note": "",
+              "endDate": "2026-08-20",
+              "endType": "Withdrawn",
+              "endNotes": "Withdrew: he ate the take-home assignment"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hsr0007",
+      "num": 7,
+      "company": "Trogdor Burnination Studios",
+      "postedOn": "2026-05-12",
+      "appliedOn": "2026-05-14",
+      "lastUpdate": "2026-06-18",
+      "status": "Closed",
+      "interest": "Moderate",
+      "awaiting": "",
+      "appliedVia": "LinkedIn",
+      "roleTitle": "Fire Safety Test Engineer",
+      "companyType": "Startup",
+      "industry": "Pyrotechnics",
+      "roleType": "Contract",
+      "workSetting": "Remote",
+      "postedRange": {
+        "min": 70,
+        "max": 90
+      },
+      "localRange": {
+        "min": null,
+        "max": null
+      },
+      "myRange": {
+        "min": 85,
+        "max": 95
+      },
+      "jobLink": "https://trogdor.example.com/jobs/fire-safety-test",
+      "companyWebsite": "https://trogdor.example.com",
+      "systemOfRecord": "Lever",
+      "rounds": [
+        {
+          "id": "hsr0007r1",
+          "type": "Screen",
+          "date": "2026-05-28",
+          "time": "13:00",
+          "status": "Cancelled",
+          "end": "Expired",
+          "notes": "Hourly contract rate, not salary",
+          "people": [
+            {
+              "id": "hsr0007p1",
+              "firstContact": "2026-05-20",
+              "contactType": "Video",
+              "name": "Trogdor the Burninator",
+              "role": "Head of Burnination",
+              "email": "trogdor@trogdor.example.com",
+              "phone": "",
+              "result": "",
+              "note": "One beefy arm; typed slowly",
+              "endDate": "2026-06-18",
+              "endType": "Expired",
+              "endNotes": "Burninated the countryside, the peasants, and the job posting"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hsr0008",
+      "num": 8,
+      "company": "Marzipan's Answering Service",
+      "postedOn": "2026-06-01",
+      "appliedOn": "2026-06-03",
+      "lastUpdate": "2026-08-25",
+      "status": "Accepted",
+      "interest": "High",
+      "awaiting": "",
+      "appliedVia": "Referral",
+      "roleTitle": "Accessibility QA Engineer",
+      "companyType": "Small Business",
+      "industry": "Telecommunications",
+      "roleType": "Full-time",
+      "workSetting": "Remote",
+      "postedRange": {
+        "min": 100000,
+        "max": 118000
+      },
+      "localRange": {
+        "min": 96000,
+        "max": 112000
+      },
+      "myRange": {
+        "min": 110000,
+        "max": 120000
+      },
+      "jobLink": "https://marzipan.example.com/jobs/accessibility-qa",
+      "companyWebsite": "https://marzipan.example.com",
+      "systemOfRecord": "Email",
+      "rounds": [
+        {
+          "id": "hsr0008r1",
+          "type": "Screen",
+          "date": "2026-06-12",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "hsr0008p1",
+              "firstContact": "2026-06-05",
+              "contactType": "Phone",
+              "name": "Marzipan",
+              "role": "Founder",
+              "email": "marzipan@marzipan.example.com",
+              "phone": "555-0238",
+              "result": "Advanced",
+              "note": "Left a voicemail with a song on it",
+              "endDate": "2026-06-12",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "hsr0008r2",
+          "type": "Interview 1",
+          "date": "2026-06-26",
+          "time": "14:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "hsr0008p2",
+              "firstContact": "2026-06-15",
+              "contactType": "Video",
+              "name": "Marzipan",
+              "role": "Founder",
+              "email": "marzipan@marzipan.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Asked about my recycling habits",
+              "endDate": "2026-06-26",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "hsr0008r3",
+          "type": "Offer Call",
+          "date": "2026-08-20",
+          "time": "11:00",
+          "status": "Completed",
+          "end": "Offer",
+          "notes": "",
+          "people": [
+            {
+              "id": "hsr0008p3",
+              "firstContact": "2026-08-14",
+              "contactType": "Phone",
+              "name": "Marzipan",
+              "role": "Founder",
+              "email": "marzipan@marzipan.example.com",
+              "phone": "555-0238",
+              "result": "Offer accepted",
+              "note": "",
+              "endDate": "2026-08-25",
+              "endType": "Offer",
+              "endNotes": "Accepted; fully remote, so no surprise visits from Homestar"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hsr0009",
+      "num": 9,
+      "company": "Homestar Runner Athletics",
+      "postedOn": "2026-09-15",
+      "appliedOn": "2026-09-17",
+      "lastUpdate": "2026-09-30",
+      "status": "Recruiter Screen",
+      "interest": "Moderate",
+      "awaiting": "2026-10-02",
+      "appliedVia": "Company Site",
+      "roleTitle": "QA Engineer, Sports Analytics",
+      "companyType": "Startup",
+      "industry": "Sports",
+      "roleType": "Full-time",
+      "workSetting": "Hybrid",
+      "postedRange": {
+        "min": 105000,
+        "max": 125000
+      },
+      "localRange": {
+        "min": null,
+        "max": null
+      },
+      "myRange": {
+        "min": 120000,
+        "max": 130000
+      },
+      "jobLink": "https://homestarrunner-athletics.example.com/jobs/qa-engineer",
+      "companyWebsite": "https://homestarrunner-athletics.example.com",
+      "systemOfRecord": "Email",
+      "rounds": [
+        {
+          "id": "hsr0009r1",
+          "type": "Screen",
+          "date": "2026-10-02",
+          "time": "15:00",
+          "status": "Scheduled",
+          "end": "Pending",
+          "notes": "Both of them will be on the call",
+          "people": [
+            {
+              "id": "hsr0009p1",
+              "firstContact": "2026-09-24",
+              "contactType": "Phone",
+              "name": "Pom Pom",
+              "role": "Recruiter",
+              "email": "pompom@homestarrunner-athletics.example.com",
+              "phone": "555-0249",
+              "result": "",
+              "note": "Communicates entirely in bubbly noises; very persuasive",
+              "endDate": "",
+              "endType": "Pending",
+              "endNotes": ""
+            },
+            {
+              "id": "hsr0009p2",
+              "firstContact": "2026-09-26",
+              "contactType": "Email",
+              "name": "Homestar Runner",
+              "role": "Founder",
+              "email": "homestar@homestarrunner-athletics.example.com",
+              "phone": "",
+              "result": "",
+              "note": "Asked if Q.A. stands for 'Quite Awesome'",
+              "endDate": "",
+              "endType": "Pending",
+              "endNotes": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hsr0010",
+      "num": 10,
+      "company": "Strong Mad Fitness",
+      "postedOn": "2026-08-10",
+      "appliedOn": "2026-08-12",
+      "lastUpdate": "2026-09-27",
+      "status": "Final",
+      "interest": "Moderate",
+      "awaiting": "2026-10-08",
+      "appliedVia": "LinkedIn",
+      "roleTitle": "Performance Test Engineer",
+      "companyType": "Small Business",
+      "industry": "Fitness",
+      "roleType": "Full-time",
+      "workSetting": "On-Site",
+      "postedRange": {
+        "min": 120000,
+        "max": 140000
+      },
+      "localRange": {
+        "min": 115000,
+        "max": 133000
+      },
+      "myRange": {
+        "min": 135000,
+        "max": 145000
+      },
+      "jobLink": "https://strongmadfitness.example.com/jobs/performance-test",
+      "companyWebsite": "https://strongmadfitness.example.com",
+      "systemOfRecord": "Paylocity",
+      "rounds": [
+        {
+          "id": "hsr0010r1",
+          "type": "Screen",
+          "date": "2026-08-20",
+          "time": "09:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "hsr0010p1",
+              "firstContact": "2026-08-14",
+              "contactType": "Phone",
+              "name": "Strong Mad",
+              "role": "Head Coach",
+              "email": "strongmad@strongmadfitness.example.com",
+              "phone": "555-0250",
+              "result": "Advanced",
+              "note": "Shouted every question, but very sincere",
+              "endDate": "2026-08-20",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "hsr0010r2",
+          "type": "Interview 1",
+          "date": "2026-09-03",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "Load test: how many dumbbells before the rack breaks",
+          "people": [
+            {
+              "id": "hsr0010p2",
+              "firstContact": "2026-08-24",
+              "contactType": "In-person",
+              "name": "Strong Mad",
+              "role": "Head Coach",
+              "email": "strongmad@strongmadfitness.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "",
+              "endDate": "2026-09-03",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "hsr0010r3",
+          "type": "Final",
+          "date": "2026-10-08",
+          "time": "10:00",
+          "status": "Scheduled",
+          "end": "Pending",
+          "notes": "",
+          "people": [
+            {
+              "id": "hsr0010p3",
+              "firstContact": "2026-09-27",
+              "contactType": "In-person",
+              "name": "Strong Mad",
+              "role": "Head Coach",
+              "email": "strongmad@strongmadfitness.example.com",
+              "phone": "",
+              "result": "",
+              "note": "",
+              "endDate": "",
+              "endType": "Pending",
+              "endNotes": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hsr0011",
+      "num": 11,
+      "company": "Strong Sad's Doodle Studio",
+      "postedOn": "2026-09-18",
+      "appliedOn": "2026-09-20",
+      "lastUpdate": "2026-09-20",
+      "status": "Applied - Awaiting Response",
+      "interest": "Low",
+      "awaiting": "2026-10-04",
+      "appliedVia": "Company Site",
+      "roleTitle": "UX QA Analyst, Melancholy Interfaces",
+      "companyType": "Small Business",
+      "industry": "Design",
+      "roleType": "Part-time",
+      "workSetting": "Remote",
+      "postedRange": {
+        "min": 40000,
+        "max": 50000
+      },
+      "localRange": {
+        "min": null,
+        "max": null
+      },
+      "myRange": {
+        "min": 45000,
+        "max": 52000
+      },
+      "jobLink": "https://strongsad.example.com/jobs/ux-qa",
+      "companyWebsite": "https://strongsad.example.com",
+      "systemOfRecord": "Email",
+      "rounds": [
+        {
+          "id": "hsr0011r1",
+          "type": "Screen",
+          "date": "",
+          "time": "",
+          "status": "Scheduled",
+          "end": "Pending",
+          "notes": "",
+          "people": [
+            {
+              "id": "hsr0011p1",
+              "firstContact": "2026-09-20",
+              "contactType": "Email",
+              "name": "Strong Sad",
+              "role": "Creative Director",
+              "email": "strongsad@strongsad.example.com",
+              "phone": "",
+              "result": "",
+              "note": "Auto-reply was a long poem about rain",
+              "endDate": "",
+              "endType": "Pending",
+              "endNotes": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hsr0012",
+      "num": 12,
+      "company": "Stinkoman 20X6 Arcade",
+      "postedOn": "2026-09-29",
+      "appliedOn": "",
+      "lastUpdate": "2026-09-30",
+      "status": "Ready",
+      "interest": "",
+      "awaiting": "",
+      "appliedVia": "",
+      "roleTitle": "Platform Tester, Level 9 Boss Fights",
+      "companyType": "Startup",
+      "industry": "",
+      "roleType": "",
+      "workSetting": "",
+      "postedRange": {
+        "min": null,
+        "max": null
+      },
+      "localRange": {
+        "min": null,
+        "max": null
+      },
+      "myRange": {
+        "min": null,
+        "max": null
+      },
+      "jobLink": "https://20x6.example.com/jobs/platform-tester",
+      "companyWebsite": "",
+      "systemOfRecord": "",
+      "rounds": [
+        {
+          "id": "hsr0012r1",
+          "type": "Screen",
+          "date": "",
+          "time": "",
+          "status": "Scheduled",
+          "end": "Pending",
+          "notes": "",
+          "people": []
+        }
+      ]
+    },
+    {
+      "id": "hsr0013",
+      "num": 13,
+      "company": "Homsar's Hat Emporium",
+      "postedOn": "2026-08-01",
+      "appliedOn": "2026-08-02",
+      "lastUpdate": "2026-09-29",
+      "status": "Negotiating",
+      "interest": "High",
+      "awaiting": "2026-10-03",
+      "appliedVia": "Recruiter",
+      "roleTitle": "Chaos Engineer",
+      "companyType": "Private Company",
+      "industry": "Apparel",
+      "roleType": "Full-time",
+      "workSetting": "Remote",
+      "postedRange": {
+        "min": 150000,
+        "max": 170000
+      },
+      "localRange": {
+        "min": 143000,
+        "max": 162000
+      },
+      "myRange": {
+        "min": 170000,
+        "max": 185000
+      },
+      "jobLink": "https://homsarhats.example.com/careers/chaos-engineer",
+      "companyWebsite": "https://homsarhats.example.com",
+      "systemOfRecord": "SmartRecruiters",
+      "rounds": [
+        {
+          "id": "hsr0013r1",
+          "type": "Screen",
+          "date": "2026-08-11",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "hsr0013p1",
+              "firstContact": "2026-08-04",
+              "contactType": "Phone",
+              "name": "Senor Cardgage",
+              "role": "Recruiter",
+              "email": "cardgage@homsarhats.example.com",
+              "phone": "555-0262",
+              "result": "Advanced",
+              "note": "Hard to understand, but I think it went well",
+              "endDate": "2026-08-11",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "hsr0013r2",
+          "type": "Interview 1",
+          "date": "2026-08-25",
+          "time": "14:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "How would you test a hat that is also a ship?",
+          "people": [
+            {
+              "id": "hsr0013p2",
+              "firstContact": "2026-08-13",
+              "contactType": "Video",
+              "name": "Homsar",
+              "role": "Founder & Chief Hat Officer",
+              "email": "homsar@homsarhats.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Opened the call with 'DaAaAaAa!'",
+              "endDate": "2026-08-25",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "hsr0013r3",
+          "type": "Offer Call",
+          "date": "2026-09-24",
+          "time": "16:00",
+          "status": "Completed",
+          "end": "Offer",
+          "notes": "Offered 160k; countered at 180k",
+          "people": [
+            {
+              "id": "hsr0013p3",
+              "firstContact": "2026-09-18",
+              "contactType": "Phone",
+              "name": "Homsar",
+              "role": "Founder & Chief Hat Officer",
+              "email": "homsar@homsarhats.example.com",
+              "phone": "555-0263",
+              "result": "Offer extended",
+              "note": "",
+              "endDate": "2026-09-24",
+              "endType": "Offer",
+              "endNotes": "Waiting on their answer to the counter"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

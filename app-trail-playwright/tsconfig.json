@@ -1,0 +1,16 @@
+{
+  // Type-checks the specs and their helpers. Playwright transpiles on its own,
+  // so nothing is emitted; this exists for `npm run typecheck`.
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "types": ["node"]
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules"]
+}

@@ -1,0 +1,19 @@
+{
+  // Type-checks the plain JavaScript with tsc. Nothing is emitted: the app has
+  // no build step, so this exists only for `npm run typecheck` and the CI gate.
+  // The page's own script is inline in src/index.html, which tsc cannot see, and
+  // the *.test.js files are left to Vitest.
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "target": "es2022",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "lib": ["es2022", "dom"],
+    "types": ["node"],
+    "skipLibCheck": true,
+    "strict": false
+  },
+  "include": ["scripts/demo.js", "src/server.js", "src/paths.js", "src/routes.js", "src/store.js", "src/note.js", ".claude/skills/**/*.js"]
+}

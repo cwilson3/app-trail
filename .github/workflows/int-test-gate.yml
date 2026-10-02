@@ -1,0 +1,76 @@
+name: Integration Test Gate
+run-name: Integration Test Gate initiated by @${{ github.actor }}
+
+on:
+  workflow_call:
+
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+
+jobs:
+  int_tests:
+    name: Run API Tests
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: app-trail-playwright
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: './package.json'
+          cache: 'npm'
+          cache-dependency-path: './app-trail-playwright/package-lock.json'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run API Tests
+        id: api
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run test:api 2>&1 | tee int-test-output.log
+
+      - name: Summarize API Test Results
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          {
+            echo "### Integration Test Gate"
+            echo ""
+            echo "- Command: \`npm run test:api\` (\`playwright test --project=api\`)"
+            echo "- Result: \`${{ steps.api.outcome }}\`"
+            echo ""
+            echo "<details><summary>Last 50 lines of output</summary>"
+            echo ""
+            echo '```'
+            tail -n 50 int-test-output.log 2>/dev/null || echo "(no output captured)"
+            echo '```'
+            echo ""
+            echo "</details>"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload API Test Results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: int-test-results
+          path: |
+            app-trail-playwright/int-test-output.log
+            app-trail-playwright/test-results/
+          if-no-files-found: ignore
+          retention-days: 3

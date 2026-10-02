@@ -1,0 +1,58 @@
+name: Test Gate Caller
+on:
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-gate-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit_test_gate_caller:
+    name: UTG Caller
+    uses: ./.github/workflows/unit-test-gate.yml
+
+  int_test_gate_caller:
+    name: ITG Caller
+    uses: ./.github/workflows/int-test-gate.yml
+
+  type_check_caller:
+    name: Type Check Caller
+    uses: ./.github/workflows/type-check.yml
+
+  test_gate:
+    name: Test Gate
+    needs: [unit_test_gate_caller, int_test_gate_caller, type_check_caller]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Echo Upstream Results
+        run: |
+          echo "unit_test_gate_caller  : ${{ needs.unit_test_gate_caller.result }}"
+          echo "int_test_gate_caller   : ${{ needs.int_test_gate_caller.result }}"
+          echo "type_check_caller      : ${{ needs.type_check_caller.result }}"
+        shell: bash
+
+      - name: Fail Unless Every Upstream Job Succeeded
+        if: ${{ needs.unit_test_gate_caller.result != 'success' || needs.int_test_gate_caller.result != 'success' || needs.type_check_caller.result != 'success' }}
+        run: |
+          echo "::error:: The test gate did not pass - see the UTG Caller, ITG Caller or Type Check Caller jobs in this run."
+          exit 1
+        shell: bash

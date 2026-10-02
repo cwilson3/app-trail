@@ -1,0 +1,71 @@
+name: Unit Test Gate
+run-name: Unit Test Gate initiated by @${{ github.actor }}
+
+on:
+  workflow_call:
+
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+
+jobs:
+  unit_tests:
+    name: Run Unit Tests
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: './package.json'
+          cache: 'npm'
+          cache-dependency-path: './package-lock.json'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Unit Tests
+        id: unit
+        shell: bash
+        run: |
+          set -o pipefail
+          npm test 2>&1 | tee unit-test-output.log
+
+      - name: Summarize Unit Test Results
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          {
+            echo "### Unit Test Gate"
+            echo ""
+            echo "- Command: \`npm test\` (\`vitest run\`)"
+            echo "- Result: \`${{ steps.unit.outcome }}\`"
+            echo ""
+            echo "<details><summary>Last 50 lines of output</summary>"
+            echo ""
+            echo '```'
+            tail -n 50 unit-test-output.log 2>/dev/null || echo "(no output captured)"
+            echo '```'
+            echo ""
+            echo "</details>"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload Unit Test Log
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: unit-test-log
+          path: unit-test-output.log
+          if-no-files-found: ignore
+          retention-days: 3

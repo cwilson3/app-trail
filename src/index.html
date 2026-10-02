@@ -1,0 +1,3322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AppTrail</title>
+<link rel="icon" id="favicon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23ffffff'/%3E%3Cg transform='translate(4 4)' fill='none' stroke='%23000000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2' y='7' width='20' height='14' rx='2'/%3E%3Cpath d='M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+  /* Each theme is a block of variables on a class, so the class works on any
+     element: <body> wears the live one, and each swatch in Settings wears its
+     own, to show that theme's colours. Light is the default, on :root. */
+  :root, .theme-light{
+    --bg:#ffffff;
+    --ink:#111113;
+    --ink-2:#3f3f46;
+    --muted:#6b7280;
+    --faint:#9ca3af;
+    --line:#e7e7ea;
+    --line-2:#ededf0;
+    --field:#e5e5e9;
+    --head:#fafafa;
+    --hover:#fafafb;
+    --chip:#f0f0f2;
+    --accent:#111113;
+    --radius:10px;
+    --shadow:0 1px 2px rgba(16,17,20,.04), 0 1px 1px rgba(16,17,20,.03);
+    --shadow-modal:0 24px 60px rgba(16,17,20,.28);
+    --shadow-pop:0 8px 24px rgba(16,17,20,.25);
+    /* surfaces & states */
+    --surface:#ffffff;
+    --surface-2:#fcfcfd;
+    --accent-ink:#ffffff;
+    --accent-hover:#28282c;
+    --btn-hover:#f7f7f8;
+    --btn-active:#f0f0f2;
+    --ghost-hover:#f2f2f4;
+    --border-strong:#b6b6c0;
+    --dashed-hover:#d3d3da;
+    --placeholder:#c4c4cc;
+    --overlay-bg:rgba(20,20,24,.42);
+    --focus-ring:rgba(17,17,19,.06);
+    /* status */
+    --danger:#b42318;   --danger-bg:#fef3f2;
+    --good-bg:#e8f5ec;  --good-ink:#20693c;
+    --warm-bg:#fff4e5;  --warm-ink:#8a5300;
+    --bad-bg:#f5f0f0;   --bad-ink:#8a3a34;
+    --live-bg:#eaf0fb;  --live-ink:#2f4d8f;
+    color-scheme:light;
+  }
+
+  /* ---------- dark theme (opt-in via .theme-dark) ---------- */
+  .theme-dark{
+    --bg:#0e0e10;
+    --ink:#f1f1f3;
+    --ink-2:#c6c6ce;
+    --muted:#8d8d98;
+    --faint:#6c6c77;
+    --line:#2a2a30;
+    --line-2:#232328;
+    --field:#33333b;
+    --head:#1c1c20;
+    --hover:#1f1f24;
+    --chip:#26262c;
+    --accent:#f1f1f3;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 1px 1px rgba(0,0,0,.4);
+    --shadow-modal:0 24px 60px rgba(0,0,0,.62);
+    --shadow-pop:0 8px 24px rgba(0,0,0,.55);
+    --surface:#17171a;
+    --surface-2:#1b1b1f;
+    --accent-ink:#111113;
+    --accent-hover:#dcdce2;
+    --btn-hover:#212127;
+    --btn-active:#2a2a31;
+    --ghost-hover:#26262c;
+    --border-strong:#55555f;
+    --dashed-hover:#45454e;
+    --placeholder:#55555e;
+    --overlay-bg:rgba(0,0,0,.62);
+    --focus-ring:rgba(241,241,243,.14);
+    --danger:#f0837a;   --danger-bg:rgba(180,35,24,.20);
+    --good-bg:rgba(52,168,102,.16);  --good-ink:#7fd6a3;
+    --warm-bg:rgba(212,145,30,.16);  --warm-ink:#e3b25e;
+    --bad-bg:rgba(190,90,80,.16);    --bad-ink:#e29a92;
+    --live-bg:rgba(90,130,220,.18);  --live-ink:#9db6ee;
+    color-scheme:dark;
+  }
+
+  /* ---------- joey theme (opt-in via .theme-joey) ---------- */
+  /* neon on near-black: cyan #00E5E5, magenta #C236B8, green #00FF66, orange #FF6600 */
+  .theme-joey{
+    --bg:#07070f;
+    --ink:#eafcff;
+    --ink-2:#a9dde3;
+    --muted:#86a7b8;
+    --faint:#5d7488;
+    --line:#1d2440;
+    --line-2:#161b31;
+    --field:#28305a;
+    --head:#10132a;
+    --hover:#141834;
+    --chip:#1a1f3d;
+    --accent:#00e5e5;
+    --shadow:0 1px 2px rgba(0,0,0,.6), 0 0 0 1px rgba(0,229,229,.05);
+    --shadow-modal:0 24px 60px rgba(0,0,0,.7), 0 0 42px rgba(194,54,184,.20);
+    --shadow-pop:0 8px 24px rgba(0,0,0,.6), 0 0 18px rgba(0,229,229,.16);
+    --surface:#0d0f1e;
+    --surface-2:#111424;
+    --accent-ink:#04121a;
+    --accent-hover:#5cf5f5;
+    --btn-hover:#171c36;
+    --btn-active:#1e2442;
+    --ghost-hover:#1b2140;
+    --border-strong:#00e5e5;
+    --dashed-hover:#c236b8;
+    --placeholder:#4a5a7a;
+    --overlay-bg:rgba(4,4,12,.72);
+    --focus-ring:rgba(0,229,229,.18);
+    --danger:#e35ad8;   --danger-bg:rgba(194,54,184,.22);
+    --good-bg:rgba(0,255,102,.16);   --good-ink:#3dff96;
+    --warm-bg:rgba(255,102,0,.18);   --warm-ink:#ff9a4d;
+    --bad-bg:rgba(194,54,184,.16);   --bad-ink:#e98ce0;
+    --live-bg:rgba(0,229,229,.16);   --live-ink:#5ff2f2;
+    color-scheme:dark;
+  }
+
+  /* ---------- retro (opt-in via .theme-retro) ---------- */
+  /* arcade neon on deep violet: cyan #00E5FF, magenta #FF1493, laser green #39FF14 */
+  .theme-retro{
+    --bg:#1a0a2e;
+    --ink:#e0f0ff;
+    --ink-2:#bcd5ee;
+    --muted:#9988cc;
+    --faint:#7a6aa8;
+    --line:#4a3568;
+    --line-2:#3a2558;
+    --field:#4a3568;
+    --head:#241242;
+    --hover:#32204f;
+    --chip:#3a2558;
+    --accent:#00e5ff;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 1px 1px rgba(0,0,0,.4);
+    --shadow-modal:0 24px 60px rgba(0,0,0,.66);
+    --shadow-pop:0 8px 24px rgba(0,0,0,.55);
+    --surface:#2a1548;
+    --surface-2:#311b52;
+    --accent-ink:#06121a;
+    --accent-hover:#40efff;
+    --btn-hover:#311b52;
+    --btn-active:#3d2660;
+    --ghost-hover:#35205a;
+    --border-strong:#6f52a6;
+    --dashed-hover:#5f4487;
+    --placeholder:#6d5b9c;
+    --overlay-bg:rgba(26,10,46,.75);
+    --focus-ring:rgba(0,229,255,.16);
+    --danger:#ff51af;   --danger-bg:rgba(255,20,147,.12);
+    --good-bg:rgba(57,255,20,.14);   --good-ink:#7cff5c;
+    --warm-bg:rgba(255,230,0,.16);   --warm-ink:#f5dd3d;
+    --bad-bg:rgba(255,20,147,.12);   --bad-ink:#ff74bd;
+    --live-bg:rgba(0,229,255,.14);   --live-ink:#5ceeff;
+    color-scheme:dark;
+  }
+
+  /* ---------- retro 2 (opt-in via .theme-retro2) ---------- */
+  /* joey's neon quad - cyan #00E5E5, magenta #C236B8, green #00FF66, orange
+     #FF6600 - laid over a vaporwave violet ground rather than joey's near-black */
+  .theme-retro2{
+    --bg:#0d0221;
+    --ink:#eafcff;
+    --ink-2:#c9a6ff;
+    --muted:#976fc6;
+    --faint:#6d489a;
+    --line:#3d1a6e;
+    --line-2:#2a0f4e;
+    --field:#3d1a6e;
+    --head:#150430;
+    --hover:#25104a;
+    --chip:#2a0f4e;
+    --accent:#00e5e5;
+    --shadow:0 1px 2px rgba(0,0,0,.6), 0 0 0 1px rgba(0,229,229,.05);
+    --shadow-modal:0 24px 60px rgba(0,0,0,.72), 0 0 42px rgba(194,54,184,.22);
+    --shadow-pop:0 8px 24px rgba(0,0,0,.6), 0 0 18px rgba(0,229,229,.16);
+    --surface:#190535;
+    --surface-2:#1f0942;
+    --accent-ink:#04121a;
+    --accent-hover:#5cf5f5;
+    --btn-hover:#231048;
+    --btn-active:#2f1659;
+    --ghost-hover:#2a1350;
+    --border-strong:#00e5e5;
+    --dashed-hover:#c236b8;
+    --placeholder:#6a4a9c;
+    --overlay-bg:rgba(13,2,33,.75);
+    --focus-ring:rgba(0,229,229,.18);
+    --danger:#e35ad8;   --danger-bg:rgba(194,54,184,.22);
+    --good-bg:rgba(0,255,102,.16);   --good-ink:#3dff96;
+    --warm-bg:rgba(255,102,0,.18);   --warm-ink:#ff9a4d;
+    --bad-bg:rgba(194,54,184,.16);   --bad-ink:#e98ce0;
+    --live-bg:rgba(0,229,229,.16);   --live-ink:#5ff2f2;
+    color-scheme:dark;
+  }
+
+  /* ---------- ginkgo (opt-in via .theme-ginkgo) ---------- */
+  /* autumn ginkgo leaf: gold #D4A017 on a dark olive ground */
+  .theme-ginkgo{
+    --bg:#181c12;
+    --ink:#e8e2cc;
+    --ink-2:#c8c2a6;
+    --muted:#9a9570;
+    --faint:#7b7659;
+    --line:#383d28;
+    --line-2:#2c3120;
+    --field:#434a30;
+    --head:#1d2116;
+    --hover:#2c3120;
+    --chip:#333823;
+    --accent:#d4a017;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 1px 1px rgba(0,0,0,.4);
+    --shadow-modal:0 24px 60px rgba(0,0,0,.64);
+    --shadow-pop:0 8px 24px rgba(0,0,0,.54);
+    --surface:#222618;
+    --surface-2:#272c1c;
+    --accent-ink:#141708;
+    --accent-hover:#e8b92a;
+    --btn-hover:#282d1d;
+    --btn-active:#333823;
+    --ghost-hover:#2e3422;
+    --border-strong:#5d6640;
+    --dashed-hover:#4e563a;
+    --placeholder:#6b6750;
+    --overlay-bg:rgba(24,28,18,.75);
+    --focus-ring:rgba(212,160,23,.16);
+    --danger:#d79084;   --danger-bg:rgba(196,92,74,.20);
+    --good-bg:rgba(106,173,61,.16);  --good-ink:#8fce63;
+    --warm-bg:rgba(240,165,0,.16);   --warm-ink:#f0b73c;
+    --bad-bg:rgba(196,92,74,.14);    --bad-ink:#dd8d7e;
+    --live-bg:rgba(212,160,23,.14);  --live-ink:#e0bc5b;
+    color-scheme:dark;
+  }
+
+  /* ---------- win98 (opt-in via .theme-win98) ---------- */
+  /* the grey plastic era: #C0C0C0 desktop, #D4D0C8 dialog face, teal accent */
+  .theme-win98{
+    --bg:#c0c0c0;
+    --ink:#000000;
+    --ink-2:#1c1c1c;
+    --muted:#4e4e4e;
+    --faint:#6e6e6e;
+    --line:#888888;
+    --line-2:#a8a8a0;
+    --field:#7f7f7f;
+    --head:#cbc7bf;
+    --hover:#cdcac2;
+    --chip:#c9c5bd;
+    --accent:#008080;
+    --shadow:0 1px 2px rgba(0,0,0,.18), 0 1px 1px rgba(0,0,0,.10);
+    --shadow-modal:0 10px 28px rgba(0,0,0,.42);
+    --shadow-pop:0 4px 14px rgba(0,0,0,.35);
+    --surface:#d4d0c8;
+    --surface-2:#cbc7bf;
+    --accent-ink:#ffffff;
+    --accent-hover:#00a0a0;
+    --btn-hover:#c8c4bc;
+    --btn-active:#b8b4ac;
+    --ghost-hover:#c4c0b8;
+    --border-strong:#5a5a5a;
+    --dashed-hover:#8e8e86;
+    --placeholder:#8a8a82;
+    --overlay-bg:rgba(0,0,0,.42);
+    --focus-ring:rgba(0,128,128,.20);
+    --danger:#bf0000;   --danger-bg:#f0d8d8;
+    --good-bg:#d6e6d6;  --good-ink:#006000;
+    --warm-bg:#ebebd0;  --warm-ink:#676700;
+    --bad-bg:#e6dada;   --bad-ink:#8a2020;
+    --live-bg:#d4dcec;  --live-ink:#000080;
+    color-scheme:light;
+  }
+
+  /* ---------- winxp (opt-in via .theme-winxp) ---------- */
+  /* luna: #ECE9D8 tan chrome, blue #485FEA selection, the olive green task text */
+  .theme-winxp{
+    --bg:#ece9d8;
+    --ink:#0a0a0a;
+    --ink-2:#33322c;
+    --muted:#476200;
+    --faint:#7d8b52;
+    --line:#aca899;
+    --line-2:#d6d2c2;
+    --field:#b8b49f;
+    --head:#f3f1e4;
+    --hover:#d8e4f8;
+    --chip:#e3ecfa;
+    --accent:#485fea;
+    --shadow:0 1px 2px rgba(60,58,40,.10), 0 1px 1px rgba(60,58,40,.07);
+    --shadow-modal:0 20px 50px rgba(40,50,90,.32);
+    --shadow-pop:0 8px 22px rgba(40,50,90,.26);
+    --surface:#ffffff;
+    --surface-2:#f7f5ea;
+    --accent-ink:#ffffff;
+    --accent-hover:#1621c9;
+    --btn-hover:#e8f0fc;
+    --btn-active:#c1d2f0;
+    --ghost-hover:#e4ecf9;
+    --border-strong:#7f8aa8;
+    --dashed-hover:#9aa4bd;
+    --placeholder:#a6a291;
+    --overlay-bg:rgba(0,0,0,.40);
+    --focus-ring:rgba(72,95,234,.18);
+    --danger:#b74000;   --danger-bg:#fdece1;
+    --good-bg:#eaf5d8;  --good-ink:#4a7500;
+    --warm-bg:#fdf3d4;  --warm-ink:#806700;
+    --bad-bg:#f6e6dc;   --bad-ink:#a33a00;
+    --live-bg:#e3e9fd;  --live-ink:#2f3fb8;
+    color-scheme:light;
+  }
+
+  /* ---------- phosphor (opt-in via .theme-phosphor) ---------- */
+  /* a green CRT: one hue, graded by brightness the way a real tube was */
+  .theme-phosphor{
+    --bg:#001100;
+    --ink:#33ff00;
+    --ink-2:#27cc00;
+    --muted:#1c9500;
+    --faint:#146a00;
+    --line:#004400;
+    --line-2:#003300;
+    --field:#005500;
+    --head:#001300;
+    --hover:#002200;
+    --chip:#003300;
+    --accent:#33ff00;
+    --shadow:0 1px 2px rgba(0,0,0,.6), 0 0 0 1px rgba(51,255,0,.06);
+    --shadow-modal:0 24px 60px rgba(0,0,0,.75), 0 0 40px rgba(51,255,0,.10);
+    --shadow-pop:0 8px 24px rgba(0,0,0,.65), 0 0 16px rgba(51,255,0,.12);
+    --surface:#001a00;
+    --surface-2:#002000;
+    --accent-ink:#001100;
+    --accent-hover:#66ff33;
+    --btn-hover:#002200;
+    --btn-active:#003300;
+    --ghost-hover:#002a00;
+    --border-strong:#00aa00;
+    --dashed-hover:#008800;
+    --placeholder:#136400;
+    --overlay-bg:rgba(0,17,0,.78);
+    --focus-ring:rgba(51,255,0,.18);
+    --danger:#8cff66;   --danger-bg:rgba(51,255,0,.22);
+    --good-bg:rgba(51,255,0,.14);    --good-ink:#33ff00;
+    --warm-bg:rgba(102,255,0,.14);   --warm-ink:#8cff33;
+    --bad-bg:rgba(26,136,0,.24);     --bad-ink:#1fb300;
+    --live-bg:rgba(51,255,0,.12);    --live-ink:#5cff33;
+    color-scheme:dark;
+  }
+
+  /* ---------- j (opt-in via .theme-j) ---------- */
+  /* ultramarine ground under #9FCBEE text, with a crimson accent */
+  .theme-j{
+    --bg:#000249;
+    --ink:#cfe6fb;
+    --ink-2:#9fcbee;
+    --muted:#6d94b8;
+    --faint:#4f7396;
+    --line:#0f4392;
+    --line-2:#0b2d72;
+    --field:#17539f;
+    --head:#040c55;
+    --hover:#0c2a75;
+    --chip:#103a86;
+    --accent:#ff4949;
+    --shadow:0 1px 2px rgba(0,0,0,.55), 0 1px 1px rgba(0,0,0,.4);
+    --shadow-modal:0 24px 60px rgba(0,0,20,.7);
+    --shadow-pop:0 8px 24px rgba(0,0,20,.6);
+    --surface:#06105e;
+    --surface-2:#0a1a6a;
+    --accent-ink:#000249;
+    --accent-hover:#ff6f6f;
+    --btn-hover:#0a1f6c;
+    --btn-active:#0f4392;
+    --ghost-hover:#0c2a75;
+    --border-strong:#2f6ec0;
+    --dashed-hover:#1b5bb0;
+    --placeholder:#4a6ea6;
+    --overlay-bg:rgba(0,2,73,.75);
+    --focus-ring:rgba(255,73,73,.18);
+    --danger:#ff5f5f;   --danger-bg:rgba(221,23,23,.26);
+    --good-bg:rgba(62,207,142,.16);  --good-ink:#5fdca6;
+    --warm-bg:rgba(245,179,66,.16);  --warm-ink:#f5b342;
+    --bad-bg:rgba(221,23,23,.16);    --bad-ink:#ff8f8f;
+    --live-bg:rgba(159,203,238,.14); --live-ink:#9fcbee;
+    color-scheme:dark;
+  }
+
+  /* ---------- j2 (opt-in via .theme-j2) ---------- */
+  /* cocoa ground under white text, purple accent, yellow warning, pink error */
+  .theme-j2{
+    --bg:#2f1e16;
+    --ink:#ffffff;
+    --ink-2:#e5d6ce;
+    --muted:#cbb8ad;
+    --faint:#a08d82;
+    --line:#5a4239;
+    --line-2:#4a342a;
+    --field:#6b5045;
+    --head:#352219;
+    --hover:#4a342a;
+    --chip:#533a2f;
+    --accent:#c98bff;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 1px 1px rgba(0,0,0,.4);
+    --shadow-modal:0 24px 60px rgba(0,0,0,.66);
+    --shadow-pop:0 8px 24px rgba(0,0,0,.55);
+    --surface:#3b2820;
+    --surface-2:#432e25;
+    --accent-ink:#2f1e16;
+    --accent-hover:#dcaeff;
+    --btn-hover:#453026;
+    --btn-active:#523a2f;
+    --ghost-hover:#4c352b;
+    --border-strong:#8a6a5b;
+    --dashed-hover:#7a5b4d;
+    --placeholder:#907d72;
+    --overlay-bg:rgba(47,30,22,.75);
+    --focus-ring:rgba(201,139,255,.18);
+    --danger:#ff7eb1;   --danger-bg:rgba(255,111,168,.12);
+    --good-bg:rgba(134,207,143,.16); --good-ink:#86cf8f;
+    --warm-bg:rgba(255,201,77,.16);  --warm-ink:#ffc94d;
+    --bad-bg:rgba(255,111,168,.14);  --bad-ink:#ffa1c5;
+    --live-bg:rgba(201,139,255,.16); --live-ink:#d8b0ff;
+    color-scheme:dark;
+  }
+
+  /* ---------- sea (opt-in via .theme-sea) ---------- */
+  /* deep water under pale surf: #C3E5E7 text, #99CCCC accent, #F0D1B2 sand */
+  .theme-sea{
+    --bg:#2b3149;
+    --ink:#c3e5e7;
+    --ink-2:#a9d3d8;
+    --muted:#9abdc6;
+    --faint:#7b9aa6;
+    --line:#4d5678;
+    --line-2:#434a6c;
+    --field:#55608a;
+    --head:#2f3550;
+    --hover:#434a6c;
+    --chip:#4a5378;
+    --accent:#99cccc;
+    --shadow:0 1px 2px rgba(0,0,0,.45), 0 1px 1px rgba(0,0,0,.35);
+    --shadow-modal:0 24px 60px rgba(10,14,26,.6);
+    --shadow-pop:0 8px 24px rgba(10,14,26,.5);
+    --surface:#353c5b;
+    --surface-2:#3b4364;
+    --accent-ink:#1f2437;
+    --accent-hover:#b3dcdc;
+    --btn-hover:#3e4668;
+    --btn-active:#4b5479;
+    --ghost-hover:#434a6c;
+    --border-strong:#6380a2;
+    --dashed-hover:#6f7ba6;
+    --placeholder:#75839c;
+    --overlay-bg:rgba(43,49,73,.75);
+    --focus-ring:rgba(153,204,204,.18);
+    --danger:#f4aca4;   --danger-bg:rgba(239,139,128,.12);
+    --good-bg:rgba(94,201,167,.16);  --good-ink:#7fd9bc;
+    --warm-bg:rgba(240,209,178,.16); --warm-ink:#f0d1b2;
+    --bad-bg:rgba(239,139,128,.10);  --bad-ink:#f2a9a0;
+    --live-bg:rgba(153,204,204,.12); --live-ink:#9bcdcd;
+    color-scheme:dark;
+  }
+
+  /* ---------- urban (opt-in via .theme-urban) ---------- */
+  /* warm charcoal and stone, teal accent, and a wine #712E34 too dark to read
+     as text - so it carries the selection fill and the error tint instead */
+  .theme-urban{
+    --bg:#2d2724;
+    --ink:#d9c5b2;
+    --ink-2:#c0ad9c;
+    --muted:#ad9d8e;
+    --faint:#857566;
+    --line:#4d4239;
+    --line-2:#423931;
+    --field:#5c4e43;
+    --head:#322b28;
+    --hover:#453c36;
+    --chip:#4b413a;
+    --accent:#70b9b0;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 1px 1px rgba(0,0,0,.4);
+    --shadow-modal:0 24px 60px rgba(0,0,0,.66);
+    --shadow-pop:0 8px 24px rgba(0,0,0,.55);
+    --surface:#38312d;
+    --surface-2:#3f3732;
+    --accent-ink:#1b2523;
+    --accent-hover:#8ccfc6;
+    --btn-hover:#413833;
+    --btn-active:#4d433c;
+    --ghost-hover:#473d37;
+    --border-strong:#77675a;
+    --dashed-hover:#6a5b50;
+    --placeholder:#7d6e61;
+    --overlay-bg:rgba(45,39,36,.75);
+    --focus-ring:rgba(112,185,176,.16);
+    --danger:#e09295;   --danger-bg:rgba(113,46,52,.40);
+    --good-bg:rgba(124,191,138,.12); --good-ink:#7fc18d;
+    --warm-bg:rgba(220,161,84,.12);  --warm-ink:#dfa861;
+    --bad-bg:rgba(113,46,52,.45);    --bad-ink:#e3999c;
+    --live-bg:rgba(112,185,176,.14); --live-ink:#8ccfc6;
+    color-scheme:dark;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,"Helvetica Neue",Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1600px;margin:0 auto;padding:34px 30px 80px}
+
+  /* ---------- top bar ---------- */
+  .topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:24px}
+  .brand{display:flex;align-items:center;gap:14px}
+  .logo{width:38px;height:38px;border-radius:10px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;flex:none}
+  .logo svg{width:19px;height:19px;stroke-width:2}
+  h1{margin:0;font-size:22px;letter-spacing:-.4px;font-weight:700}
+  .sub{margin:3px 0 0;font-size:12.5px;color:var(--muted)}
+  .sub b{font-weight:600;color:var(--ink-2)}
+  .actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+  .btn{
+    display:inline-flex;align-items:center;gap:7px;
+    height:36px;padding:0 13px;border:1px solid var(--field);border-radius:9px;
+    background:var(--surface);color:var(--ink);font-size:13px;font-weight:500;font-family:inherit;
+    cursor:pointer;white-space:nowrap;box-shadow:var(--shadow);transition:background .12s,border-color .12s;
+  }
+  .btn:hover{background:var(--btn-hover)}
+  .btn:active{background:var(--btn-active)}
+  .btn svg{width:15px;height:15px;flex:none;opacity:.75}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  .btn.primary:hover{background:var(--accent-hover)}
+  .btn.primary svg{opacity:1}
+  .btn.ghost{border-color:transparent;box-shadow:none;background:transparent;color:var(--muted)}
+  .btn.ghost:hover{background:var(--ghost-hover);color:var(--ink)}
+  .btn.danger:hover{color:var(--danger);background:var(--danger-bg)}
+  .btn:disabled{opacity:.45;cursor:default}
+
+  /* ---------- table ---------- */
+  .tablewrap{border:1px solid var(--line);border-radius:12px;overflow:auto;box-shadow:var(--shadow);background:var(--surface)}
+  table{border-collapse:separate;border-spacing:0;width:100%;min-width:1260px}
+  /* the small uppercase label: table and flow headings, field labels, and the
+     names over each filter group */
+  thead th, .f label, .minilabel, .fgroup-head .name, .flowtable th{
+    font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);
+  }
+  thead th{
+    position:sticky;top:0;z-index:1;
+    background:var(--head);
+    text-align:left;
+    padding:13px 9px;border-bottom:1px solid var(--line);white-space:normal;vertical-align:middle;
+  }
+  thead th.sortable{cursor:pointer;user-select:none}
+  thead th.sortable:hover{color:var(--ink-2)}
+  thead th .arrow{opacity:.55;font-size:9px;margin-left:3px}
+  tbody td{padding:12px 9px;border-bottom:1px solid var(--line-2);font-size:13px;color:var(--ink-2);vertical-align:middle}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr{cursor:pointer}
+  tbody tr:hover td{background:var(--hover)}
+  td.dim{color:var(--faint)}
+  td.company{color:var(--ink);font-weight:550}
+  th.rownum,td.rownum{width:1%;white-space:nowrap;text-align:right;padding-right:4px}
+  td.rownum{color:var(--faint);font-variant-numeric:tabular-nums}
+  td.rnd{font-weight:650;color:var(--ink)}
+  td.money{white-space:nowrap;font-variant-numeric:tabular-nums}
+  td.date{white-space:nowrap;font-variant-numeric:tabular-nums}
+  .pill{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--chip);font-size:11px;font-weight:600;color:var(--ink-2);white-space:nowrap}
+  .pill.good{background:var(--good-bg);color:var(--good-ink)}
+  .pill.warm{background:var(--warm-bg);color:var(--warm-ink)}
+  .pill.bad{background:var(--bad-bg);color:var(--bad-ink)}
+  .pill.live{background:var(--live-bg);color:var(--live-ink)}
+
+  .empty{border:1px dashed var(--field);border-radius:12px;padding:56px 20px;text-align:center;color:var(--muted)}
+  .empty h3{margin:0 0 6px;font-size:15px;color:var(--ink);font-weight:600}
+  .empty p{margin:0 0 18px;font-size:13px}
+
+  /* ---------- modal ---------- */
+  .overlay{position:fixed;inset:0;background:var(--overlay-bg);backdrop-filter:blur(2px);display:flex;align-items:flex-start;justify-content:center;padding:40px 20px;overflow:auto;z-index:50}
+  .overlay[hidden]{display:none}
+  .card{background:var(--surface);width:100%;max-width:940px;border-radius:14px;box-shadow:var(--shadow-modal);overflow:hidden;margin:auto}
+  .card.narrow{max-width:720px}
+  .card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:20px 24px;border-bottom:1px solid var(--line)}
+  .eyebrow{font-size:12px;color:var(--muted);margin:0 0 3px}
+  .card-head h2{margin:0;font-size:19px;font-weight:700;letter-spacing:-.3px}
+  .card-body{padding:22px 24px 26px;max-height:calc(100vh - 220px);overflow:auto}
+  .card-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 24px;border-top:1px solid var(--line);background:var(--surface)}
+  .card-foot .note{font-size:12px;color:var(--faint)}
+
+  .sec{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px}
+  .sec h3{margin:0;display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  .sec h3 svg{width:15px;height:15px;opacity:.6}
+  hr.rule{border:0;border-top:1px solid var(--line);margin:26px 0 22px}
+
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px 18px}
+  .f{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .f.wide{grid-column:span 2}
+  .linkrow{display:flex;gap:8px}
+  .linkrow .inp{flex:1;min-width:0}
+  .openbtn{
+    width:38px;height:38px;flex:none;border:1px solid var(--field);border-radius:8px;background:var(--surface);
+    color:var(--muted);display:grid;place-items:center;cursor:pointer;
+  }
+  .openbtn:hover:not(:disabled){color:var(--ink);border-color:var(--border-strong)}
+  .openbtn.copied{color:var(--ink);border-color:var(--border-strong)}
+  .openbtn:disabled{opacity:.35;cursor:default}
+  .openbtn svg{width:15px;height:15px}
+  .range{display:flex;align-items:center;gap:8px}
+  .range .dash{color:var(--muted);flex:none}
+  input.money{font-variant-numeric:tabular-nums}
+  .inp{
+    height:38px;border:1px solid var(--field);border-radius:8px;background:var(--surface);
+    padding:0 11px;font:13.5px/1 inherit;color:var(--ink);font-family:inherit;width:100%;
+  }
+  .inp::placeholder{color:var(--placeholder)}
+  .inp:focus{outline:none;border-color:var(--border-strong);box-shadow:0 0 0 3px var(--focus-ring)}
+  /* --chevron is rebuilt in --muted by setChevron() on every theme change: a
+     data: URI cannot read a CSS variable, so the stroke colour is baked in */
+  select.inp{appearance:none;-webkit-appearance:none;background-image:var(--chevron,url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='%236b7280' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/></svg>"));background-repeat:no-repeat;background-position:right 10px center;background-size:12px;padding-right:28px;cursor:pointer}
+  input[type=date].inp,
+  input[type=time].inp{font-variant-numeric:tabular-nums}
+  textarea.inp{height:auto;min-height:74px;padding:9px 11px;line-height:1.5;resize:vertical}
+
+  /* job description */
+  .jd-btns{display:flex;gap:6px;align-items:center}
+  /* .openbtn sets display:grid, which outranks the hidden attribute's display:none */
+  .jd-btns .openbtn[hidden]{display:none}
+  .jd{
+    border:1px solid var(--line);border-radius:11px;background:var(--surface);
+    padding:4px 18px 18px;max-height:460px;overflow:auto;
+    font-size:13.5px;line-height:1.6;color:var(--ink-2);
+  }
+  .jd[hidden]{display:none}
+  .jd h3,.jd h4,.jd h5,.jd h6{
+    margin:20px 0 8px;color:var(--ink);font-weight:700;letter-spacing:-.2px;
+  }
+  .jd h3{font-size:15.5px}
+  .jd h4{font-size:13.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .jd h5,.jd h6{font-size:13px}
+  .jd p{margin:0 0 10px}
+  .jd ul,.jd ol{margin:0 0 12px;padding-left:20px}
+  .jd li{margin:0 0 5px}
+  .jd a{color:var(--ink);text-underline-offset:2px}
+  .jd code{background:var(--chip);border-radius:4px;padding:1px 5px;font-size:12.5px}
+  .jd blockquote{margin:0 0 12px;padding-left:12px;border-left:2px solid var(--field);color:var(--muted)}
+  .jd hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+  .jd .jd-none{margin:14px 0 4px;color:var(--muted)}
+  .jd .jd-none code{white-space:nowrap}
+
+  /* rounds */
+  .rounds{display:flex;flex-direction:column;gap:12px}
+  .round{border:1px solid var(--line);border-radius:11px;background:var(--surface);overflow:hidden}
+  .round-head{display:flex;align-items:center;gap:10px;padding:12px 14px;flex-wrap:wrap}
+  .chev{width:24px;height:24px;border:0;background:transparent;cursor:pointer;display:grid;place-items:center;color:var(--muted);padding:0;flex:none}
+  .chev svg{width:14px;height:14px;transition:transform .15s}
+  .round.closed .chev svg,
+  .person.closed .chev svg{transform:rotate(-90deg)}
+  .badge{width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+  .round-head select.inp{height:34px;width:auto;min-width:132px}
+  .round-head input.inp{height:34px;width:auto;flex:none}
+  .round-head input[type=date].inp{width:146px}
+  .round-head input[type=time].inp{width:126px}
+  .round-meta{width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:9px 18px;margin-top:2px}
+  .rmeta{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+  .people-count{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)}
+  .people-count svg{width:14px;height:14px;opacity:.7}
+  .spacer{flex:1 1 auto}
+  .round-body{padding:0 14px 14px;display:flex;flex-direction:column;gap:12px}
+  .round.closed .round-body{display:none}
+  .person{border:1px solid var(--line);border-radius:9px;background:var(--surface-2);padding:14px}
+  .person.closed{padding-bottom:12px}
+  .person-head{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+  .person.closed .person-head{margin-bottom:0}
+  .person-head .minilabel{color:var(--ink-2)}
+  .person-head .chev{margin-left:-4px}
+  .person-sum{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .person.closed .person-body{display:none}
+  .iconbtn{border:0;background:transparent;color:var(--faint);cursor:pointer;padding:4px;border-radius:6px;display:grid;place-items:center}
+  .iconbtn:hover{color:var(--danger);background:var(--danger-bg)}
+  .iconbtn svg{width:15px;height:15px}
+  .add-dashed{
+    width:100%;border:1px dashed var(--field);background:var(--surface);border-radius:9px;height:44px;
+    display:flex;align-items:center;justify-content:center;gap:7px;cursor:pointer;
+    color:var(--muted);font-size:13px;font-family:inherit;font-weight:500;
+  }
+  .add-dashed:hover{background:var(--hover);border-color:var(--dashed-hover);color:var(--ink-2)}
+  .add-dashed svg{width:14px;height:14px}
+  .none{color:var(--faint);font-size:13px;padding:2px 0 8px}
+
+  /* docs */
+  .docs h3{margin:22px 0 8px;font-size:13px;font-weight:700}
+  .docs h3:first-child{margin-top:0}
+  .docs p{margin:0 0 10px;font-size:13.5px;color:var(--ink-2)}
+  .docs ul{margin:0 0 12px;padding-left:18px;font-size:13.5px;color:var(--ink-2)}
+  .docs li{margin:0 0 5px}
+  .docs table{min-width:0;width:100%;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .docs td{padding:7px 10px;font-size:12.5px;border-bottom:1px solid var(--line-2)}
+  .docs td:first-child{font-weight:600;color:var(--ink);width:34%;white-space:nowrap}
+  .docs code{background:var(--chip);border-radius:4px;padding:1px 5px;font-size:12px}
+
+  .toast{
+    position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(10px);
+    background:var(--accent);color:var(--accent-ink);font-size:12.5px;padding:9px 15px;border-radius:9px;
+    box-shadow:var(--shadow-pop);opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;z-index:80;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* ---------- content width modes (class on <body>; margins is .wrap's own width) ---------- */
+  body.width-full .wrap{max-width:none;padding-left:20px;padding-right:20px}
+
+  /* ---------- actions menu ---------- */
+  .menuctl{position:relative;display:inline-flex}
+  .btn .caret{width:13px;height:13px;margin-right:-4px;transition:transform .14s}
+  .btn[aria-expanded="true"] .caret{transform:rotate(180deg)}
+  .menu{
+    position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:30;padding:4px;
+    background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-modal);
+    transform-origin:top right;
+  }
+  .menu[hidden]{display:none}
+  .menu:not([hidden]){animation:filter-in .14s ease-out}
+  .menuitem{
+    display:flex;align-items:center;gap:7px;width:100%;height:34px;padding:0 8px;
+    border:0;border-radius:8px;background:transparent;color:var(--ink);
+    font-size:13px;font-weight:500;font-family:inherit;text-align:left;cursor:pointer;white-space:nowrap;
+  }
+  .menuitem:hover,.menuitem:focus-visible{background:var(--btn-hover);outline:none}
+  .menuitem:active{background:var(--btn-active)}
+  .menuitem svg{width:15px;height:15px;flex:none;opacity:.75}
+
+  /* ---------- filter popover ---------- */
+  .filterctl{position:relative;display:inline-flex}
+  .btn[aria-expanded="true"]{background:var(--btn-active);border-color:var(--border-strong)}
+  .btn .fcount{
+    display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-right:-3px;
+    border-radius:999px;background:var(--accent);color:var(--accent-ink);
+    font-size:10.5px;font-weight:700;font-variant-numeric:tabular-nums;
+  }
+  .btn .fcount[hidden]{display:none}
+
+  .filter-panel{
+    position:absolute;top:calc(100% + 8px);right:0;z-index:30;
+    width:min(600px,86vw);
+    background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-modal);
+    transform-origin:top right;
+  }
+  .filter-panel[hidden]{display:none}
+  .filter-panel:not([hidden]){animation:filter-in .14s ease-out}
+  @keyframes filter-in{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:none}}
+
+  .filter-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 12px;border-bottom:1px solid var(--line)}
+  .filter-head .settings-title{padding:0}
+  .filter-groups{display:grid;grid-template-columns:1.25fr 1fr .85fr}
+  .fgroup{padding:11px 12px 12px;min-width:0}
+  .fgroup + .fgroup{border-left:1px solid var(--line)}
+  .fgroup-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:7px}
+  .linkbtn{border:0;background:none;padding:0;font:inherit;font-size:11.5px;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+  .linkbtn:hover{color:var(--ink)}
+  .linkbtn:disabled{opacity:.4;cursor:default;text-decoration:none}
+  .fsearch{
+    width:100%;height:28px;margin-bottom:6px;padding:0 8px;
+    border:1px solid var(--field);border-radius:8px;background:var(--surface);color:var(--ink);
+    font:inherit;font-size:12.5px;
+  }
+  .fsearch::placeholder{color:var(--placeholder)}
+  .fsearch:focus{outline:none;border-color:var(--border-strong)}
+  .fopts{max-height:216px;overflow:auto;display:flex;flex-direction:column;gap:1px}
+  .fopt{display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:7px;cursor:pointer;font-size:12.5px;color:var(--ink-2)}
+  .fopt:hover{background:var(--btn-hover)}
+  .fopt input{margin:0;accent-color:var(--accent);flex:none}
+  .fopt .txt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .fopt .n{margin-left:auto;padding-left:6px;font-size:11px;color:var(--faint);font-variant-numeric:tabular-nums}
+  .fnone{padding:6px;font-size:12.5px;color:var(--faint)}
+  .filter-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 12px;border-top:1px solid var(--line)}
+  .filter-foot .fnote{font-size:12px;color:var(--muted)}
+  .filter-foot .fbtns{display:flex;align-items:center;gap:6px}
+  .filter-foot .btn{height:30px;padding:0 10px;font-size:12.5px}
+
+  /* ---------- view controls: a gear in the lower-right corner ---------- */
+  .viewctl{
+    position:fixed;right:18px;bottom:18px;z-index:40;
+    display:flex;flex-direction:column;align-items:flex-end;gap:10px;
+  }
+
+  .gearbtn{
+    width:38px;height:38px;padding:0;border:1px solid var(--line);border-radius:999px;
+    background:var(--surface);color:var(--faint);box-shadow:var(--shadow-pop);
+    display:grid;place-items:center;cursor:pointer;
+    transition:background .12s,color .12s;
+  }
+  .gearbtn:hover{background:var(--btn-hover);color:var(--ink-2)}
+  .gearbtn[aria-expanded="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+  .gearbtn:focus-visible{outline:2px solid var(--border-strong);outline-offset:2px}
+  .gearbtn svg{width:18px;height:18px;display:block;transition:transform .25s ease}
+  .gearbtn[aria-expanded="true"] svg{transform:rotate(60deg)}
+
+  .settings-panel{
+    min-width:246px;padding:6px;border-radius:12px;
+    background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-modal);
+    transform-origin:bottom right;
+  }
+  .settings-panel[hidden]{display:none}
+  .settings-panel:not([hidden]){animation:settings-in .14s ease-out}
+  @keyframes settings-in{from{opacity:0;transform:translateY(6px) scale(.97)}to{opacity:1;transform:none}}
+  .settings-title{
+    font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+    padding:6px 10px 8px;
+  }
+  .settings-row{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:7px 10px;border-radius:8px;
+  }
+  .settings-row + .settings-row{border-top:1px solid var(--line);border-radius:0}
+  .settings-row .lbl{font-size:13px;color:var(--ink-2);white-space:nowrap}
+
+  .widthctl{display:inline-flex;gap:2px;padding:3px;border-radius:10px;background:var(--btn-hover)}
+  .widthctl button{
+    width:32px;height:26px;padding:0;border:0;border-radius:7px;background:transparent;
+    color:var(--faint);display:grid;place-items:center;cursor:pointer;
+    transition:background .12s,color .12s;
+  }
+  .widthctl button:hover{background:var(--surface);color:var(--ink-2)}
+  .widthctl button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+  .widthctl button:focus-visible{outline:2px solid var(--border-strong);outline-offset:1px}
+  .widthctl svg{width:20px;height:14px;display:block}
+
+  /* thirteen themes do not fit a single row of icons, so the theme row stacks
+     its label over a two-column grid of named swatches */
+  .settings-row.row-theme{flex-direction:column;align-items:stretch;gap:7px}
+  .themectl{display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:3px;border-radius:10px;background:var(--btn-hover)}
+  .themectl button{
+    height:26px;padding:0 7px;border:0;border-radius:7px;background:transparent;
+    color:var(--ink-2);font:inherit;font-size:12px;text-align:left;
+    display:flex;align-items:center;gap:7px;cursor:pointer;
+    transition:background .12s,color .12s;
+  }
+  .themectl button:hover{background:var(--surface);color:var(--ink)}
+  .themectl button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+  .themectl button:focus-visible{outline:2px solid var(--border-strong);outline-offset:1px}
+  /* each swatch carries its own theme's class, so --bg and --accent here are
+     that theme's ground and accent, whichever theme is live */
+  .themectl .sw{
+    width:14px;height:14px;flex:none;border-radius:5px;
+    border:1px solid rgba(127,127,140,.4);
+    background:linear-gradient(135deg,var(--bg) 0 50%,var(--accent) 50% 100%);
+  }
+
+  /* ---------- sidebar & views ---------- */
+  /* the live view is a data-route on <body>, set before first paint, so the
+     wrong view never flashes in on a reload of #tracker */
+  body{padding-left:76px}
+  .sidenav{
+    position:fixed;top:0;bottom:0;left:0;z-index:20;width:76px;
+    display:flex;flex-direction:column;gap:4px;padding:14px 8px;
+    background:var(--surface);border-right:1px solid var(--line);
+  }
+  .navitem{
+    display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 2px;
+    border-radius:10px;color:var(--muted);text-decoration:none;
+    font-size:10.5px;font-weight:600;line-height:1.2;text-align:center;
+    transition:background .12s,color .12s;
+  }
+  .navitem svg{width:20px;height:20px;flex:none}
+  .navitem:hover{background:var(--btn-hover);color:var(--ink)}
+  .navitem:focus-visible{outline:2px solid var(--border-strong);outline-offset:1px}
+  body[data-route="flow"]    .navitem[data-route="flow"],
+  body[data-route="tracker"] .navitem[data-route="tracker"],
+  body[data-route="builder"] .navitem[data-route="builder"]{background:var(--accent);color:var(--accent-ink)}
+  body:not([data-route="flow"])    #viewFlow,
+  body:not([data-route="tracker"]) #viewTracker,
+  body:not([data-route="builder"]) #viewBuilder{display:none}
+
+  /* ---------- flow: pipeline sankey ---------- */
+  .panel{border:1px solid var(--line);border-radius:12px;background:var(--surface);box-shadow:var(--shadow);padding:18px 20px 16px}
+  .panel-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+  .panel-head h2{margin:0;font-size:15px;font-weight:650}
+  .panel-head p{margin:0;font-size:12.5px;color:var(--muted)}
+  /* drawn at the width it has, never narrower than 760px - a phone scrolls it sideways rather than shrinking the labels */
+  .sankey{position:relative;overflow-x:auto}
+  .sankey svg{display:block;overflow:visible}
+  .sankey .lnk{fill-opacity:.26;transition:fill-opacity .12s}
+  .sankey .lnk:hover,.sankey .lnk.hot{fill-opacity:.55}
+  .sankey .nd{rx:3px}
+  .sankey text{font-size:12.5px;fill:var(--ink);paint-order:stroke;stroke:var(--surface);stroke-width:4px;stroke-linejoin:round}
+  .sankey text .n{fill:var(--muted);font-weight:500}
+  .sankey [data-tip]{cursor:default}
+  .tone-all{fill:var(--ink-2)} .tone-live{fill:var(--live-ink)} .tone-good{fill:var(--good-ink)}
+  .tone-warm{fill:var(--warm-ink)} .tone-bad{fill:var(--bad-ink)} .tone-muted{fill:var(--faint)}
+  .sankey-tip{
+    position:absolute;z-index:5;pointer-events:none;max-width:260px;padding:7px 10px;border-radius:8px;
+    background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-pop);
+    font-size:12px;color:var(--ink-2);white-space:nowrap;
+  }
+  .sankey-tip b{color:var(--ink);font-weight:650}
+  .sankey-tip[hidden]{display:none}
+  .flowtable{margin-top:12px;font-size:12.5px;color:var(--muted)}
+  .flowtable summary{cursor:pointer;width:max-content}
+  .flowtable summary:hover{color:var(--ink)}
+  .flowtable table{min-width:0;width:auto;margin-top:8px;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .flowtable th,.flowtable td{padding:6px 12px;text-align:left;border-bottom:1px solid var(--line-2);color:var(--ink-2)}
+  .flowtable th{background:var(--head)}
+  .flowtable tr:last-child td{border-bottom:0}
+  .flowtable td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .empty a{color:var(--ink);font-weight:600}
+
+  @media (max-width:820px){
+    body{padding-left:0;padding-top:58px}
+    .sidenav{bottom:auto;right:0;width:auto;height:58px;flex-direction:row;padding:6px 10px;border-right:0;border-bottom:1px solid var(--line)}
+    .navitem{flex-direction:row;gap:7px;padding:0 12px;font-size:12.5px}
+    .navitem svg{width:17px;height:17px}
+    .wrap{padding:22px 16px 60px}
+    .grid{grid-template-columns:repeat(2,1fr)}
+    .card-body{max-height:none}
+    .overlay{padding:16px 10px}
+    body.width-full .wrap{padding-left:16px;padding-right:16px}
+    .viewctl{right:12px;bottom:12px}
+    .settings-row.row-width{display:none}
+    .filter-panel{width:min(600px,92vw)}
+    .filter-groups{grid-template-columns:1fr}
+    .fgroup + .fgroup{border-left:0;border-top:1px solid var(--line)}
+    .fopts{max-height:150px}
+  }
+</style>
+</head>
+<body>
+<script>/* restore view prefs before first paint (no flash) */
+/* Every theme, in the order Settings lists them. Each one's colours are its
+   .theme-<id> block in the stylesheet, and nowhere else: the favicon and the
+   swatches in Settings read them from there. */
+var THEMES = [
+  { id:"light",    label:"Light" },
+  { id:"dark",     label:"Dark" },
+  { id:"joey",     label:"Joey" },
+  { id:"retro",    label:"Retro" },
+  { id:"retro2",   label:"Retro 2" },
+  { id:"ginkgo",   label:"Ginkgo" },
+  { id:"win98",    label:"Win98" },
+  { id:"winxp",    label:"WinXP" },
+  { id:"phosphor", label:"Phosphor" },
+  { id:"j",        label:"J" },
+  { id:"j2",       label:"J2" },
+  { id:"sea",      label:"Sea" },
+  { id:"urban",    label:"Urban" }
+], DEFAULT_THEME = "light";
+function isTheme(id){
+  for (var i = 0; i < THEMES.length; i++) if (THEMES[i].id === id) return true;
+  return false;
+}
+/* favicon follows the theme: the tab sits on the browser's chrome, not ours.
+   It is drawn in the live theme's ground and accent. */
+function setFavicon(){
+  var css = getComputedStyle(document.body);
+  var color = function(name){ return encodeURIComponent(css.getPropertyValue(name).trim()); };
+  var svg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E"
+    + "%3Crect width='32' height='32' fill='" + color("--bg") + "'/%3E"
+    + "%3Cg transform='translate(4 4)' fill='none' stroke='" + color("--accent") + "'"
+    + " stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E"
+    + "%3Crect x='2' y='7' width='20' height='14' rx='2'/%3E"
+    + "%3Cpath d='M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16'/%3E"
+    + "%3C/g%3E%3C/svg%3E";
+  var old = document.getElementById("favicon");
+  if(!old) return;
+  /* Chrome ignores an in-place href change on data: icons - swap the node */
+  var link = document.createElement("link");
+  link.rel = "icon"; link.id = "favicon"; link.href = svg;
+  old.parentNode.replaceChild(link, old);
+}
+/* the select chevron is a data: URI, and a data: URI cannot read a CSS
+   variable - so rebuild it in the live theme's --muted after every switch */
+function setChevron(){
+  var muted = getComputedStyle(document.body).getPropertyValue("--muted").trim() || "#6b7280";
+  document.body.style.setProperty("--chevron",
+    "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'>"
+    + "<path d='M2.5 4.5 6 8l3.5-3.5' fill='none' stroke='" + muted.replace("#", "%23")
+    + "' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/></svg>\")");
+}
+(function(){try{
+  var t = localStorage.getItem("at-theme");
+  if(!isTheme(t)) t = DEFAULT_THEME;
+  document.body.classList.add("theme-"+t);
+  setFavicon();
+  setChevron();
+  var w=localStorage.getItem("at-width");
+  if(w==="margins"||w==="full") document.body.classList.add("width-"+w);
+}catch(e){}})();
+/* the view comes from the URL hash - #flow, #builder - and is the tracker otherwise */
+var ROUTES = ["tracker","flow","builder"], DEFAULT_ROUTE = "tracker";
+function routeFromHash(){
+  var r = location.hash.replace(/^#\/?/, "");
+  return ROUTES.indexOf(r) < 0 ? DEFAULT_ROUTE : r;
+}
+document.body.dataset.route = routeFromHash();</script>
+
+<nav class="sidenav" aria-label="Sections">
+  <a class="navitem" href="#tracker" data-route="tracker">
+    <i data-icon="tracker"></i>
+    Tracker
+  </a>
+  <a class="navitem" href="#flow" data-route="flow">
+    <i data-icon="flow"></i>
+    Flow
+  </a>
+  <a class="navitem" href="#builder" data-route="builder">
+    <i data-icon="builder"></i>
+    Builder
+  </a>
+</nav>
+
+<div class="wrap" id="viewFlow">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <i data-icon="flow"></i>
+      </div>
+      <div>
+        <h1>Flow</h1>
+        <p class="sub" id="flowSub">Loading…</p>
+      </div>
+    </div>
+  </header>
+  <section class="panel" id="pipelinePanel" aria-labelledby="pipelineTitle">
+    <div class="panel-head">
+      <h2 id="pipelineTitle">Pipeline</h2>
+      <p>How far each application has got, and where it ended up</p>
+    </div>
+    <div class="sankey" id="sankey"></div>
+    <details class="flowtable" id="flowTable"></details>
+  </section>
+  <div class="empty" id="flowEmpty" hidden>
+    <h3>No applications yet</h3>
+    <p>The pipeline fills in as you add applications in the <a href="#tracker">Tracker</a>.</p>
+  </div>
+</div>
+
+<div class="wrap" id="viewBuilder">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <i data-icon="builder"></i>
+      </div>
+      <div>
+        <h1>Builder</h1>
+        <p class="sub">Coming soon</p>
+      </div>
+    </div>
+  </header>
+  <div class="empty">
+    <h3>Nothing here yet</h3>
+    <p>This is a placeholder for the builder.</p>
+  </div>
+</div>
+
+<div class="wrap" id="viewTracker">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <i data-icon="tracker"></i>
+      </div>
+      <div>
+        <h1>Tracker</h1>
+        <p class="sub" id="sub">Loading…</p>
+      </div>
+    </div>
+    <div class="actions">
+      <div class="menuctl" id="actionsCtl">
+        <button class="btn" id="btnActions" title="Open, save, import, export"
+                aria-haspopup="menu" aria-expanded="false" aria-controls="actionsMenu">
+          <i data-icon="menu"></i>
+          Actions
+          <i data-icon="chevron" class="caret"></i>
+        </button>
+        <div class="menu" id="actionsMenu" role="menu" aria-labelledby="btnActions" hidden>
+          <button class="menuitem" type="button" role="menuitem" tabindex="-1" id="btnOpen" title="Link this app to a JSON file on disk">
+            <i data-icon="folder"></i>
+            Open
+          </button>
+          <button class="menuitem" type="button" role="menuitem" tabindex="-1" id="btnSave" title="Save now">
+            <i data-icon="save"></i>
+            Save
+          </button>
+          <button class="menuitem" type="button" role="menuitem" tabindex="-1" id="btnImport">
+            <i data-icon="upload"></i>
+            Import
+          </button>
+          <button class="menuitem" type="button" role="menuitem" tabindex="-1" id="btnExport">
+            <i data-icon="download"></i>
+            Export
+          </button>
+          <button class="menuitem" type="button" role="menuitem" tabindex="-1" id="btnNote" title="Send the rows you can see to a note in Notes">
+            <i data-icon="note"></i>
+            Note
+          </button>
+        </div>
+      </div>
+      <button class="btn" id="btnDocs">
+        <i data-icon="doc"></i>
+        Docs
+      </button>
+      <div class="filterctl" id="filterCtl">
+        <button class="btn" id="btnFilter" title="Filter the table"
+                aria-haspopup="dialog" aria-expanded="false" aria-controls="filterPanel">
+          <i data-icon="filter"></i>
+          Filter
+          <span class="fcount" id="filterCount" hidden>0</span>
+        </button>
+        <div class="filter-panel" id="filterPanel" role="dialog" aria-label="Filter applications" hidden>
+          <div class="filter-head">
+            <span class="settings-title">Filter</span>
+            <button class="linkbtn" type="button" id="btnFilterClear">Clear all</button>
+          </div>
+          <div class="filter-groups" id="filterGroups"></div>
+          <div class="filter-foot">
+            <span class="fnote" id="filterNote"></span>
+            <div class="fbtns">
+              <button class="btn ghost" type="button" id="btnFilterDefault">Reset to default</button>
+              <button class="btn" type="button" id="btnFilterDone">Done</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="btn primary" id="btnAdd">
+        <i data-icon="plus"></i>
+        Add Application
+      </button>
+    </div>
+  </header>
+
+  <div class="tablewrap" id="tablewrap">
+    <table>
+      <thead><tr id="headRow"></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="empty" id="empty" hidden>
+    <h3 id="emptyTitle">No applications yet</h3>
+    <p id="emptyText">Add your first application to start tracking rounds, contacts and outcomes.</p>
+    <button class="btn primary" id="btnAdd2">
+      <i data-icon="plus"></i>
+      Add Application
+    </button>
+    <button class="btn" id="btnEmptyFilter" hidden>
+      <i data-icon="filter"></i>
+      Clear filters
+    </button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" hidden></div>
+<div class="toast" id="toast"></div>
+<input type="file" id="fileInput" accept="application/json,.json" hidden>
+
+<div class="viewctl" id="viewCtl">
+  <div class="settings-panel" id="settingsPanel" role="dialog" aria-label="Settings" hidden>
+    <div class="settings-title">Settings</div>
+    <div class="settings-row row-width">
+      <span class="lbl" id="lblWidth">Content width</span>
+      <div class="widthctl" id="widthCtl" role="group" aria-labelledby="lblWidth">
+        <button type="button" data-width="margins" title="With margins" aria-label="With margins">
+          <svg viewBox="0 0 20 14" fill="none" stroke="currentColor" stroke-width="1.3">
+            <rect x=".65" y=".65" width="18.7" height="12.7" rx="2.4"/>
+            <rect x="3.6" y="3.7" width="12.8" height="6.6" rx="1.2" fill="currentColor" stroke="none"/>
+          </svg>
+        </button>
+        <button type="button" data-width="full" title="Full width" aria-label="Full width">
+          <svg viewBox="0 0 20 14" fill="none" stroke="currentColor" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2.5 7h15"/><path d="M6 3.5 2.5 7 6 10.5"/><path d="M14 3.5 17.5 7 14 10.5"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="settings-row row-theme">
+      <span class="lbl" id="lblTheme">Theme</span>
+      <div class="themectl" id="themeCtl" role="group" aria-labelledby="lblTheme">
+        <!-- one button per entry in THEMES, built when the page loads -->
+      </div>
+    </div>
+  </div>
+  <button type="button" class="gearbtn" id="btnSettings" title="Settings" aria-label="Settings"
+          aria-haspopup="dialog" aria-expanded="false" aria-controls="settingsPanel">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"/>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+    </svg>
+  </button>
+</div>
+
+<script src="jd-name.js"></script>
+<script>
+(function(){
+"use strict";
+
+/* ================= constants ================= */
+
+/* Named before the app became AppTrail. It is where every browser already keeps
+   its copy of the tracker, so renaming it would make that copy look empty. */
+const LS_KEY = "app-track.v1";
+/* The rows a server save still owes, kept beside the browser's copy so a reload
+   can send them again instead of losing them. { savedAt, dirty, deleted } */
+const LS_PENDING_KEY = LS_KEY + ".pending";
+/* The document lives under data/, so the path is what we fetch and what we
+   name in the UI; DATA_NAME is the bare file name, for the save picker. */
+const DATA_NAME = "data.json";
+const DATA_FILE = "data/" + DATA_NAME;
+
+/* Every status, in the order the app lists them, and what each one means
+   everywhere it shows:
+     tone     the colour of its pill in the table
+     stage    how far up the pipeline it puts an application, as an index into
+              STAGES in the flow view (0 applied ... 4 offer); none for Ready
+     outcome  for a status that ends an application, the colour it wears as an
+              outcome in the flow view. These are the closed statuses, which
+              the default filter hides. */
+const STATUS_TABLE = [
+  { name:"Ready",                       tone:"live" },
+  { name:"Applied - Awaiting Response", tone:"good", stage:0 },
+  { name:"Recruiter Screen",            tone:"live", stage:1 },
+  { name:"Phone Screen",                tone:"live", stage:1 },
+  { name:"Interview",                   tone:"live", stage:2 },
+  { name:"Final",                       tone:"live", stage:3 },
+  { name:"Offer",                       tone:"good", stage:4 },
+  { name:"Negotiating",                 tone:"good", stage:4 },
+  { name:"Accepted",                    tone:"good", stage:4, outcome:"good" },
+  { name:"Rejected",                    tone:"bad",  outcome:"bad" },
+  { name:"Withdrawn",                   tone:"bad",  outcome:"muted" },
+  { name:"Ghosted",                     tone:"warm", outcome:"bad" },
+  { name:"Closed",                      tone:"bad",  outcome:"muted" }   /* the posting is gone, not a decision about you */
+];
+const STATUSES = STATUS_TABLE.map(s => s.name);
+const statusInfo = name => STATUS_TABLE.find(s => s.name === name) || {};
+
+const ROUND_TYPES = ["Screen","Interview 1","Interview 2","Interview 3","Interview 4","Interview 5","Final","Take-home","Offer Call","Other"];
+/* Statuses that have been renamed. Rows saved before a rename - and filters
+   already stored in someone's browser - still carry the old wording, so both
+   are mapped through this on the way in. */
+const STATUS_RENAMES = { "Applied": "Applied - Awaiting Response" };
+
+function normStatus(s){
+  s = STATUS_RENAMES[s] || s;
+  return STATUSES.includes(s) ? s : "Applied - Awaiting Response";
+}
+
+const ROUND_STATUSES = ["Scheduled","In Progress","Completed","Cancelled","No Show"];
+const END_TYPES = ["Pending","Moved Forward","Rejected","Withdrawn","Offer","Expired","No Response"];
+const INTEREST_LEVELS = ["High","Moderate","Low"];
+const INTEREST_OPTIONS = [{ value:"", label:"—" }].concat(INTEREST_LEVELS);
+const INTEREST_TONE = { "High":"good", "Moderate":"warm", "Low":"" };
+
+const WORK_SETTINGS = ["Remote","Hybrid","On-Site"];
+const WORK_SETTING_OPTIONS = [{ value:"", label:"—" }].concat(WORK_SETTINGS);
+
+const CONTACT_TYPES = ["Email","Phone","Video","In-person","LinkedIn","Referral","Text"];
+
+/* ---- the fields of an application, a round and a person ----
+
+   One list each. blankApp() and its kin, normalize() and the detail card are
+   all built from them, so a new field is one line here.
+     type      how the card edits it - text, date, time, area, select, link
+               or range - and how a loaded value is cleaned up
+     options   a select's values; a loaded value outside them becomes `initial`
+     initial   what a new record starts with ("" unless given; a function is
+               called for each new record)
+     clean     replaces the usual clean-up of a loaded value
+     from      where to read a loaded value, when it is not under `key`
+     section   the part of the card it sits in; none for a field the card
+               does not show
+     wide      spans two of the card's columns */
+const APP_FIELDS = [
+  { key:"postedOn",       label:"Posted",                    type:"date",   section:"application" },
+  { key:"appliedOn",      label:"Applied",                   type:"date",   section:"application" },
+  { key:"awaiting",       label:"Await",                     type:"date",   section:"application", from: a => a.awaiting || a.await },
+  { key:"status",         label:"Status",                    type:"select", section:"application", options:STATUSES, initial:"Ready", clean:normStatus },
+  { key:"interest",       label:"Interest",                  type:"select", section:"application", options:INTEREST_OPTIONS },
+  { key:"appliedVia",     label:"Applied Via",               type:"text",   section:"application" },
+  { key:"jobLink",        label:"Job Link",                  type:"link",   section:"application", wide:true, copy:"Job link" },
+  { key:"systemOfRecord", label:"System of Record",          type:"text",   section:"application" },
+  { key:"company",        label:"Company Name",              type:"text",   section:"company" },
+  { key:"roleTitle",      label:"Role Title",                type:"text",   section:"company" },
+  { key:"companyType",    label:"Company Type",              type:"text",   section:"company" },
+  { key:"industry",       label:"Industry",                  type:"text",   section:"company" },
+  { key:"roleType",       label:"Role Type",                 type:"text",   section:"company" },
+  { key:"workSetting",    label:"Work Setting",              type:"select", section:"company", options:WORK_SETTING_OPTIONS },
+  { key:"companyWebsite", label:"Company Website",           type:"link",   section:"company", wide:true },
+  { key:"postedRange",    label:"Posted Role Range",         type:"range",  section:"salary", wide:true },
+  { key:"localRange",     label:"Adjusted for local market", type:"range",  section:"salary", wide:true },
+  { key:"myRange",        label:"My Range Given",            type:"range",  section:"salary", wide:true },
+  { key:"lastUpdate",     label:"Last Update",               type:"date",   initial: () => todayISO() }   // set by every edit
+];
+/* The card's sections, in order, and the fields each holds. */
+const CARD_SECTIONS = [
+  { id:"application", title:"Application Details" },
+  { id:"company",     title:"Company Details" },
+  { id:"salary",      title:"Salary" }
+];
+
+/* A round's head holds `type`; its meta row the fields marked `meta`; its
+   body the notes. */
+const ROUND_FIELDS = [
+  { key:"type",   label:"Type",   type:"select", options:ROUND_TYPES, initial:"Screen" },
+  { key:"date",   label:"Date",   type:"date",   meta:true },
+  { key:"time",   label:"Time",   type:"time",   meta:true },
+  { key:"status", label:"Status", type:"select", options:ROUND_STATUSES, initial:"Scheduled", meta:true },
+  { key:"end",    label:"End",    type:"select", options:END_TYPES, initial:"Pending", meta:true },
+  { key:"notes",  label:"Notes",  type:"area" }
+];
+
+const PERSON_FIELDS = [
+  { key:"firstContact", label:"First Contact",     type:"date" },
+  { key:"contactType",  label:"Contact Type",      type:"select", options:CONTACT_TYPES, initial:"Email" },
+  { key:"name",         label:"Contact Name",      type:"text" },
+  { key:"role",         label:"Contact Role",      type:"text" },
+  { key:"email",        label:"Contact Email",     type:"text" },
+  { key:"phone",        label:"Contact Phone",     type:"text" },
+  { key:"result",       label:"Result",            type:"text" },
+  { key:"note",         label:"Note",              type:"text" },
+  { key:"endDate",      label:"End Date",          type:"date" },
+  { key:"endType",      label:"End Type",          type:"select", options:END_TYPES, initial:"Pending" },
+  { key:"endNotes",     label:"End Contact Notes", type:"text" }
+];
+
+const LINK_FIELDS = APP_FIELDS.filter(f => f.type === "link").map(f => f.key);
+
+/* ---- the table's columns ----
+
+   Each column says how to read its cell, and the defaults cover the rest:
+     value(app)            what the cell holds (app[key])
+     text(app)             the cell as text, "" when empty - also what the Note
+                           button sends
+     render(app, i)        the cell's markup, or null for an empty cell
+     compare(a, b, dir)    the sort; ties fall back to the row number
+   Blanks sink to the bottom whichever way a column is sorted. */
+const sinkBlanks = (x, y, dir, cmp) => x == null && y == null ? 0 : x == null ? 1 : y == null ? -1 : cmp(x, y) * dir;
+const byText = (x, y, dir) => sinkBlanks(x.toLowerCase() || null, y.toLowerCase() || null, dir, (p, q) => p < q ? -1 : p > q ? 1 : 0);
+const byNumber = (x, y, dir) => ((x == null ? -Infinity : Number(x)) - (y == null ? -Infinity : Number(y))) * dir;
+const byRank = (order, x, y, dir) => {
+  const rank = v => { const i = order.indexOf(v); return i === -1 ? null : i; };
+  return sinkBlanks(rank(x), rank(y), dir, (p, q) => p - q);
+};
+const rangeLow = r => r && (r.min != null ? r.min : r.max);
+const pill = (v, tone) => '<span class="pill ' + (tone || "") + '">' + esc(v) + "</span>";
+const rangeColumn = (key, label) => ({ key, label, cls:"money",
+  text: app => rangeText(app[key]),
+  compare: (a, b, dir) => sinkBlanks(rangeLow(a[key]), rangeLow(b[key]), dir, (p, q) => p - q) });
+
+const COLUMNS = [
+  { key:"_row",        label:"#",            cls:"rownum", fixed:true, render: (app, i) => String(i + 1) },
+  { key:"company",     label:"Company",      cls:"company" },
+  { key:"roleTitle",   label:"Role Title" },
+  { key:"postedOn",    label:"Posted",       cls:"date" },
+  { key:"appliedOn",   label:"Applied",      cls:"date" },
+  { key:"status",      label:"Status",       render: app => pill(app.status, statusInfo(app.status).tone) },
+  { key:"interest",    label:"Interest",     render: app => app.interest ? pill(app.interest, INTEREST_TONE[app.interest]) : null,
+                                             compare: (a, b, dir) => byRank(INTEREST_LEVELS, a.interest, b.interest, dir) },
+  { key:"_round",      label:"Round",        cls:"rnd", value: currentRound,
+                                             compare: (a, b, dir) => byNumber(currentRound(a), currentRound(b), dir) },
+  { key:"lastUpdate",  label:"Last Update",  cls:"date" },
+  { key:"awaiting",    label:"Await",        cls:"date" },
+  { key:"companyType", label:"Company Type" },
+  { key:"industry",    label:"Industry" },
+  rangeColumn("postedRange", "Posted Range"),
+  rangeColumn("myRange", "My Range")
+].map(withColumnDefaults);
+
+function withColumnDefaults(c){
+  const value = c.value || (app => app[c.key]);
+  const text = c.text || (app => { const v = value(app); return v == null ? "" : String(v); });
+  return Object.assign({
+    render: app => { const t = text(app); return t ? esc(t) : null; },
+    compare: (a, b, dir) => byText(text(a), text(b), dir)
+  }, c, { value, text });
+}
+
+/* The Note button sends these columns, in this order, for whichever rows the
+   table is showing. Labels come from COLUMNS so the note and the table cannot
+   drift apart. */
+const NOTE_COLUMN_KEYS = ["company", "roleTitle", "status", "interest", "_round", "lastUpdate"];
+
+/* Which note to write. config.json is the same file the server reads; this copy
+   only names the note in the toast and in the no-server fallback. */
+const noteConfig = { title: "JS-2026", folder: "" };
+
+/* Every icon the page draws. Markup asks for one with <i data-icon="name">,
+   which is swapped for the svg when the page starts. */
+const stroked = (paths, width) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="' + (width || 1.8) +
+  '" stroke-linecap="round" stroke-linejoin="round">' + paths + "</svg>";
+const ICONS = {
+  chevron: stroked('<path d="m6 9 6 6 6-6"/>', 2),
+  layers: stroked('<path d="m12 2 9 5-9 5-9-5 9-5z"/><path d="m3 12 9 5 9-5M3 17l9 5 9-5"/>'),
+  users: stroked('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>'),
+  trash: stroked('<path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>'),
+  x: stroked('<path d="M18 6 6 18M6 6l12 12"/>', 1.9),
+  external: stroked('<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6M10 14 21 3"/>'),
+  plus: stroked('<path d="M12 5v14M5 12h14"/>', 2),
+  doc: stroked('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>'),
+  copy: stroked('<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>'),
+  check: stroked('<path d="M20 6 9 17l-5-5"/>', 2.2),
+  tracker: stroked('<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>'),
+  flow: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="2" y="5" width="3" height="14" rx="1"/><rect x="19" y="2" width="3" height="6" rx="1"/><rect x="19" y="15" width="3" height="7" rx="1"/><path fill-opacity=".45" d="M5 5C12 5 12 2 19 2v6C12 8 12 11 5 11z"/><path fill-opacity=".45" d="M5 12C12 12 12 15 19 15v7C12 22 12 19 5 19z"/></svg>',
+  builder: stroked('<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>'),
+  menu: stroked('<path d="M4 6h16M4 12h16M4 18h16"/>'),
+  folder: stroked('<path d="M3 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v1"/><path d="M3 9h17.5a1 1 0 0 1 .97 1.24l-1.75 7A1 1 0 0 1 18.75 18H4a1 1 0 0 1-1-1z"/>'),
+  save: stroked('<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/>'),
+  upload: stroked('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M12 3v12M7 8l5-5 5 5"/>'),
+  download: stroked('<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M12 15V3M7 10l5 5 5-5"/>'),
+  note: stroked('<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/>'),
+  filter: stroked('<path d="M22 3H2l8 9.46V19l4 2v-8.54z"/>')
+};
+
+/* The markup's <i data-icon> placeholders become their svg, keeping any class
+   the placeholder carried. */
+for (const el of document.querySelectorAll("i[data-icon]")){
+  const tpl = document.createElement("template");
+  tpl.innerHTML = ICONS[el.dataset.icon];
+  const svg = tpl.content.firstElementChild;
+  for (const c of el.classList) svg.classList.add(c);
+  el.replaceWith(svg);
+}
+
+/* ================= state ================= */
+
+let state = { version:1, savedAt:null, applications:[] };
+let mode = "local";          // "server" | "fs" | "local" | "dataset"
+let fileHandle = null;       // File System Access handle
+let serverUp = false;        // server.js answered at boot
+/* A separate file brought in with Import. While one is loaded nothing is
+   written anywhere until Save, and Save asks first - so data/data.json and the
+   browser's copy of it are left alone. { name, etag, unsaved, handle } */
+let dataset = null;
+let current = null;          // application open in the modal
+let openRounds = new Set();  // round ids that are expanded
+let openPeople = new Set();  // person ids that are expanded
+let cardEdited = false;      // anything changed since the modal opened - only then does closing it save
+let sortKey = "company", sortDir = 1;
+let saveTimer = null, toastTimer = null, renderTimer = null;
+
+/* --- sync state: what the server had when we last agreed with it, and what we
+   have changed since. Anything in `dirty` or `deleted` is ours and outranks the
+   copy on disk; everything else loses to it. --- */
+let serverEtag = null;
+const dirty = new Set();
+const deleted = new Set();
+let pendingRemote = null;      // a server change held back while the user types
+let retryingSave = false;
+let saveRetryDelay = 0;        // ms; grows while saves to the server keep failing
+
+const $ = s => document.querySelector(s);
+const overlay = $("#overlay");
+
+/* ================= helpers ================= */
+
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Math.random().toString(36).slice(2, 10);
+const pad3 = n => String(n).padStart(3, "0");
+
+/* a job link may be pasted with or without a scheme; anything that isn't
+   url-ish (an internal req number, say) stays plain text in the table */
+function linkHref(v){
+  const s = String(v || "").trim();
+  if (!s) return null;
+  if (/^https?:\/\//i.test(s)) return s;
+  if (/^[\w-]+(\.[\w-]+)+(\/|$|\?)/.test(s)) return "https://" + s;
+  return null;
+}
+/* money — every range is two numbers; anything typed is parsed loosely
+   ("125k", "$125,000", "125000") and rendered back as $125,000 */
+function parseMoney(v){
+  if (typeof v === "number") return isFinite(v) ? v : null;
+  const s = String(v == null ? "" : v).replace(/[$,\s]/g, "");
+  const m = s.match(/^(-?\d*\.?\d+)([kKmM])?/);
+  if (!m) return null;
+  let n = parseFloat(m[1]);
+  if (!isFinite(n)) return null;
+  const suf = (m[2] || "").toLowerCase();
+  if (suf === "k") n *= 1e3;
+  if (suf === "m") n *= 1e6;
+  return n;
+}
+function formatMoney(n){
+  return n == null ? "" : "$" + Number(n).toLocaleString("en-US", { maximumFractionDigits: 2 });
+}
+function blankRange(){ return { min:null, max:null }; }
+function normRange(v){
+  if (v && typeof v === "object" && !Array.isArray(v)) return { min: parseMoney(v.min), max: parseMoney(v.max) };
+  const parts = String(v == null ? "" : v).split(/[-–—]|\bto\b/);
+  return { min: parseMoney(parts[0]), max: parseMoney(parts[1]) };
+}
+function rangeText(r){
+  if (!r) return "";
+  const lo = formatMoney(r.min), hi = formatMoney(r.max);
+  return lo && hi ? lo + "-" + hi : (lo || hi);
+}
+
+function todayISO(){
+  const d = new Date();
+  return d.getFullYear() + "-" + pad2(d.getMonth()+1) + "-" + pad2(d.getDate());
+}
+function pad2(n){ return String(n).padStart(2,"0"); }
+
+/* "1 application", "3 applications" - noun() is the word alone. */
+const noun = (n, word) => n === 1 ? word : word + "s";
+const plural = (n, word) => n + " " + noun(n, word);
+
+/* The overlay holds one card at a time - an application, or the docs. */
+function showOverlay(html){
+  overlay.innerHTML = html;
+  overlay.hidden = false;
+  document.body.style.overflow = "hidden";
+}
+function closeOverlay(){
+  overlay.hidden = true;
+  overlay.innerHTML = "";
+  document.body.style.overflow = "";
+}
+
+/* A button that opens a panel beside it, and a press outside `root` - or
+   Escape - that closes it again. onOpen runs just before the panel shows. */
+function makePopover(btn, panel, root, { onOpen } = {}){
+  const onOutside = e => { if (!root.contains(e.target)) close(false); };
+  const onKey = e => { if (e.key === "Escape"){ e.stopPropagation(); close(true); } };
+  function open(){
+    if (onOpen) onOpen();
+    panel.hidden = false;
+    btn.setAttribute("aria-expanded", "true");
+    document.addEventListener("mousedown", onOutside, true);
+    document.addEventListener("keydown", onKey, true);
+  }
+  function close(focusBtn){
+    panel.hidden = true;
+    btn.setAttribute("aria-expanded", "false");
+    document.removeEventListener("mousedown", onOutside, true);
+    document.removeEventListener("keydown", onKey, true);
+    if (focusBtn) btn.focus();
+  }
+  btn.addEventListener("click", () => { if (panel.hidden) open(); else close(false); });
+  return { open, close };
+}
+
+function toast(msg){
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2200);
+}
+
+/* ---- records, built from the field lists ---- */
+
+const optionValue = o => o && typeof o === "object" ? o.value : o;
+
+function initialValue(f){
+  if (f.type === "range") return blankRange();
+  return typeof f.initial === "function" ? f.initial() : (f.initial || "");
+}
+
+/* A loaded value made safe to hold: a select's must be one of its options. */
+function cleanValue(f, raw){
+  if (f.clean) return f.clean(raw);
+  if (f.type === "range") return normRange(raw);
+  if (f.options) return f.options.map(optionValue).includes(raw) ? raw : initialValue(f);
+  return raw || "";
+}
+
+const blankOf = fields => Object.fromEntries(fields.map(f => [f.key, initialValue(f)]));
+const cleanOf = (fields, src) => Object.fromEntries(fields.map(f => [f.key, cleanValue(f, f.from ? f.from(src) : src[f.key])]));
+/* The objects in a list that should hold records - anything else is dropped. */
+const records = v => (Array.isArray(v) ? v : []).filter(r => r && typeof r === "object");
+
+function blankApp(){
+  return Object.assign({ id: uid(), num: nextNum() }, blankOf(APP_FIELDS), { rounds:[ blankRound() ] });
+}
+function blankRound(){ return Object.assign({ id: uid() }, blankOf(ROUND_FIELDS), { people:[] }); }
+function blankPerson(){ return Object.assign({ id: uid() }, blankOf(PERSON_FIELDS)); }
+function nextNum(){
+  return state.applications.reduce((m,a) => Math.max(m, a.num||0), 0) + 1;
+}
+
+/* the round the application is currently on: latest round still pending */
+function currentRound(app){
+  const rs = app.rounds || [];
+  for (let i = rs.length - 1; i >= 0; i--){
+    if (!rs[i].end || rs[i].end === "Pending") return i + 1;
+  }
+  return null;
+}
+
+/* An id ends up in the markup, so one from a loaded file is cut down to word
+   characters and hyphens. The same input always gives the same id, so a row
+   keeps its identity across reloads and merges. */
+function safeId(v){
+  return v == null || v === "" ? "" : String(v).replace(/[^\w-]/g, "_");
+}
+
+/* normalise anything we load so a hand-edited data/data.json can't break the
+   UI: every field of every application, round and person is there and holds
+   something the card can show. A person keeps any extra keys it came with. */
+function normalize(raw){
+  const list = Array.isArray(raw) ? raw : (raw && raw.applications) || [];
+  return {
+    version:1,
+    savedAt: raw && raw.savedAt || null,
+    applications: list.map((a, i) => {
+      a = a && typeof a === "object" ? a : {};
+      return Object.assign({ id: safeId(a.id) || uid(), num: Number(a.num) || i + 1 },
+        cleanOf(APP_FIELDS, a), { rounds: records(a.rounds).map(normRound) });
+    })
+  };
+}
+function normRound(r){
+  return Object.assign({ id: r.id || uid() }, cleanOf(ROUND_FIELDS, r), { people: records(r.people).map(normPerson) });
+}
+function normPerson(p){
+  return Object.assign({}, p, cleanOf(PERSON_FIELDS, p), { id: p.id || uid() });
+}
+
+/* ================= persistence ================= */
+
+function scheduleSave(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(persist, 500);
+}
+
+function touch(app){
+  if (app){ app.lastUpdate = todayISO(); dirty.add(app.id); }
+  cardEdited = true;
+  scheduleSave();
+}
+
+function serialize(){
+  state.savedAt = new Date().toISOString();
+  return JSON.stringify(state, null, 2);
+}
+
+/* The document as JSON, with a copy kept in this browser whatever happens to
+   the save that follows. */
+function keepInBrowser(){
+  const json = serialize();
+  try { localStorage.setItem(LS_KEY, json); } catch(e){ /* quota / private mode */ }
+  return json;
+}
+
+/* ---- where a save goes ----
+
+   One store per mode. persist() hands the save to the store for the current
+   mode, so another place to keep the tracker is another entry here rather than
+   another branch in every function that asks where the data went.
+     label()       the file or place, as the UI names it
+     where()       the subtitle's account of it, between saves
+     save(opts)    writes the document; resolves true once it is safely there
+     saved()       the toast for a save that got through
+     notSaved()    the toast for one that did not */
+const STORES = {
+  server: {
+    label: () => DATA_FILE,
+    where: () => "synced with " + DATA_FILE,
+    save: saveToServer,
+    saved: () => "Saved to " + DATA_FILE,
+    notSaved: () => "Not saved to " + DATA_FILE + " yet — will keep trying"
+  },
+  fs: {
+    label: () => fileHandle.name,
+    where: () => "linked to " + fileHandle.name,
+    save: saveToLinkedFile,
+    saved: () => "Saved to " + fileHandle.name,
+    notSaved: () => "Could not write " + fileHandle.name + " — kept in your browser"
+  },
+  local: {
+    label: () => "your browser's copy",
+    where: () => "data saved in your browser",
+    save: async () => { keepInBrowser(); setSub("data saved in your browser"); return true; },
+    saved: () => "Saved in your browser",
+    notSaved: () => "Could not save in your browser"
+  },
+  /* An imported dataset is only written by Save, which asks first
+     (saveDataset). Until then an edit just marks it unsaved. */
+  dataset: {
+    label: () => dataset.name,
+    where: () => datasetTarget() + (dataset.unsaved ? " · unsaved changes" : " · nothing to save"),
+    save: async () => { dataset.unsaved = true; setSub(STORES.dataset.where()); return false; },
+    saved: () => "Saved to " + datasetTarget(),
+    notSaved: () => "Not saved to " + datasetTarget()
+  }
+};
+/* "fs" before a file has been picked is the browser's copy. */
+const store = () => STORES[mode === "fs" && !fileHandle ? "local" : mode];
+
+/* `keepalive` is for the save sent as the page unloads: without it the browser
+   may drop the request with the page. Resolves true once the save is safely
+   stored. */
+function persist({ keepalive = false } = {}){
+  clearTimeout(saveTimer);
+  saveTimer = null;               // nothing is waiting now - unload checks this
+  return store().save({ keepalive });
+}
+
+const putJson = (url, json, ifMatch, { keepalive = false } = {}) => fetch(url, {
+  method:"PUT", headers:{ "Content-Type":"application/json", "If-Match": ifMatch }, body: json, keepalive
+});
+
+async function writeHandle(handle, json){
+  const w = await handle.createWritable();
+  await w.write(json);
+  await w.close();
+}
+
+function downloadJson(name, json){
+  const url = URL.createObjectURL(new Blob([json], { type:"application/json" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+/* What the browser's file pickers offer: tracker files are JSON. */
+const JSON_FILE_TYPES = [{ description:"JSON", accept:{ "application/json":[".json"] } }];
+const pickSaveFile = suggestedName => window.showSaveFilePicker({ suggestedName, types: JSON_FILE_TYPES });
+
+async function saveToServer({ keepalive = false } = {}){
+  const json = keepInBrowser();
+  rememberPendingSave();
+  try {
+    const res = await putJson(DATA_FILE, json, serverEtag || "*", { keepalive });
+
+    /* Someone else wrote the file since we last read it - most likely an
+       import. Take their version, lay our own edits back on top, save that. */
+    if (res.status === 409){
+      const body = await res.json();
+      /* Held back while the user types: our edits stay dirty, and are saved
+         once the merge lands (flushPendingRemote). Sending them now with the
+         new ETag would overwrite the change we have not merged. */
+      if (!mergeRemote(normalize(body.data), body.etag)){
+        setSub("waiting to merge a change to " + DATA_FILE);
+        return false;
+      }
+      if (retryingSave) throw new Error("409");
+      retryingSave = true;
+      try { return await saveToServer({ keepalive }); } finally { retryingSave = false; }
+    }
+
+    if (!res.ok) throw new Error(res.status);
+    serverEtag = res.headers.get("ETag") || serverEtag;
+    dirty.clear();
+    deleted.clear();
+    forgetPendingSave();
+    saveRetryDelay = 0;
+    setSub("saved to " + DATA_FILE);
+    return true;
+  } catch(e){
+    retrySaveLater();
+    return false;
+  }
+}
+
+async function saveToLinkedFile(){
+  const json = keepInBrowser();
+  try {
+    await writeHandle(fileHandle, json);
+    setSub("saved to " + fileHandle.name);
+    return true;
+  } catch(e){
+    setSub("could not write the linked file — data kept in your browser");
+    return false;
+  }
+}
+
+/* A failed save - the server restarting, a network blip, a second conflict -
+   stays in server mode with its edits still dirty, and tries again, backing
+   off to once a minute. The browser's copy and the pending record cover a
+   reload in the meantime. */
+function retrySaveLater(){
+  const first = !saveRetryDelay;
+  saveRetryDelay = first ? 2000 : Math.min(saveRetryDelay * 2, 60000);
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(persist, saveRetryDelay);
+  setSub("could not save to " + DATA_FILE + " — retrying, edits kept in your browser");
+  if (first) toast("Could not write " + DATA_FILE + " — will keep trying");
+}
+
+function rememberPendingSave(){
+  try {
+    localStorage.setItem(LS_PENDING_KEY, JSON.stringify(
+      { savedAt: state.savedAt, dirty: [...dirty], deleted: [...deleted] }));
+  } catch(e){ /* quota / private mode */ }
+}
+
+function forgetPendingSave(){
+  try { localStorage.removeItem(LS_PENDING_KEY); } catch(e){}
+}
+
+/* Edits a save never delivered are still in the browser's copy. Lay those rows
+   back over what the server has and send them. The record only counts if it was
+   written with that copy (same savedAt) - anything else has replaced it since. */
+function restoreUnsavedEdits(fromLS){
+  let pending = null;
+  try { pending = JSON.parse(localStorage.getItem(LS_PENDING_KEY)); } catch(e){}
+  if (!pending || !fromLS || pending.savedAt !== fromLS.savedAt) return;
+  const ids = list => (Array.isArray(list) ? list : []).map(safeId).filter(Boolean);
+  ids(pending.dirty).forEach(id => dirty.add(id));
+  ids(pending.deleted).forEach(id => deleted.add(id));
+  if (!dirty.size && !deleted.size){ forgetPendingSave(); return; }
+  const remote = state;
+  state = fromLS;
+  mergeRemote(remote, serverEtag);
+  const n = dirty.size + deleted.size;
+  toast("Restored " + plural(n, "unsaved change") + " from this browser");
+  scheduleSave();
+}
+
+function setSub(where){
+  const n = state.applications.length;
+  const shown = state.applications.filter(passesFilter).length;
+  const count = shown === n ? "<b>" + n + "</b>" : "<b>" + shown + "</b> of " + n;
+  $("#sub").innerHTML = count + " " + noun(n, "application") + " · " + esc(where);
+}
+
+/* ================= staying in step with the file ================= */
+
+/* True while the cursor is in a field. Rebuilding the modal underneath someone
+   who is typing loses their keystroke and their caret, so a server change that
+   arrives mid-edit waits for them to finish. */
+function isEditing(){
+  const el = document.activeElement;
+  if (!el || overlay.hidden || !overlay.contains(el)) return false;
+  return el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT";
+}
+
+/* Fold the file's version into ours. Rows we have touched stay as they are -
+   and keep their object identity, so the open modal goes on writing to the row
+   it was opened on. Everything else comes from disk.
+
+   etag is the version remote came from. serverEtag only moves to it once the
+   merge has happened: a save sent with it says "I have seen this version", so
+   while the merge waits for the user to finish typing, so does the ETag.
+   Returns false when the merge was deferred. */
+function mergeRemote(remote, etag){
+  if (isEditing()){ pendingRemote = { remote, etag }; return false; }
+  pendingRemote = null;
+  serverEtag = etag || serverEtag;
+
+  const mine = new Map(state.applications.map(a => [a.id, a]));
+  const out = [];
+  for (const a of remote.applications){
+    if (deleted.has(a.id)) continue;                  // deleted here, not saved yet
+    out.push(dirty.has(a.id) && mine.has(a.id) ? mine.get(a.id) : a);
+  }
+  const known = new Set(out.map(a => a.id));
+  for (const a of state.applications){                // added here, not on disk yet
+    if (!known.has(a.id) && dirty.has(a.id)) out.push(a);
+  }
+
+  const added = out.length - state.applications.length;
+  state.applications = out;
+  state.savedAt = remote.savedAt;
+
+  if (current){
+    const still = out.find(a => a.id === current.id);
+    if (still === current) renderHeader();
+    else if (still) reopenDetail(still);
+    else { closeDetail(); toast("The row you had open was removed from " + DATA_FILE); }
+  }
+  renderTable();
+  if (added > 0) toast(plural(added, "application") + " added from " + DATA_FILE);
+  return true;
+}
+
+/* A save that met a conflict mid-edit was held back with the merge, so once
+   the merge lands, any edits still unsaved go out on top of it. */
+function flushPendingRemote(){
+  if (!pendingRemote || isEditing()) return;
+  mergeRemote(pendingRemote.remote, pendingRemote.etag);
+  if (dirty.size || deleted.size) scheduleSave();
+}
+
+async function refresh(){
+  if (mode !== "server") return;
+  try {
+    const res = await fetch(DATA_FILE + "?t=" + Date.now(), { cache:"no-store" });
+    if (!res.ok) return;
+    const etag = res.headers.get("ETag");
+    mergeRemote(normalize(await res.json()), etag);
+  } catch(e){ /* offline or server gone; the next event or reload picks it up */ }
+}
+
+/* The server tells us when data/data.json changes - whether that was an import, or
+   someone editing the file directly. */
+function watchServer(){
+  if (mode !== "server" || !window.EventSource) return;
+  const es = new EventSource("api/events");
+  es.addEventListener("change", e => {
+    let etag = null;
+    try { etag = JSON.parse(e.data).etag; } catch(err){}
+    if (etag && etag === serverEtag) return;     // our own save echoing back
+    refresh();
+  });
+}
+
+/* A missed event while the laptop was asleep still resolves on the way back. */
+document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
+
+async function boot(){
+  await loadNoteConfig();
+  let fromDisk = null;
+  try {
+    const res = await fetch(DATA_FILE + "?t=" + Date.now(), { cache:"no-store" });
+    if (res.ok){
+      serverEtag = res.headers.get("ETag");
+      fromDisk = normalize(await res.json());
+    }
+  } catch(e){ /* no file, or file:// blocked the fetch */ }
+
+  // Does something answer PUT? (the bundled server.js does)
+  let writable = false;
+  if (fromDisk && location.protocol.startsWith("http")){
+    try {
+      const res = await fetch("api/health", { cache:"no-store" });
+      writable = res.ok;
+    } catch(e){ writable = false; }
+  }
+
+  let fromLS = null;
+  try {
+    const s = localStorage.getItem(LS_KEY);
+    if (s) fromLS = normalize(JSON.parse(s));
+  } catch(e){}
+
+  serverUp = writable;
+  if (writable){
+    mode = "server";
+    state = fromDisk;
+    setSub("synced with " + DATA_FILE);
+    restoreUnsavedEdits(fromLS);
+  } else if (fromDisk && fromDisk.applications.length && !(fromLS && fromLS.applications.length)){
+    mode = "local";
+    state = fromDisk;
+    setSub("loaded from " + DATA_FILE + " · edits saved in your browser");
+  } else if (fromLS){
+    mode = "local";
+    state = fromLS;
+    setSub("data saved in your browser");
+  } else if (fromDisk){
+    mode = "local";
+    state = fromDisk;
+    setSub("data saved in your browser");
+  } else {
+    setSub("data saved in your browser");
+  }
+
+  renderTable();
+  watchServer();
+}
+
+/* ================= filters =================
+
+   A field's selection is a set of values; an empty set means "no restriction",
+   so a row has to match every field that has one. Closed-out applications are
+   hidden by default - the table is a list of things still in play. */
+
+const CLOSED_STATUSES = STATUS_TABLE.filter(s => s.outcome).map(s => s.name);
+const OPEN_STATUSES = STATUSES.filter(s => !CLOSED_STATUSES.includes(s));
+const FILTER_KEY = "at-filter";
+const NO_INTEREST = "__none__";        // stands in for a blank interest
+
+const FILTER_FIELDS = [
+  { key:"company",  label:"Company",  search:true },
+  { key:"status",   label:"Status" },
+  { key:"interest", label:"Interest" }
+];
+
+const filters = { company:new Set(), status:new Set(OPEN_STATUSES), interest:new Set() };
+const filterQuery = { company:"" };
+
+function defaultFilters(){ return { company:[], status:OPEN_STATUSES.slice(), interest:[] }; }
+
+function loadFilters(){
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(FILTER_KEY) || "null"); } catch(e){}
+  const src = saved && typeof saved === "object" ? saved : defaultFilters();
+  for (const f of FILTER_FIELDS){
+    const vals = Array.isArray(src[f.key]) ? src[f.key] : [];
+    const named = vals.filter(v => typeof v === "string");
+    filters[f.key] = new Set(f.key === "status"
+      ? named.map(v => STATUS_RENAMES[v] || v)
+      : named);
+  }
+}
+function saveFilters(){
+  const out = {};
+  for (const f of FILTER_FIELDS) out[f.key] = Array.from(filters[f.key]);
+  try { localStorage.setItem(FILTER_KEY, JSON.stringify(out)); } catch(e){}
+}
+
+function filterValue(app, key){
+  if (key === "interest") return app.interest || NO_INTEREST;
+  return app[key] == null ? "" : String(app[key]);
+}
+
+function passesFilter(app){
+  for (const f of FILTER_FIELDS){
+    const sel = filters[f.key];
+    if (sel.size && !sel.has(filterValue(app, f.key))) return false;
+  }
+  return true;
+}
+
+function activeFilterCount(){
+  let n = 0;
+  for (const f of FILTER_FIELDS) if (filters[f.key].size) n++;
+  return n;
+}
+
+/* Every value the field takes across the data, with a row count. Fixed
+   vocabularies list all their values so you can select one nothing uses yet;
+   companies come from the data, plus anything still selected but now gone. */
+function filterOptions(key){
+  const counts = new Map();
+  for (const a of state.applications){
+    const v = filterValue(a, key);
+    counts.set(v, (counts.get(v) || 0) + 1);
+  }
+  let vals;
+  if (key === "status") vals = STATUSES.slice();
+  else if (key === "interest") vals = INTEREST_LEVELS.concat([NO_INTEREST]);
+  else vals = Array.from(counts.keys()).sort((a,b) =>
+    a.localeCompare(b, undefined, { sensitivity:"base" }));
+  for (const v of filters[key]) if (vals.indexOf(v) === -1) vals.push(v);
+  return vals.map(v => ({
+    value: v,
+    label: (v === NO_INTEREST || v === "") ? "—" : v,
+    n: counts.get(v) || 0
+  }));
+}
+
+function optionsHtml(f){
+  const sel = filters[f.key];
+  const q = (filterQuery[f.key] || "").trim().toLowerCase();
+  let opts = filterOptions(f.key);
+  if (q) opts = opts.filter(o => o.label.toLowerCase().indexOf(q) !== -1 || sel.has(o.value));
+  if (!opts.length) return '<div class="fnone">No matches</div>';
+  return opts.map(o =>
+    '<label class="fopt"><input type="checkbox" data-field="' + f.key + '" value="' + esc(o.value) + '"' +
+    (sel.has(o.value) ? " checked" : "") + ">" +
+    '<span class="txt">' + esc(o.label) + "</span>" +
+    '<span class="n">' + o.n + "</span></label>"
+  ).join("");
+}
+
+function renderFilterPanel(){
+  $("#filterGroups").innerHTML = FILTER_FIELDS.map(f =>
+    '<section class="fgroup" data-field="' + f.key + '">' +
+      '<div class="fgroup-head">' +
+        '<span class="name">' + esc(f.label) + "</span>" +
+        '<button class="linkbtn" type="button" data-clear="' + f.key + '"' +
+          (filters[f.key].size ? "" : " disabled") + ">Any</button>" +
+      "</div>" +
+      (f.search
+        ? '<input class="fsearch" type="search" data-search="' + f.key + '" placeholder="Search ' +
+          esc(f.label.toLowerCase()) + '" value="' + esc(filterQuery[f.key] || "") + '">'
+        : "") +
+      '<div class="fopts" data-opts="' + f.key + '">' + optionsHtml(f) + "</div>" +
+    "</section>"
+  ).join("");
+  syncFilterUi();
+}
+
+function syncFilterUi(){
+  const n = activeFilterCount();
+  const badge = $("#filterCount");
+  badge.textContent = String(n);
+  badge.hidden = n === 0;
+  const shown = state.applications.filter(passesFilter).length;
+  const total = state.applications.length;
+  $("#filterNote").textContent = n === 0 ? "Showing all " + plural(total, "application") : "Showing " + shown + " of " + total;
+  $("#btnFilterClear").disabled = n === 0;
+}
+
+/* Tick boxes and "Any" buttons follow the model, without rebuilding the panel -
+   a rebuild would drop the caret out of the search box and lose the scroll. */
+function syncFilterChecks(){
+  const boxes = filterPanel.querySelectorAll("input[type=checkbox][data-field]");
+  for (const b of boxes) b.checked = filters[b.dataset.field].has(b.value);
+  const anys = filterPanel.querySelectorAll("button[data-clear]");
+  for (const b of anys) b.disabled = !filters[b.dataset.clear].size;
+}
+
+function applyFilters(){
+  saveFilters();
+  if (!filterPanel.hidden) syncFilterChecks();
+  syncFilterUi();
+  renderTable();
+}
+
+function setFilter(key, values){
+  filters[key] = new Set(values);
+  applyFilters();
+}
+
+$("#filterPanel").addEventListener("change", e => {
+  const box = e.target.closest("input[type=checkbox][data-field]");
+  if (!box) return;
+  const key = box.dataset.field, sel = filters[key];
+  if (box.checked) sel.add(box.value); else sel.delete(box.value);
+  /* everything ticked is the same as nothing ticked - keep the simpler one, so
+     a company added later isn't silently filtered out */
+  if (sel.size && sel.size === filterOptions(key).length) sel.clear();
+  applyFilters();
+});
+
+$("#filterPanel").addEventListener("input", e => {
+  const box = e.target.closest("input[data-search]");
+  if (!box) return;
+  const key = box.dataset.search;
+  filterQuery[key] = box.value;
+  const host = $('#filterGroups .fopts[data-opts="' + key + '"]');
+  if (host) host.innerHTML = optionsHtml(FILTER_FIELDS.find(f => f.key === key));
+});
+
+$("#filterPanel").addEventListener("click", e => {
+  const clear = e.target.closest("button[data-clear]");
+  if (clear) setFilter(clear.dataset.clear, []);
+});
+
+function clearAllFilters(){
+  for (const f of FILTER_FIELDS) filters[f.key] = new Set();
+  applyFilters();
+}
+$("#btnFilterClear").onclick = clearAllFilters;
+$("#btnFilterDefault").onclick = () => {
+  const d = defaultFilters();
+  for (const f of FILTER_FIELDS) filters[f.key] = new Set(d[f.key]);
+  applyFilters();
+};
+$("#btnEmptyFilter").onclick = clearAllFilters;
+
+const filterPanel = $("#filterPanel");
+const filterPopover = makePopover($("#btnFilter"), filterPanel, $("#filterCtl"), { onOpen: renderFilterPanel });
+$("#btnFilterDone").onclick = () => filterPopover.close(true);
+
+loadFilters();
+
+/* ================= actions menu ================= */
+
+const actionsBtn = $("#btnActions"), actionsMenu = $("#actionsMenu");
+const actionItems = () => [...actionsMenu.querySelectorAll(".menuitem")];
+
+const actionsPopover = makePopover(actionsBtn, actionsMenu, $("#actionsCtl"));
+const focusFirstAction = () => actionItems()[0].focus();
+
+/* opened from the keyboard, the menu takes focus; opened with a click, it does not */
+actionsBtn.addEventListener("click", e => { if (!actionsMenu.hidden && e.detail === 0) focusFirstAction(); });
+actionsBtn.addEventListener("keydown", e => {
+  if (e.key === "ArrowDown" && actionsMenu.hidden){ e.preventDefault(); actionsPopover.open(); focusFirstAction(); }
+});
+actionsMenu.addEventListener("keydown", e => {
+  const items = actionItems(), i = items.indexOf(document.activeElement);
+  const go = n => { e.preventDefault(); items[(n + items.length) % items.length].focus(); };
+  if (e.key === "ArrowDown") go(i + 1);
+  else if (e.key === "ArrowUp") go(i - 1);
+  else if (e.key === "Home") go(0);
+  else if (e.key === "End") go(items.length - 1);
+  else if (e.key === "Tab") actionsPopover.close(false);
+});
+/* each item keeps its own click handler; this just folds the menu away after it */
+actionsMenu.addEventListener("click", e => {
+  if (e.target.closest(".menuitem")) actionsPopover.close(false);
+});
+
+/* ================= table ================= */
+
+function renderHead(){
+  $("#headRow").innerHTML = COLUMNS.map(c =>
+    c.fixed ? '<th class="' + c.cls + '">' + esc(c.label) + "</th>"
+            : '<th class="sortable" data-key="' + c.key + '">' + esc(c.label) +
+              (sortKey === c.key ? '<span class="arrow">' + (sortDir === 1 ? "▲" : "▼") + "</span>" : "") +
+              "</th>"
+  ).join("");
+}
+
+function sorted(){
+  const col = COLUMNS.find(c => c.key === sortKey);
+  return state.applications.filter(passesFilter)
+    .sort((a, b) => col.compare(a, b, sortDir) || (a.num - b.num));
+}
+
+function renderTable(){
+  clearTimeout(renderTimer);
+  renderTimer = null;
+  renderHead();
+  const rows = sorted();
+  const body = $("#tbody");
+
+  $("#tablewrap").hidden = rows.length === 0;
+  $("#empty").hidden = rows.length !== 0;
+  if (!rows.length){
+    const filtered = state.applications.length > 0;      // rows exist, none match
+    $("#emptyTitle").textContent = filtered ? "Nothing matches your filters" : "No applications yet";
+    $("#emptyText").textContent = filtered
+      ? "All " + state.applications.length + " applications are hidden by the filter."
+      : "Add your first application to start tracking rounds, contacts and outcomes.";
+    $("#btnAdd2").hidden = filtered;
+    $("#btnEmptyFilter").hidden = !filtered;
+  }
+
+  body.innerHTML = rows.map((app, i) => "<tr data-id=\"" + esc(app.id) + "\">" + COLUMNS.map(c => {
+    const html = c.render(app, i);
+    return '<td class="' + (c.cls || "") + (html == null ? " dim" : "") + '">' + (html == null ? "—" : html) + "</td>";
+  }).join("") + "</tr>").join("");
+
+  syncFilterUi();
+
+  setSub(store().where());
+  renderFlow();     // every change to the rows comes through here, so the pipeline follows them
+}
+
+$("#tbody").addEventListener("click", e => {
+  const tr = e.target.closest("tr");
+  if (!tr) return;
+  const app = state.applications.find(a => a.id === tr.dataset.id);
+  if (app) openDetail(app);
+});
+
+$("#headRow").addEventListener("click", e => {
+  const th = e.target.closest("th");
+  if (!th || !th.dataset.key) return;
+  const key = th.dataset.key;
+  if (sortKey === key) sortDir = -sortDir; else { sortKey = key; sortDir = 1; }
+  renderTable();
+});
+
+/* ================= detail modal ================= */
+
+function field(label, inner, cls){
+  return '<div class="f' + (cls ? " " + cls : "") + '"><label>' + esc(label) + "</label>" + inner + "</div>";
+}
+/* A builder for one kind of <input>: (bind, value, attrs) => markup. */
+function input(type){
+  return (bind, value, attrs) => '<input class="inp" type="' + type + '"' + (type === "text" ? ' placeholder="—"' : "") +
+    ' data-bind="' + bind + '" value="' + esc(value || "") + '"' + (attrs || "") + ">";
+}
+function area(bind, value, attrs){
+  return '<textarea class="inp area" rows="3" placeholder="\u2014" data-bind="' + bind + '"' +
+         (attrs || "") + ">" + esc(value || "") + "</textarea>";
+}
+function moneyRange(bind, r){
+  const box = (part, val, ph) =>
+    '<input class="inp money" type="text" inputmode="decimal" placeholder="' + ph +
+    '" data-bind="' + bind + '" data-part="' + part + '" value="' + esc(formatMoney(val)) + '">';
+  return '<div class="range">' + box("min", r && r.min, "Min") +
+         '<span class="dash">-</span>' + box("max", r && r.max, "Max") + "</div>";
+}
+/* `copyLabel` adds a copy button ahead of the open one, and names the thing
+   being copied for the toast and the screen reader. Copy is offered for
+   anything typed in, not just what parses as a URL: a requisition number is
+   still worth pasting somewhere. */
+function linkInput(bind, value, placeholder, copyLabel){
+  const typed = !!String(value || "").trim();
+  return '<div class="linkrow">' +
+    '<input class="inp" type="url" placeholder="' + esc(placeholder) + '" data-bind="' + bind +
+    '" value="' + esc(value || "") + '">' +
+    (copyLabel
+      ? '<button class="openbtn" type="button" data-act="copy-link" data-link="' + bind +
+        '" data-label="' + esc(copyLabel) + '" title="Copy to the clipboard"' +
+        ' aria-label="Copy the ' + esc(copyLabel.toLowerCase()) + ' to the clipboard"' +
+        (typed ? "" : " disabled") + ">" + ICONS.copy + "</button>"
+      : "") +
+    '<button class="openbtn" type="button" data-act="open-link" data-link="' + bind +
+    '" title="Open in a new tab" aria-label="Open in a new tab"' +
+    (linkHref(value) ? "" : " disabled") + ">" + ICONS.external + "</button>" +
+  "</div>";
+}
+function select(bind, options, value, attrs){
+  return '<select class="inp" data-bind="' + bind + '"' + (attrs || "") + ">" +
+         options.map(o => {
+           const val = optionValue(o);
+           const label = o && typeof o === "object" ? o.label : o;
+           return '<option value="' + esc(val) + '"' + (val === value ? " selected" : "") + ">" +
+                  esc(label) + "</option>";
+         }).join("") +
+         "</select>";
+}
+
+/* The control a field is edited with, holding `value`. */
+function control(f, value, attrs){
+  switch (f.type){
+    case "text": case "date": case "time": return input(f.type)(f.key, value, attrs);
+    case "area":   return area(f.key, value, attrs);
+    case "select": return select(f.key, f.options, value, attrs);
+    case "link":   return linkInput(f.key, value, "https://…", f.copy);
+    case "range":  return moneyRange(f.key, value);
+  }
+  throw new Error("no control for a " + f.type + " field");
+}
+/* A labelled field of the card's grid. */
+const gridField = (f, value, attrs) => field(f.label, control(f, value, attrs), f.wide ? "wide" : "");
+
+function openDetail(app){
+  current = app;
+  cardEdited = false;
+  jdShowing = null;
+  openRounds = new Set((app.rounds || []).map(r => r.id));   // start expanded
+  openPeople = new Set((app.rounds || []).flatMap(r => (r.people || []).map(p => p.id)));
+
+  showOverlay(
+    '<div class="card" role="dialog" aria-modal="true">' +
+      '<div class="card-head">' +
+        "<div>" +
+          '<p class="eyebrow" id="dEyebrow"></p>' +
+          '<h2 id="dTitle"></h2>' +
+        "</div>" +
+        '<div style="display:flex;gap:6px;align-items:center">' +
+          '<button class="btn ghost danger" id="dDelete">' + ICONS.trash + " Delete</button>" +
+          '<button class="btn ghost" id="dClose" aria-label="Close">' + ICONS.x + "</button>" +
+        "</div>" +
+      "</div>" +
+      '<div class="card-body">' +
+        CARD_SECTIONS.map(sec =>
+          '<div class="sec"><h3>' + esc(sec.title) + "</h3></div>" +
+          '<div class="grid">' +
+            APP_FIELDS.filter(f => f.section === sec.id).map(f => gridField(f, app[f.key])).join("") +
+          "</div>"
+        ).join('<hr class="rule">') +
+        '<hr class="rule">' +
+        '<div class="sec">' +
+          "<h3>" + ICONS.doc + " Local Job Description</h3>" +
+          '<div class="jd-btns">' +
+            '<button class="openbtn" type="button" data-act="jd-open" id="jdOpen" hidden' +
+              ' title="Open the file in a new tab" aria-label="Open the file in a new tab">' + ICONS.external + "</button>" +
+            '<button class="btn ghost" type="button" data-act="jd-load" id="jdLoad">Load JD</button>' +
+          "</div>" +
+        "</div>" +
+        '<div class="jd" id="dJd" hidden></div>' +      /* starts collapsed; Load JD opens it */
+        '<hr class="rule">' +
+        '<div class="sec">' +
+          "<h3>" + ICONS.layers + " Interview Rounds</h3>" +
+          '<button class="btn primary" data-act="add-round">' + ICONS.plus + " Add round</button>" +
+        "</div>" +
+        '<div class="rounds" id="dRounds"></div>' +
+      "</div>" +
+      '<div class="card-foot">' +
+        '<span class="note" id="dNote"></span>' +
+        '<button class="btn primary" id="dDone">Done</button>' +
+      "</div>" +
+    "</div>");
+
+  renderHeader();
+  renderRounds();
+
+  $("#dClose").onclick = closeDetail;
+  $("#dDone").onclick = closeDetail;
+  $("#dDelete").onclick = () => {
+    if (!confirm("Delete this application" + (app.company ? " at " + app.company : "") + "?")) return;
+    state.applications = state.applications.filter(a => a.id !== app.id);
+    dirty.delete(app.id);
+    deleted.add(app.id);
+    cardEdited = true;           // closing saves the deletion straight away
+    closeDetail();
+    toast("Application deleted");
+  };
+
+  refreshJdOpen(app);          // is there a file? the answer does not wait for Load JD
+}
+
+function renderHeader(){
+  const app = current;
+  $("#dEyebrow").textContent = "#" + pad3(app.num) + "  ·  Updated " + (app.lastUpdate || "—");
+  $("#dTitle").textContent = app.company || "New Application";
+  const rounds = (app.rounds || []).length;
+  const people = (app.rounds || []).reduce((n,r) => n + (r.people || []).length, 0);
+  $("#dNote").textContent = plural(rounds, "round") + " · " + plural(people, "contact");
+}
+
+function renderRounds(){
+  const app = current;
+  const host = $("#dRounds");
+  if (!app.rounds.length){
+    host.innerHTML = '<p class="none">No rounds yet. Add one when you hear back.</p>';
+    renderHeader();
+    return;
+  }
+
+  const [typeField] = ROUND_FIELDS, notesField = ROUND_FIELDS.find(f => f.type === "area");
+  host.innerHTML = app.rounds.map((r, ri) => {
+    const open = openRounds.has(r.id), a = ' data-r="' + ri + '"';
+    return '<div class="round' + (open ? "" : " closed") + '">' +
+      '<div class="round-head">' +
+        '<button class="chev" data-act="toggle" data-r="' + ri + '" aria-label="Toggle round">' + ICONS.chevron + "</button>" +
+        '<span class="badge">' + (ri + 1) + "</span>" +
+        control(typeField, r.type, a) +
+        '<span class="people-count">' + ICONS.users + " " + (r.people || []).length + "</span>" +
+        '<span class="spacer"></span>' +
+        '<button class="btn ghost danger" data-act="del-round" data-r="' + ri + '">' + ICONS.trash + " Remove</button>" +
+        '<div class="round-meta">' +
+          ROUND_FIELDS.filter(f => f.meta).map(f => roundMeta(f.label, control(f, r[f.key], a))).join("") +
+        "</div>" +
+      "</div>" +
+      '<div class="round-body">' +
+        field(notesField.label, control(notesField, r.notes, a)) +
+        (r.people || []).map((p, pi) => personCard(p, ri, pi)).join("") +
+        '<button class="add-dashed" data-act="add-person" data-r="' + ri + '">' + ICONS.plus + " Add person</button>" +
+      "</div>" +
+    "</div>";
+  }).join("");
+
+  renderHeader();
+}
+
+/* a label and its control travel together so the meta row wraps between
+   fields rather than orphaning a label at the end of a line */
+function roundMeta(label, inner){
+  return '<span class="rmeta"><span class="minilabel">' + esc(label) + "</span>" + inner + "</span>";
+}
+
+function personCard(p, ri, pi){
+  const a = ' data-r="' + ri + '" data-p="' + pi + '"';
+  const open = openPeople.has(p.id);
+  const sum = [p.name, p.role].filter(Boolean).join(" · ");
+  return '<div class="person' + (open ? "" : " closed") + '">' +
+    '<div class="person-head">' +
+      '<button class="chev" data-act="toggle-person"' + a + ' aria-label="Toggle person">' + ICONS.chevron + "</button>" +
+      '<span class="minilabel">Person ' + (pi + 1) + "</span>" +
+      '<span class="person-sum">' + esc(sum) + "</span>" +
+      '<span class="spacer"></span>' +
+      '<button class="iconbtn" data-act="del-person"' + a + ' aria-label="Remove person">' + ICONS.trash + "</button>" +
+    "</div>" +
+    '<div class="person-body grid">' +
+      PERSON_FIELDS.map(f => gridField(f, p[f.key], a)).join("") +
+    "</div>" +
+  "</div>";
+}
+
+/* ================= copying a link ================= */
+
+/* navigator.clipboard needs a secure context, which http://localhost is but a
+   page opened straight off disk is not - so the old selection-based copy is
+   kept as the fallback rather than leaving the button dead on file://. */
+async function copyText(text){
+  try {
+    if (navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch(e){ /* denied or unavailable - try the other way */ }
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.cssText = "position:fixed;top:0;left:0;opacity:0";
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand("copy");
+    document.body.removeChild(ta);
+    return ok;
+  } catch(e){ return false; }
+}
+
+async function copyLink(btn, value, label){
+  const text = String(value == null ? "" : value).trim();
+  if (!text) return;
+  if (!await copyText(text)){ toast("Could not reach the clipboard"); return; }
+
+  /* a tick on the button says which one copied; the toast says what */
+  const icon = btn.innerHTML;
+  btn.innerHTML = ICONS.check;
+  btn.classList.add("copied");
+  clearTimeout(btn.copyTimer);
+  btn.copyTimer = setTimeout(() => {
+    btn.innerHTML = icon;
+    btn.classList.remove("copied");
+  }, 1200);
+  toast(label + " copied");
+}
+
+/* ================= the job description file ================= */
+
+/* jds/<company>-<role>.md, written by the job-from-url skill and kept out of
+   git. The row does not store a path: the name is derived from what the row
+   already says, by jd-name.js - the same file the skill names it with. */
+const { jdSlug, jdName } = window.JdName;
+
+let jdIndex = null;              // file names under jds/, when the server has said
+let jdShowing = null;            // the file the open card is displaying
+
+/* Re-read every time the button is pressed rather than once per page load: a
+   JD imported while the tracker is open should be findable without a reload,
+   and this is one small JSON response per press. */
+async function loadJdIndex(){
+  try {
+    const res = await fetch("api/jds", { cache:"no-store" });
+    if (res.ok){
+      const body = await res.json();
+      if (Array.isArray(body.files)) jdIndex = body.files;
+    }
+  } catch(e){ /* no server: fall back to guessing the name and trying it */ }
+  return jdIndex;
+}
+
+/* Company and role are editable, so the derived name can drift away from the
+   file that was written for the row. When the server has given us a listing,
+   an unambiguous match on either half is taken as the same posting. */
+function jdFileFor(app){
+  const co = jdSlug(app.company), role = jdSlug(app.roleTitle);
+  const derived = jdName(app.company, app.roleTitle);
+  if (!derived) return null;
+  const exact = derived + ".md";
+  if (!jdIndex) return exact;
+  if (jdIndex.includes(exact)) return exact;
+  const byRole = role ? jdIndex.filter(f => f === role + ".md" || f.endsWith("-" + role + ".md")) : [];
+  if (byRole.length === 1) return byRole[0];
+  const byCompany = co ? jdIndex.filter(f => f === co + ".md" || f.indexOf(co + "-") === 0) : [];
+  if (byCompany.length === 1) return byCompany[0];
+  return null;
+}
+
+function jdMissing(app){
+  const derived = jdName(app.company, app.roleTitle);
+  return '<p class="jd-none">No saved description for this row. Import the posting with ' +
+         "<code>/job-from-url</code>, or drop one at <code>jds/" +
+         esc(derived || "&lt;company&gt;-&lt;role&gt;") + ".md</code> in your data folder.</p>";
+}
+
+/* Whether a file exists is not the same question as whether the panel is open,
+   so the open-in-a-tab button is settled when the card opens rather than when
+   the posting is first shown. Only an answer from the server counts: without
+   the listing jdFileFor() falls back to guessing a name, and a button that
+   opens a 404 is worse than no button. */
+async function refreshJdOpen(app){
+  const open = $("#jdOpen");
+  jdIndex = null;                       // the folder may have changed since last time
+  await loadJdIndex();
+  if (current !== app || !$("#jdOpen") || $("#jdOpen") !== open) return;   // card moved on
+  const file = jdIndex ? jdFileFor(app) : null;
+  jdShowing = file;
+  open.hidden = !file;
+}
+
+async function toggleJd(){
+  const app = current, host = $("#dJd"), load = $("#jdLoad"), open = $("#jdOpen");
+  if (!app || !host) return;
+
+  if (!host.hidden){                                   // second press: put it away
+    host.hidden = true;                                // the open button stays: it
+    load.textContent = jdShowing ? "Show JD" : "Load JD";   // is about the file, not
+    return;                                            // about the panel being open
+  }
+  /* A "nothing here" message is not a cached answer: the file may have been
+     imported since, so pressing Load again looks again. */
+  if (host.innerHTML && !host.dataset.empty){          // already fetched this card
+    host.hidden = false;
+    open.hidden = !jdShowing;
+    load.textContent = "Hide JD";
+    return;
+  }
+
+  load.disabled = true;
+  load.textContent = "Loading…";
+  try {
+    await loadJdIndex();
+    const file = jdFileFor(app);
+    let html = null;
+    jdShowing = null;
+    if (file){
+      /* not cached, for the same reason the listing is not: the file is on this
+         machine, and a re-import should show up on the next press */
+      const res = await fetch("jds/" + encodeURIComponent(file) + "?t=" + Date.now(), { cache:"no-store" });
+      if (res.ok){ html = mdToHtml(await res.text()); jdShowing = file; }
+    }
+    host.innerHTML = html || jdMissing(app);
+    if (html) delete host.dataset.empty; else host.dataset.empty = "1";
+    host.hidden = false;
+    open.hidden = !jdShowing;
+    load.textContent = "Hide JD";
+  } catch(e){
+    /* opened over file://, or the server is not running */
+    host.innerHTML = '<p class="jd-none">Job descriptions are read from the ' +
+                     "<code>jds/</code> folder, which needs the local server — " +
+                     "run <code>node src/server.js</code> and reload.</p>";
+    host.dataset.empty = "1";
+    host.hidden = false;
+    jdShowing = null;
+    open.hidden = true;
+    load.textContent = "Hide JD";
+  } finally {
+    load.disabled = false;
+  }
+}
+
+/* Just enough markdown for a job posting: headings, lists, rules, quotes, and
+   bold/italic/code/links inside them. Everything is escaped before a single
+   tag is added, so nothing in the file can put HTML on the page - these are
+   pages someone else wrote, saved to disk. */
+function mdInline(v){
+  return esc(v)
+    .replace(/`([^`]+)`/g, (m, a) => "<code>" + a + "</code>")
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,
+             (m, t, u) => '<a href="' + u + '" target="_blank" rel="noopener noreferrer">' + t + "</a>")
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/(^|[^*])\*([^*]+)\*/g, "$1<em>$2</em>");
+}
+
+function mdToHtml(src){
+  const lines = String(src == null ? "" : src)
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/\r\n?/g, "\n")
+    .split("\n");
+  const out = [];
+  let list = null, para = [];
+  const endPara = () => { if (para.length){ out.push("<p>" + mdInline(para.join(" ")) + "</p>"); para = []; } };
+  const endList = () => { if (list){ out.push("</" + list + ">"); list = null; } };
+
+  for (const raw of lines){
+    const line = raw.replace(/\s+$/, "");
+    let m;
+    if (!line.trim()){ endPara(); endList(); continue; }
+    if ((m = line.match(/^(#{1,6})\s+(.*)$/))){
+      endPara(); endList();
+      /* the card already owns h2, so the file's h1 starts at h3 */
+      const n = Math.min(6, m[1].length + 2);
+      out.push("<h" + n + ">" + mdInline(m[2]) + "</h" + n + ">");
+    } else if (/^\s*([-*_])(\s*\1){2,}\s*$/.test(line)){
+      endPara(); endList();
+      out.push("<hr>");
+    } else if ((m = line.match(/^\s*[-*+]\s+(.*)$/))){
+      endPara();
+      if (list !== "ul"){ endList(); out.push("<ul>"); list = "ul"; }
+      out.push("<li>" + mdInline(m[1]) + "</li>");
+    } else if ((m = line.match(/^\s*\d+[.)]\s+(.*)$/))){
+      endPara();
+      if (list !== "ol"){ endList(); out.push("<ol>"); list = "ol"; }
+      out.push("<li>" + mdInline(m[1]) + "</li>");
+    } else if ((m = line.match(/^>\s?(.*)$/))){
+      endPara(); endList();
+      out.push("<blockquote>" + mdInline(m[1]) + "</blockquote>");
+    } else {
+      endList();
+      para.push(line.trim());
+    }
+  }
+  endPara(); endList();
+  return out.join("");
+}
+
+/* Takes the card down without saving; returns whether it held an edit. */
+function hideDetail(){
+  const edited = cardEdited;
+  closeOverlay();
+  current = null;
+  cardEdited = false;
+  jdShowing = null;
+  return edited;
+}
+
+/* Saving straight away, rather than when the debounce runs out, only when the
+   card changed something: a card opened just to look must not mark a dataset
+   unsaved, or send a PUT that wakes every other open page. */
+function closeDetail(){
+  const edited = hideDetail();
+  renderTable();
+  if (edited) persist();
+  flushPendingRemote();
+}
+
+/* Builds the card again for a row that is now a different object - a merge
+   brought in the copy from disk - so every field, index and handler points at
+   what is actually stored. Expanded rounds and people stay as they were. */
+function reopenDetail(app){
+  const rounds = openRounds, people = openPeople, edited = cardEdited;
+  const scroll = $(".card-body").scrollTop;
+  openDetail(app);
+  openRounds = rounds;
+  openPeople = people;
+  cardEdited = edited;
+  renderRounds();
+  $(".card-body").scrollTop = scroll;
+}
+
+/* edits — delegated so typing never rebuilds the DOM under the cursor. Each
+   control reports through one event: a select, checkbox, date or time on
+   change, anything typed on input. Listening to both ran a select's edit
+   twice. */
+const editEvent = el => el.tagName === "SELECT" || ["checkbox", "date", "time"].includes(el.type) ? "change" : "input";
+overlay.addEventListener("input", onEdit);
+overlay.addEventListener("change", onEdit);
+
+function onEdit(e){
+  const el = e.target;
+  if (!current || !el.dataset || !el.dataset.bind || e.type !== editEvent(el)) return;
+  const val = applyEdit(el);
+  if (LINK_FIELDS.includes(el.dataset.bind)) syncLinkButtons(el, val);
+  touch(current);
+  renderHeader();
+  scheduleTableRender();
+}
+
+/* Writes what one control holds into the open application; returns the value. */
+function applyEdit(el){
+  const { bind, part, r, p } = el.dataset;
+  if (part){                                    // one half of a money range
+    const range = current[bind] || (current[bind] = blankRange());
+    return range[part] = parseMoney(el.value);
+  }
+  const target = p !== undefined ? current.rounds[+r].people[+p]
+               : r !== undefined ? current.rounds[+r]
+               : current;
+  return target[bind] = el.type === "checkbox" ? el.checked : el.value;
+}
+
+/* A link's open and copy buttons follow what is typed. */
+function syncLinkButtons(el, val){
+  const open = el.parentNode.querySelector('[data-act="open-link"]');
+  if (open) open.disabled = !linkHref(val);
+  const copy = el.parentNode.querySelector('[data-act="copy-link"]');
+  if (copy) copy.disabled = !String(val || "").trim();
+}
+
+/* The table and the pipeline behind the card follow an edit, but not on every
+   keystroke: they are drawn once typing pauses, or when the card closes. */
+function scheduleTableRender(){
+  clearTimeout(renderTimer);
+  renderTimer = setTimeout(renderTable, 150);
+}
+
+/* tidy a money field back to $125,000 once the user leaves it */
+overlay.addEventListener("focusout", e => {
+  const el = e.target;
+  setTimeout(flushPendingRemote, 0);        // after focus has settled elsewhere
+  if (!current || !el.dataset || !el.dataset.part) return;
+  const r = current[el.dataset.bind];
+  el.value = formatMoney(r && r[el.dataset.part]);
+});
+
+overlay.addEventListener("click", e => {
+  if (e.target === overlay){ if (current) closeDetail(); else closeOverlay(); return; }
+
+  const btn = e.target.closest("[data-act]");
+  if (!btn || !current) return;
+  const ri = btn.dataset.r !== undefined ? +btn.dataset.r : null;
+  const pi = btn.dataset.p !== undefined ? +btn.dataset.p : null;
+
+  switch (btn.dataset.act){
+    case "add-round": {
+      const r = blankRound();
+      current.rounds.push(r);
+      openRounds.add(r.id);
+      break;
+    }
+    case "del-round":
+      current.rounds.splice(ri, 1);
+      break;
+    case "add-person": {
+      const p = blankPerson();
+      current.rounds[ri].people.push(p);
+      openRounds.add(current.rounds[ri].id);
+      openPeople.add(p.id);
+      break;
+    }
+    case "del-person":
+      current.rounds[ri].people.splice(pi, 1);
+      break;
+    case "copy-link":
+      copyLink(btn, current[btn.dataset.link], btn.dataset.label || "Link");
+      return;                       // no data change
+    case "open-link": {
+      const href = linkHref(current[btn.dataset.link]);
+      if (href) window.open(href, "_blank", "noopener");
+      return;                       // no data change
+    }
+    case "jd-load":
+      toggleJd();
+      return;                       // no data change
+    case "jd-open": {
+      if (jdShowing) window.open("jds/" + encodeURIComponent(jdShowing), "_blank", "noopener");
+      return;                       // no data change
+    }
+    case "toggle": {
+      const id = current.rounds[ri].id;
+      openRounds.has(id) ? openRounds.delete(id) : openRounds.add(id);
+      renderRounds();
+      return;                       // no data change
+    }
+    case "toggle-person": {
+      const id = current.rounds[ri].people[pi].id;
+      openPeople.has(id) ? openPeople.delete(id) : openPeople.add(id);
+      renderRounds();
+      return;                       // no data change
+    }
+    default: return;
+  }
+
+  touch(current);
+  renderRounds();
+  renderTable();
+});
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && !overlay.hidden){
+    if (current) closeDetail();
+    else closeOverlay();
+  }
+});
+
+/* ================= toolbar ================= */
+
+function addApplication(){
+  const app = blankApp();
+  state.applications.push(app);
+  dirty.add(app.id);
+  if (passesFilter(app)) renderTable();
+  else {                            // a blank row matches no company you picked
+    for (const f of FILTER_FIELDS) if (!filters[f.key].has(filterValue(app, f.key))) filters[f.key].clear();
+    applyFilters();
+    toast("Filters cleared to show the new application");
+  }
+  scheduleSave();
+  openDetail(app);
+}
+$("#btnAdd").onclick = addApplication;
+$("#btnAdd2").onclick = addApplication;
+
+$("#btnExport").onclick = () => {
+  downloadJson((dataset ? dataset.name.replace(/\.json$/i, "") : "job-applications") + "-" + todayISO() + ".json", serialize());
+  toast("Exported");
+};
+
+/* Notes.app can only be driven from this machine, so the note is written by
+   server.js over /api/note. Without the server there is nothing to call, and
+   the honest fallback is to hand the same table to the clipboard. */
+async function loadNoteConfig(){
+  try {
+    const res = await fetch("config.json?t=" + Date.now(), { cache:"no-store" });
+    if (!res.ok) return;
+    const n = (await res.json() || {}).note;
+    if (!n || typeof n !== "object") return;
+    if (typeof n.title === "string" && n.title.trim()) noteConfig.title = n.title.trim();
+    if (typeof n.folder === "string") noteConfig.folder = n.folder.trim();
+  } catch(e){ /* file://, or no config.json - the built-in title stands */ }
+}
+
+function noteTable(){
+  const cols = NOTE_COLUMN_KEYS.map(k => COLUMNS.find(c => c.key === k));
+  const rows = sorted().map(app => cols.map(c => c.text(app) || "—"));   // the dash the table shows
+  return { columns: cols.map(c => c.label), rows };
+}
+
+$("#btnNote").onclick = async () => {
+  const { columns, rows } = noteTable();
+  if (!rows.length){ toast("Nothing to send — no rows are showing"); return; }
+
+  if (serverUp){
+    let out = {}, res;
+    try {
+      res = await fetch("api/note", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ columns, rows })
+      });
+      out = await res.json().catch(() => ({}));
+    } catch(err){
+      alert("Could not reach the server to write the note.\n\n" + err.message);
+      return;
+    }
+    if (res.ok && out.ok){
+      toast((out.action === "created" ? "Created " : "Updated ") + '“' + out.title +
+            '” in Notes · ' + plural(out.rows, "row"));
+    } else {
+      alert("Could not write the note.\n\n" + (out.error || "The server answered " + res.status + "."));
+    }
+    return;
+  }
+
+  const tsv = [columns].concat(rows).map(r => r.join("\t")).join("\n");
+  toast(await copyText(tsv)
+    ? "Copied — paste into your “" + noteConfig.title + "” note"
+    : "Could not copy — run node src/server.js to write the note directly");
+};
+
+$("#btnImport").onclick = () => $("#fileInput").click();
+$("#fileInput").onchange = async e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  try {
+    const next = normalize(JSON.parse(await f.text()));
+    const leaving = store().label();
+    if (!await openDataset(f.name, next)) { e.target.value = ""; return; }
+    toast("Opened " + f.name + " · " + leaving + " is untouched · Save writes to " + datasetTarget());
+  } catch(err){
+    alert("That file could not be read as tracker JSON.\n\n" + err.message);
+  }
+  e.target.value = "";
+};
+
+const hasFS = typeof window.showOpenFilePicker === "function";
+
+/* Where Save puts a dataset: beside data.json when the server can write it,
+   otherwise wherever the browser lets us. */
+function datasetTarget(){
+  return serverUp ? "data/" + dataset.name : dataset.handle ? dataset.handle.name : dataset.name;
+}
+
+/* Every way of loading another file - Import, Open - comes through here, so
+   none of them can lose work: an edit still waiting goes to the file it was
+   made in, unsaved dataset changes are confirmed before they are dropped, and
+   no sync state from the old file carries over to the new one.
+   nextMode is "dataset" or "fs"; meta is { name, handle }.
+   Returns false when the user keeps what they have. */
+async function switchSource(next, nextMode, meta){
+  if (mode === "dataset" && dataset.unsaved &&
+      !confirm(dataset.name + " has unsaved changes. Open " + meta.name + " and discard them?")) return false;
+  /* The card closes while the old file is still the target, and its save is
+     the one below - closing it the usual way would start a second. */
+  const edited = hideDetail();
+  if ((edited || saveTimer) && mode !== "dataset") await persist();
+  clearTimeout(saveTimer);
+  saveTimer = null;
+  state = next;
+  mode = nextMode;
+  dataset = nextMode === "dataset" ? { name: meta.name, etag:null, unsaved:false, handle:null } : null;
+  fileHandle = nextMode === "fs" ? meta.handle : null;
+  dirty.clear();
+  deleted.clear();
+  pendingRemote = null;
+  saveRetryDelay = 0;
+  renderTable();
+  return true;
+}
+
+async function openDataset(name, data){
+  if (!await switchSource(data, "dataset", { name })) return false;
+  /* If the file is already under data/, its ETag lets Save notice a change
+     made on disk while this one was open. */
+  if (serverUp){
+    try {
+      const res = await fetch("data/" + encodeURIComponent(name) + "?t=" + Date.now(), { cache:"no-store" });
+      if (res.ok) dataset.etag = res.headers.get("ETag");
+    } catch(e){ /* the save will still ask before it overwrites */ }
+  }
+  return true;
+}
+
+async function saveDataset(){
+  const target = datasetTarget();
+  const n = state.applications.length;
+  const main = serverUp && dataset.name === DATA_NAME ? "\n\nThis is the tracker's main data file." : "";
+  if (!confirm("Save " + plural(n, "application") + " to " + target + "?" + main)) return;
+  const json = serialize();
+
+  if (serverUp){
+    const put = ifMatch => putJson("data/" + encodeURIComponent(dataset.name), json, ifMatch);
+    try {
+      let res = await put(dataset.etag || "*");
+      if (res.status === 409){
+        if (!confirm(target + " has changed on disk since you opened it. Overwrite it anyway?")) return;
+        res = await put("*");
+      }
+      if (!res.ok) throw new Error("the server answered " + res.status);
+      dataset.etag = res.headers.get("ETag") || dataset.etag;
+    } catch(err){
+      alert("Could not save " + target + ".\n\n" + err.message);
+      return;
+    }
+  } else if (hasFS){
+    try {
+      if (!dataset.handle) dataset.handle = await pickSaveFile(dataset.name);
+      await writeHandle(dataset.handle, json);
+    } catch(err){
+      if (err && err.name === "AbortError") return;
+      alert("Could not save " + target + ".\n\n" + err.message);
+      return;
+    }
+  } else {
+    downloadJson(dataset.name, json);
+  }
+  dataset.unsaved = false;
+  renderTable();
+  toast("Saved to " + datasetTarget());
+}
+
+$("#btnOpen").onclick = async () => {
+  if (!hasFS){ $("#btnImport").click(); return; }
+  try {
+    const [h] = await window.showOpenFilePicker({ types: JSON_FILE_TYPES });
+    const file = await h.getFile();
+    if (!await switchSource(normalize(JSON.parse(await file.text())), "fs", { name: h.name, handle: h })) return;
+    try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(e){}
+    toast("Linked to " + h.name);
+  } catch(err){
+    if (!err || err.name === "AbortError") return;
+    // file:// pages are not allowed to pick files this way — fall back to Import.
+    if (err.name === "SecurityError" || err.name === "NotAllowedError"){ $("#btnImport").click(); return; }
+    alert("Could not open that file.\n\n" + err.message);
+  }
+};
+
+$("#btnSave").onclick = async () => {
+  if (mode === "dataset") return saveDataset();
+  if (mode === "local" && hasFS && !fileHandle){
+    try {
+      fileHandle = await pickSaveFile(DATA_NAME);
+      mode = "fs";
+    } catch(err){
+      if (err && err.name === "AbortError") return;
+    }
+  }
+  const saved = await persist();
+  renderTable();
+  toast(saved ? store().saved() : store().notSaved());
+};
+
+$("#btnDocs").onclick = () => {
+  current = null;
+  showOverlay(
+    '<div class="card narrow" role="dialog" aria-modal="true">' +
+      '<div class="card-head">' +
+        "<div><p class=\"eyebrow\">Reference</p><h2>How this tracker works</h2></div>" +
+        '<button class="btn ghost" id="docsClose" aria-label="Close">' + ICONS.x + "</button>" +
+      "</div>" +
+      '<div class="card-body docs">' +
+        "<h3>Storage</h3>" +
+        "<p>Everything lives on your machine. Nothing is sent anywhere.</p>" +
+        "<ul>" +
+          "<li><b>Served with <code>server.js</code>:</b> every edit is written straight to <code>data.json</code> in your data folder, which sits outside the project so it is never committed &mdash; <code>~/Library/Application Support/app-trail</code> on macOS, or wherever <code>APP_TRAIL_DATA_DIR</code> points. <code>node src/server.js</code> prints the full path when it starts.</li>" +
+          "<li><b>Import</b> opens another tracker file as a separate dataset. Nothing is written while it is loaded &mdash; not <code>data.json</code>, not the browser&rsquo;s copy &mdash; until you press <b>Save</b>, which asks before writing into the data folder under the imported file&rsquo;s name. Export and Note work on whatever is loaded. Reload the page to go back to <code>data.json</code>.</li>" +
+          "<li><b>Opened as a plain file:</b> edits are kept in this browser&rsquo;s local storage. Use <b>Open</b> to link a JSON file on disk (Chrome, Edge, Opera) or <b>Export</b> to write a copy.</li>" +
+          "<li><b>Note</b> is the one exception, and only where you send it: if the Notes account it writes to syncs with iCloud, that note syncs too.</li>" +
+        "</ul>" +
+        "<h3>The table</h3>" +
+        "<p>One row per application, sorted by company. Click any column heading to re-sort; click any row to open its detail card.</p>" +
+        "<table>" +
+          "<tr><td>Status</td><td>Where the application stands. <i>Closed</i> is for a posting that has been taken down or a role that is no longer available &mdash; the opening ended it, rather than you (<i>Withdrawn</i>) or them (<i>Rejected</i>).</td></tr>" +
+          "<tr><td>Round</td><td>The round you&rsquo;re currently on &mdash; the latest round whose end state is still <i>Pending</i>.</td></tr>" +
+          "<tr><td>#</td><td>Row number in the current sort order &mdash; it renumbers when you re-sort.</td></tr>" +
+          "<tr><td>Posted</td><td>The date the role was posted, when the listing shows it.</td></tr>" +
+          "<tr><td>Last Update</td><td>Set automatically whenever you change anything.</td></tr>" +
+          "<tr><td>Await</td><td>The date you&rsquo;re expecting to hear back by.</td></tr>" +
+          "<tr><td>Posted Range / My Range</td><td>Each is a low and a high dollar amount, shown as <code>$125,000-$145,000</code>. Type <code>125k</code> or <code>125000</code> &mdash; it is reformatted for you.</td></tr>" +
+          "<tr><td>System of Record</td><td>Where the application itself lives &mdash; Workday, Greenhouse, the company portal, &hellip;</td></tr>" +
+        "</table>" +
+        "<h3>Sending the table to Notes</h3>" +
+        "<p><b>Note</b> writes the rows you can see &mdash; after the filter, in the sort order on screen &mdash; " +
+          "into a note in the macOS Notes app, with six columns: Company, Role Title, Status, Interest, Round and Last Update.</p>" +
+        "<ul>" +
+          "<li>It writes the same note every time, so pressing it again refreshes that note rather than piling up copies. The note is created the first time if it isn&rsquo;t there.</li>" +
+          "<li>Which note, and which folder, is set in <code>config.json</code> in your data folder, beside <code>data.json</code>. It is read on every export, so a change takes effect straight away.</li>" +
+          "<li>Notes can only be driven from this machine, so this needs <code>server.js</code> running, and macOS asks once for permission to control Notes. Without the server the button copies the same table to the clipboard instead.</li>" +
+        "</ul>" +
+        "<h3>The detail card</h3>" +
+        "<ul>" +
+          "<li><b>Application Details</b> &mdash; dates, status, how you applied, the job link and the system of record.</li>" +
+          "<li><b>Company Details</b> &mdash; the company, the role, and the company website.</li>" +
+          "<li><b>Salary</b> &mdash; the posted range, that range adjusted for your local market, and the range you gave.</li>" +
+          "<li>Between them these hold the fields the table leaves out: the application ID, role type, work setting, system of record, the local-market range, and both links &mdash; each with a button that opens it in a new tab, and <b>Job Link</b> with a copy button beside it.</li>" +
+          "<li><b>Local Job Description</b> &mdash; starts collapsed. <b>Load JD</b> shows the posting saved under <code>jds/</code> in your data folder by the <code>/job-from-url</code> skill, matched to this row by its company and role title. Press it again to hide it. The button beside it appears whenever a file exists for the row, open or not, and opens that file in a new tab. Needs <code>server.js</code> running.</li>" +
+          "<li><b>Interview Rounds</b> &mdash; each round is collapsible and has a type, a date and time, a status, an end state and a notes box. Each person inside a round collapses the same way, showing their name and role while closed.</li>" +
+          "<li><b>Contacts</b> &mdash; each round holds any number of people, with their details, result and notes.</li>" +
+        "</ul>" +
+        "<h3>Tips</h3>" +
+        "<ul>" +
+          "<li>Export regularly if you are not running the server &mdash; that file is your backup.</li>" +
+          "<li>To move between devices, export from one browser and import into the other.</li>" +
+          "<li><kbd>Esc</kbd> closes any open card.</li>" +
+        "</ul>" +
+      "</div>" +
+      '<div class="card-foot"><span class="note"></span><button class="btn primary" id="docsDone">Close</button></div>' +
+    "</div>");
+  $("#docsClose").onclick = closeOverlay;
+  $("#docsDone").onclick = closeOverlay;
+};
+
+/* ================= views ================= */
+
+/* routeFromHash() lives in the pre-paint script, which sets the first route
+   before the views are drawn; this keeps the sidebar in step afterwards. */
+function showRoute(){
+  const route = document.body.dataset.route;
+  document.querySelectorAll(".navitem").forEach(a => {
+    if (a.dataset.route === route) a.setAttribute("aria-current", "page");
+    else a.removeAttribute("aria-current");
+  });
+  renderFlow();
+}
+window.addEventListener("hashchange", () => {
+  document.body.dataset.route = routeFromHash();
+  window.scrollTo(0, 0);
+  showRoute();
+});
+
+/* ================= flow: the pipeline =================
+
+   Each application is traced up one ladder - applied, screen, interview,
+   final, offer - as far as its status or its rounds say it got, and then out
+   to where it stands now. A round counts once it has a date or has started:
+   the blank "Screen" that Add Round leaves behind says nothing happened. */
+
+const STAGES = ["Applied","Screen","Interview","Final","Offer"];
+
+const ROUND_STAGE = { "Screen":1, "Other":1, "Take-home":2, "Final":3, "Offer Call":4 };   // "Interview N" is 2
+/* top-to-bottom order within a column, and the colour each one wears: the
+   three ways an application can still be open, then each closed status - good
+   news first, then bad, then the ones nobody decided */
+const OUTCOME_ORDER = ["good", "bad", "muted"];
+const OUTCOMES = [
+  { label:"In progress",       tone:"live"  },
+  { label:"Awaiting response", tone:"warm"  },
+  { label:"Ready to apply",    tone:"muted" }
+].concat(STATUS_TABLE.filter(s => s.outcome)
+  .sort((a, b) => OUTCOME_ORDER.indexOf(a.outcome) - OUTCOME_ORDER.indexOf(b.outcome))
+  .map(s => ({ label: s.name, tone: s.outcome })));
+
+/* -1 = never applied, otherwise an index into STAGES */
+function stageReached(app){
+  let s = statusInfo(app.status).stage ?? -1;
+  for (const r of app.rounds || []){
+    if (!r.date && r.status !== "Completed" && r.status !== "In Progress") continue;
+    s = Math.max(s, /^Interview/.test(r.type) ? 2 : ROUND_STAGE[r.type] || 1);
+  }
+  if (s < 0 && (app.appliedOn || app.status === "Rejected" || app.status === "Ghosted")) s = 0;
+  return s;
+}
+
+function outcomeOf(app, stage){
+  if (CLOSED_STATUSES.includes(app.status)) return app.status;
+  return stage < 0 ? "Ready to apply" : stage === 0 ? "Awaiting response" : "In progress";
+}
+
+/* A tree: every node but the root has exactly one parent, so a column can be
+   ordered by its parents' order and the ribbons never cross. */
+function pipelineGraph(apps){
+  const nodes = new Map(), links = new Map();
+  const node = (id, label, parent, rank, tone) => {
+    if (!nodes.has(id)) nodes.set(id, { id, label, parent, rank, tone, col: parent ? parent.col + 1 : 0, value:0 });
+    const n = nodes.get(id);
+    n.value++;
+    return n;
+  };
+  const step = (from, id, label, rank, tone) => {
+    const to = node(id, label, from, rank, tone);
+    const key = from.id + ">" + to.id;
+    if (!links.has(key)) links.set(key, { source:from, target:to, value:0 });
+    links.get(key).value++;
+    return to;
+  };
+  for (const app of apps){
+    const stage = stageReached(app), outcome = outcomeOf(app, stage);
+    let at = node("all", "Applications", null, 0, "all");
+    if (stage < 0) at = step(at, "unapplied", "Not applied", 1, "muted");
+    for (let s = 0; s <= stage; s++) at = step(at, "s" + s, STAGES[s], 0, "live");
+    const o = OUTCOMES.findIndex(x => x.label === outcome);
+    step(at, at.id + ":" + outcome, outcome, 2 + o, OUTCOMES[o].tone);
+  }
+  return { nodes:[...nodes.values()], links:[...links.values()] };
+}
+
+const SANKEY = { nodeW:12, gap:16, labelW:170, rowH:44, minH:320 };
+
+function layoutSankey(g, W){
+  const cols = [];
+  g.nodes.forEach(n => (cols[n.col] = cols[n.col] || []).push(n));
+  cols.forEach(c => {
+    c.sort((a, b) => (a.parent ? a.parent.order - b.parent.order : 0) || a.rank - b.rank);
+    c.forEach((n, i) => n.order = i);
+  });
+  const H = Math.max(SANKEY.minH, Math.max(...cols.map(c => c.length)) * SANKEY.rowH);
+  const k = Math.min(...cols.map(c => (H - SANKEY.gap * (c.length - 1)) / c.reduce((t, n) => t + n.value, 0)));
+  const colX = (W - SANKEY.labelW - SANKEY.nodeW) / Math.max(1, cols.length - 1);
+  cols.forEach((c, i) => {
+    let y = 0;
+    c.forEach(n => { n.x = i * colX; n.y = y; n.h = n.value * k; y += n.h + SANKEY.gap; });
+  });
+  /* stack each node's ribbons in the order of the nodes at their other end */
+  g.nodes.forEach(n => {
+    let sy = n.y, ty = n.y;
+    g.links.filter(l => l.source === n).sort((a, b) => a.target.y - b.target.y)
+      .forEach(l => { l.sy = sy; sy += l.value * k; });
+    g.links.filter(l => l.target === n).sort((a, b) => a.source.y - b.source.y)
+      .forEach(l => { l.ty = ty; ty += l.value * k; });
+  });
+  g.links.forEach(l => l.h = l.value * k);
+  return H;
+}
+
+const pct = (n, of) => Math.round(100 * n / of) + "%";
+
+function renderFlow(){
+  if (document.body.dataset.route !== "flow") return;
+  const apps = state.applications;
+  $("#pipelinePanel").hidden = !apps.length;
+  $("#flowEmpty").hidden = !!apps.length;
+  if (!apps.length){ $("#flowSub").textContent = "Nothing tracked yet"; return; }
+
+  const g = pipelineGraph(apps);
+  const total = apps.length;
+  const applied = g.nodes.find(n => n.id === "s0");
+  $("#flowSub").innerHTML = "<b>" + total + "</b> " + noun(total, "application") +
+    " · <b>" + (applied ? applied.value : 0) + "</b> applied";
+
+  const host = $("#sankey");
+  const W = Math.max(760, host.clientWidth || 960);
+  const H = layoutSankey(g, W);
+  const nw = SANKEY.nodeW;
+
+  const ribbons = g.links.map(l => {
+    const x0 = l.source.x + nw, x1 = l.target.x, xm = (x0 + x1) / 2;
+    const d = "M" + x0 + "," + l.sy + "C" + xm + "," + l.sy + " " + xm + "," + l.ty + " " + x1 + "," + l.ty +
+              "L" + x1 + "," + (l.ty + l.h) + "C" + xm + "," + (l.ty + l.h) + " " + xm + "," + (l.sy + l.h) + " " + x0 + "," + (l.sy + l.h) + "Z";
+    const tip = "<b>" + esc(l.source.label) + " → " + esc(l.target.label) + "</b><br>" +
+                plural(l.value, "application") + " · " + pct(l.value, l.source.value) + " of " + esc(l.source.label);
+    return '<path class="lnk tone-' + l.target.tone + '" d="' + d + '" data-tip="' + esc(tip) + '"/>';
+  }).join("");
+
+  const blocks = g.nodes.map(n => {
+    const tip = "<b>" + esc(n.label) + "</b><br>" + plural(n.value, "application") + (n.parent ? " · " + pct(n.value, total) + " of all" : "");
+    return '<rect class="nd tone-' + n.tone + '" x="' + n.x + '" y="' + n.y + '" width="' + nw + '" height="' + Math.max(1, n.h) +
+           '" rx="3" data-tip="' + esc(tip) + '"/>' +
+           '<text x="' + (n.x + nw + 7) + '" y="' + (n.y + n.h / 2) + '" dominant-baseline="middle" data-tip="' + esc(tip) + '">' +
+           '<tspan font-weight="600">' + esc(n.label) + '</tspan> <tspan class="n">' + n.value + "</tspan></text>";
+  }).join("");
+
+  const summary = g.nodes.filter(n => !n.parent || n.rank < 2).map(n => n.label + " " + n.value).join(", ");
+  host.innerHTML =
+    '<svg width="' + W + '" height="' + (H + 2) + '" viewBox="-1 -1 ' + W + " " + (H + 2) + '" role="img" aria-label="Application pipeline: ' + esc(summary) + '">' +
+      ribbons + blocks +
+    "</svg>" +
+    '<div class="sankey-tip" id="sankeyTip" hidden></div>';
+
+  $("#flowTable").innerHTML =
+    "<summary>Show as a table</summary>" +
+    "<table><thead><tr><th>From</th><th>To</th><th>Applications</th></tr></thead><tbody>" +
+    g.links.slice().sort((a, b) => a.source.col - b.source.col || a.source.order - b.source.order || a.target.order - b.target.order)
+      .map(l => "<tr><td>" + esc(l.source.label) + "</td><td>" + esc(l.target.label) + '</td><td class="num">' + l.value + "</td></tr>").join("") +
+    "</tbody></table>";
+}
+
+$("#sankey").addEventListener("mousemove", e => {
+  const tip = $("#sankeyTip");
+  if (!tip) return;
+  const hit = e.target.closest("[data-tip]");
+  const hot = $("#sankey .lnk.hot");
+  if (hot && hot !== hit) hot.classList.remove("hot");
+  if (!hit){ tip.hidden = true; return; }
+  if (hit.classList.contains("lnk")) hit.classList.add("hot");
+  tip.innerHTML = hit.dataset.tip;
+  tip.hidden = false;
+  const box = e.currentTarget.getBoundingClientRect();
+  const x = e.clientX - box.left, y = e.clientY - box.top;
+  const flip = x + tip.offsetWidth + 16 > box.width;
+  tip.style.left = (e.currentTarget.scrollLeft + (flip ? x - tip.offsetWidth - 12 : x + 12)) + "px";
+  tip.style.top = (y + 14) + "px";
+});
+$("#sankey").addEventListener("mouseleave", () => {
+  const tip = $("#sankeyTip"), hot = $("#sankey .lnk.hot");
+  if (tip) tip.hidden = true;
+  if (hot) hot.classList.remove("hot");
+});
+
+let flowWidth = 0, resizeTimer = null;
+window.addEventListener("resize", () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    const w = $("#sankey").clientWidth;
+    if (w !== flowWidth){ flowWidth = w; renderFlow(); }
+  }, 120);
+});
+
+window.addEventListener("beforeunload", e => {
+  if (mode === "dataset" && dataset.unsaved){ e.preventDefault(); e.returnValue = ""; return; }
+  /* The browser's copy and the pending record are written before persist()
+     first awaits, so an edit survives even if this request does not - and a
+     body over the 64 kB keepalive limit is refused rather than sent. */
+  if (saveTimer) persist({ keepalive:true });
+});
+
+/* ================= settings: content width and theme =================
+
+   Both are kept in localStorage and put back by the script at the top of the
+   page, before anything is drawn. */
+
+makePopover($("#btnSettings"), $("#settingsPanel"), $("#viewCtl"));
+
+const WIDTHS = ["margins", "full"], DEFAULT_WIDTH = "margins";
+const widthBtns = [...document.querySelectorAll("#widthCtl button[data-width]")];
+const markWidth = w => widthBtns.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.width === w)));
+function applyWidth(w){
+  for (const x of WIDTHS) document.body.classList.remove("width-" + x);
+  document.body.classList.add("width-" + w);
+  markWidth(w);
+  try { localStorage.setItem("at-width", w); } catch(e){}
+}
+markWidth(WIDTHS.find(w => document.body.classList.contains("width-" + w)) || DEFAULT_WIDTH);
+$("#widthCtl").addEventListener("click", e => {
+  const b = e.target.closest("button[data-width]");
+  if (b) applyWidth(b.dataset.width);
+});
+
+/* each swatch wears its own theme's class, so it shows that theme's colours */
+$("#themeCtl").innerHTML = THEMES.map(t =>
+  '<button type="button" data-theme="' + t.id + '" title="' + esc(t.label) + '">' +
+    '<span class="sw theme-' + t.id + '" aria-hidden="true"></span>' + esc(t.label) + "</button>").join("");
+const themeBtns = [...document.querySelectorAll("#themeCtl button[data-theme]")];
+const markTheme = t => themeBtns.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.theme === t)));
+function applyTheme(t){
+  for (const x of THEMES) document.body.classList.remove("theme-" + x.id);
+  document.body.classList.add("theme-" + t);
+  setFavicon();
+  setChevron();
+  markTheme(t);
+  try { localStorage.setItem("at-theme", t); } catch(e){}
+}
+markTheme((THEMES.find(t => document.body.classList.contains("theme-" + t.id)) || { id: DEFAULT_THEME }).id);
+$("#themeCtl").addEventListener("click", e => {
+  const b = e.target.closest("button[data-theme]");
+  if (b) applyTheme(b.dataset.theme);
+});
+
+showRoute();
+boot();
+})();
+</script>
+
+</body>
+</html>

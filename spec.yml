@@ -1,0 +1,595 @@
+# The HTTP contract of server.js.
+#
+# Every path and method here is also a row in routes.js, the table server.js
+# dispatches through. routes.test.js fails if the two disagree, so a route
+# cannot be added, removed, or given a new method without updating this file.
+#
+# The page itself (GET / and /index.html) is served outside this table and is
+# deliberately not described here. Any other path answers 404.
+openapi: 3.1.0
+info:
+  title: AppTrail local server
+  version: 1.0.0
+  description: |
+    The zero-dependency backend in server.js. It serves the tracker's data
+    from the data folder paths.js resolves, never from the repository, and
+    listens on 127.0.0.1 only.
+
+    data.json has two writers - the open page and the job-from-url importer -
+    so writes are guarded by an ETag: a hash of the bytes on disk. A PUT must
+    carry `If-Match`; a stale one is refused with 409 and the current document,
+    so the writer can merge instead of overwriting.
+
+    Any route answers 405, with an `Allow` header, for a method it does not
+    take. A URL whose path cannot be percent-decoded answers 400.
+
+    Every request must name this server: a `Host` other than
+    `localhost:<port>` or `127.0.0.1:<port>`, or an `Origin` that is present
+    and names anything else, is refused with 403 and a plain-text body before
+    routing - for static files as well as every route below. This keeps other web pages - and DNS rebinding - away from the
+    API. A PUT or POST whose `Content-Type` is not `application/json` answers
+    415, so a foreign page cannot send one as a CORS "simple" request.
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:8787
+    description: Default port. `node src/server.js <port>` picks another.
+
+tags:
+  - name: data
+    description: The tracker document and other datasets
+  - name: files
+    description: Companions kept beside the data - config and job descriptions
+  - name: system
+    description: Health, change events, and the Notes.app export
+
+paths:
+  /api/health:
+    get:
+      tags: [system]
+      operationId: getHealth
+      summary: Whether the server is up, and which data.json it serves
+      responses:
+        "200":
+          description: The server is up.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, file]
+                additionalProperties: false
+                properties:
+                  ok:
+                    const: true
+                  file:
+                    type: string
+                    description: Absolute path of data.json on this machine.
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+
+  /api/jds:
+    get:
+      tags: [files]
+      operationId: listJobDescriptions
+      summary: The job descriptions saved under jds/
+      description: >
+        Only *.md files, sorted by name. An empty list when jds/ does not
+        exist yet.
+      responses:
+        "200":
+          description: The saved job descriptions.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, dir, files]
+                additionalProperties: false
+                properties:
+                  ok:
+                    const: true
+                  dir:
+                    const: jds
+                  files:
+                    type: array
+                    items:
+                      type: string
+                      pattern: "\\.[mM][dD]$"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+
+  /api/note:
+    post:
+      tags: [system]
+      operationId: writeNote
+      summary: Write the visible table into a note in Notes.app
+      description: >
+        macOS only, unless the server was started with APP_TRAIL_NOTE_COMMAND
+        naming a stand-in for osascript. The page sends the finished cells - its filter and sort
+        order live in the browser - and the server only escapes them. Which
+        note is written comes from config.json, read on every request. Every
+        cell is turned into a string and cut to 500 characters; rows are
+        padded or trimmed to the number of columns. A body over 512 KiB is
+        refused with 413, and the connection closed after the answer.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [columns, rows]
+              properties:
+                columns:
+                  type: array
+                  minItems: 1
+                  maxItems: 20
+                  items: {}
+                rows:
+                  type: array
+                  maxItems: 5000
+                  items:
+                    type: array
+                    items: {}
+      responses:
+        "200":
+          description: The note was written.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, action, rows, title, folder]
+                additionalProperties: false
+                properties:
+                  ok:
+                    const: true
+                  action:
+                    type: string
+                    description: >
+                      What osascript reported - `created` or `updated`, or
+                      `written` if it said nothing.
+                  rows:
+                    type: integer
+                    minimum: 0
+                  title:
+                    type: string
+                  folder:
+                    type: string
+                    description: Empty for the account's default folder.
+        "400":
+          description: The body is not JSON, or not a valid table.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NoteError"
+        "403":
+          description: >
+            macOS has not allowed the server to control Notes (JSON), or the
+            request's Host or Origin does not name this server (plain text).
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NoteError"
+            text/plain:
+              schema:
+                $ref: "#/components/schemas/ForeignRequest"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "413":
+          description: The body is over 512 KiB. The connection is closed after this answer.
+          headers:
+            Connection:
+              $ref: "#/components/headers/ConnectionClose"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NoteError"
+        "415":
+          $ref: "#/components/responses/UnsupportedMediaType"
+        "500":
+          description: osascript failed for another reason.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NoteError"
+        "501":
+          description: >
+            Not running on macOS, and no stand-in for osascript is set with
+            APP_TRAIL_NOTE_COMMAND.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NoteError"
+
+  /api/events:
+    get:
+      tags: [system]
+      operationId: streamChanges
+      summary: Server-sent events, one `change` per write to data.json
+      description: |
+        The stream opens with `retry: 2000`, then a `change` event carrying
+        the current ETag. After that, one `change` event per write to
+        data.json - through this server or straight to the file - and a
+        `: ping` comment every 25 seconds. Other datasets are not watched.
+
+            event: change
+            data: {"etag":"\"3fa9c1d2e4b5a687\""}
+      responses:
+        "200":
+          description: The event stream.
+          content:
+            text/event-stream:
+              schema:
+                type: string
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+
+  /config.json:
+    get:
+      tags: [files]
+      operationId: getConfig
+      summary: Settings - which note the Note button writes to
+      description: >
+        config.json from the data folder, byte for byte. The server does not
+        validate it here; it only reads `note.title` and `note.folder` when
+        writing a note.
+      responses:
+        "200":
+          description: The settings file.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Config"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+
+  /jds/{name}:
+    get:
+      tags: [files]
+      operationId: getJobDescription
+      summary: One saved job description
+      parameters:
+        - name: name
+          in: path
+          required: true
+          description: >
+            A bare *.md file name - no folders, not starting with a dot.
+            Anything else answers 404.
+          schema:
+            type: string
+            pattern: "^[^./\\\\][^/\\\\]*\\.[mM][dD]$"
+      responses:
+        "200":
+          description: The job description.
+          content:
+            text/markdown:
+              schema:
+                type: string
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+
+  /data/{name}:
+    parameters:
+      - name: name
+        in: path
+        required: true
+        description: >
+          A bare *.json file name in the data folder - no folders, not starting
+          with a dot - so never a .bak or .tmp file. `data.json` is the tracker
+          itself; any other name is a separate dataset opened with Import.
+          Anything else answers 404, and so does a name that differs from
+          `data.json` only in letter case: on a case-insensitive disk it would
+          be the tracker itself.
+        schema:
+          type: string
+          pattern: "^[^./\\\\][^/\\\\]*\\.json$"
+        example: data.json
+    get:
+      tags: [data]
+      operationId: getDataset
+      summary: Read a dataset, with its ETag
+      description: >
+        data.json is created empty on first read. Any other dataset that does
+        not exist answers 404.
+      responses:
+        "200":
+          description: The dataset as stored on disk.
+          headers:
+            ETag:
+              $ref: "#/components/headers/ETag"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrackerDocument"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "500":
+          description: The file exists but is not valid JSON.
+          content:
+            text/plain:
+              schema:
+                type: string
+    put:
+      tags: [data]
+      operationId: putDataset
+      summary: Replace a dataset, guarded by its ETag
+      description: >
+        Written to a temporary file and renamed into place, after copying the
+        previous version to `<name>.bak`. Saves are serialised, so the ETag
+        check and the write happen as one step. A PUT to a dataset that does
+        not exist yet needs `If-Match: *`. `If-Match: *` does not read the
+        current file, so it also replaces one that is no longer valid JSON. Writes to data.json are broadcast
+        on /api/events. The body may be at most 25 MiB; a larger one is
+        refused with 413.
+      parameters:
+        - $ref: "#/components/parameters/IfMatch"
+      requestBody:
+        $ref: "#/components/requestBodies/Dataset"
+      responses:
+        "200":
+          $ref: "#/components/responses/Saved"
+        "400":
+          $ref: "#/components/responses/NotSaved"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "413":
+          $ref: "#/components/responses/DatasetTooLarge"
+        "415":
+          $ref: "#/components/responses/UnsupportedMediaType"
+        "428":
+          $ref: "#/components/responses/IfMatchRequired"
+    post:
+      tags: [data]
+      operationId: postDataset
+      summary: Same as PUT
+      deprecated: true
+      description: >
+        Accepted as an alias of PUT, with identical behaviour. Neither the
+        page nor the importer uses it; prefer PUT.
+      parameters:
+        - $ref: "#/components/parameters/IfMatch"
+      requestBody:
+        $ref: "#/components/requestBodies/Dataset"
+      responses:
+        "200":
+          $ref: "#/components/responses/Saved"
+        "400":
+          $ref: "#/components/responses/NotSaved"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "409":
+          $ref: "#/components/responses/Conflict"
+        "413":
+          $ref: "#/components/responses/DatasetTooLarge"
+        "415":
+          $ref: "#/components/responses/UnsupportedMediaType"
+        "428":
+          $ref: "#/components/responses/IfMatchRequired"
+
+components:
+  headers:
+    ETag:
+      description: A hash of the bytes on disk, in quotes.
+      required: true
+      schema:
+        $ref: "#/components/schemas/ETag"
+    ConnectionClose:
+      description: The server closes the connection once this answer is sent.
+      required: true
+      schema:
+        const: close
+    Allow:
+      description: The methods this route takes, comma separated.
+      required: true
+      schema:
+        type: string
+        example: GET, PUT, POST
+
+  parameters:
+    IfMatch:
+      name: If-Match
+      in: header
+      required: true
+      description: >
+        The ETag from your last read, or `*` to write regardless of what is
+        on disk.
+      schema:
+        oneOf:
+          - $ref: "#/components/schemas/ETag"
+          - const: "*"
+
+  requestBodies:
+    Dataset:
+      required: true
+      description: >
+        The whole document. The server only checks that it is valid JSON -
+        the shape below is what the page and the importer write and expect
+        to read back.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/TrackerDocument"
+
+  responses:
+    Saved:
+      description: Written. The new ETag is in the body and the header.
+      headers:
+        ETag:
+          $ref: "#/components/headers/ETag"
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [ok, etag]
+            additionalProperties: false
+            properties:
+              ok:
+                const: true
+              etag:
+                $ref: "#/components/schemas/ETag"
+    NotSaved:
+      description: The body is not valid JSON, or the write failed. Nothing changed.
+      content:
+        text/plain:
+          schema:
+            type: string
+            example: "Could not save: Unexpected token } in JSON at position 1"
+    DatasetTooLarge:
+      description: >
+        The body is over 25 MiB. Nothing changed, and the connection is closed
+        after this answer.
+      headers:
+        Connection:
+          $ref: "#/components/headers/ConnectionClose"
+      content:
+        text/plain:
+          schema:
+            const: "Could not save: The body is over 25 MiB."
+    Conflict:
+      description: >
+        `If-Match` does not match what is on disk. The body carries the current
+        document so the writer can merge. For a dataset that does not exist,
+        `etag` and `data` are null and no ETag header is sent.
+      headers:
+        ETag:
+          description: The ETag of the document on disk. Absent when there is none.
+          schema:
+            $ref: "#/components/schemas/ETag"
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [conflict, etag, data]
+            additionalProperties: false
+            properties:
+              conflict:
+                const: true
+              etag:
+                oneOf:
+                  - $ref: "#/components/schemas/ETag"
+                  - type: "null"
+              data:
+                description: The current document, or null if there is none.
+    IfMatchRequired:
+      description: The request has no `If-Match` header.
+      content:
+        text/plain:
+          schema:
+            type: string
+    NotFound:
+      description: No such file, or a name the route does not serve.
+      content:
+        text/plain:
+          schema:
+            const: Not found
+    Forbidden:
+      description: The request's `Host` or `Origin` does not name this server.
+      content:
+        text/plain:
+          schema:
+            $ref: "#/components/schemas/ForeignRequest"
+    UnsupportedMediaType:
+      description: "The body is not labelled `Content-Type: application/json`."
+      content:
+        text/plain:
+          schema:
+            const: "Content-Type must be application/json"
+    MethodNotAllowed:
+      description: The route does not take this method.
+      headers:
+        Allow:
+          $ref: "#/components/headers/Allow"
+      content:
+        text/plain:
+          schema:
+            const: Method not allowed
+
+  schemas:
+    ForeignRequest:
+      type: string
+      enum:
+        - "Forbidden: Host is not this server"
+        - "Forbidden: Origin is not this server"
+
+    ETag:
+      type: string
+      pattern: '^"[0-9a-f]{16}"$'
+      example: '"3fa9c1d2e4b5a687"'
+
+    NoteError:
+      type: object
+      required: [ok, error]
+      additionalProperties: false
+      properties:
+        ok:
+          const: false
+        error:
+          type: string
+
+    Config:
+      type: object
+      properties:
+        note:
+          type: object
+          properties:
+            title:
+              type: string
+              description: The note to write. Defaults to JS-2026.
+            folder:
+              type: string
+              description: The Notes folder; created if missing. Empty for the default folder.
+
+    TrackerDocument:
+      type: object
+      description: >
+        What the page and the importer keep in a dataset. Applications carry
+        many more fields than listed here (rounds, people, salary ranges);
+        examples/data.sample.json shows a full one.
+      required: [applications]
+      properties:
+        version:
+          type: integer
+          example: 1
+        savedAt:
+          type: [string, "null"]
+          format: date-time
+        applications:
+          type: array
+          items:
+            type: object
+            required: [id]
+            properties:
+              id:
+                type: string
+              company:
+                type: string
+              roleTitle:
+                type: string
+              status:
+                type: string

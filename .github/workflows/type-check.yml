@@ -1,0 +1,87 @@
+name: Type Check
+run-name: Type Check initiated by @${{ github.actor }}
+
+on:
+  workflow_call:
+
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+
+jobs:
+  type_check:
+    name: Run Type Check
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: './package.json'
+          cache: 'npm'
+          cache-dependency-path: './package-lock.json'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Type Check
+        id: tsc
+        run: npm run typecheck
+
+      - name: Summarize Type Check Results
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          {
+            echo "### Type Check"
+            echo ""
+            echo "- Command: \`npm run typecheck\` (\`tsc -p .\`)"
+            echo "- Result: \`${{ steps.tsc.outcome }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  type_check_playwright:
+    name: Run Type Check (Playwright)
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: app-trail-playwright
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: './package.json'
+          cache: 'npm'
+          cache-dependency-path: './app-trail-playwright/package-lock.json'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Type Check
+        id: tsc
+        run: npm run typecheck
+
+      - name: Summarize Type Check Results
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          {
+            echo "### Type Check (Playwright)"
+            echo ""
+            echo "- Command: \`npm run typecheck\` in \`app-trail-playwright\` (\`tsc -p .\`)"
+            echo "- Result: \`${{ steps.tsc.outcome }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"

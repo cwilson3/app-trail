@@ -1,0 +1,19 @@
+.DS_Store
+node_modules/
+
+/resources*
+.playwright-mcp/
+
+/jds*
+/runs/
+
+# Your data lives outside the repository - see paths.js. These catch copies
+# left behind by checkouts from before the move.
+/data/
+/config.json
+
+# Local code-review notes
+/REVIEW-FINDINGS.md
+
+# Throwaway copies of the test datasets - see scripts/demo.js
+/.demo-data/

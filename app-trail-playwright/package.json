@@ -1,0 +1,24 @@
+{
+  "name": "app-trail-playwright",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API and E2E tests for AppTrail. Kept self-contained so this directory can be moved into its own repository.",
+  "scripts": {
+    "test": "playwright test",
+    "test:api": "playwright test --project=api",
+    "test:e2e": "playwright test --project=e2e-*",
+    "test:pageload": "playwright test --project=pageload",
+    "test:ui": "playwright test --ui",
+    "report": "playwright show-report",
+    "typecheck": "tsc -p ."
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^22.20.5",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
+    "typescript": "^7.0.2",
+    "yaml": "^2.9.1"
+  },
+  "license": "MIT"
+}

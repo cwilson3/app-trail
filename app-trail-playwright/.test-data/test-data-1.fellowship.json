@@ -1,0 +1,2218 @@
+{
+  "version": 1,
+  "savedAt": null,
+  "applications": [
+    {
+      "id": "lotr0001",
+      "num": 1,
+      "company": "Bag End Holdings",
+      "postedOn": "2026-08-20",
+      "appliedOn": "2026-08-24",
+      "lastUpdate": "2026-09-28",
+      "status": "Interview",
+      "interest": "High",
+      "awaiting": "2026-10-06",
+      "appliedVia": "Referral",
+      "roleTitle": "Senior Ring-Bearer Logistics Engineer",
+      "companyType": "Private Company",
+      "industry": "Logistics",
+      "roleType": "Full-time",
+      "workSetting": "Remote",
+      "postedRange": {
+        "min": 140000,
+        "max": 165000
+      },
+      "localRange": {
+        "min": 135000,
+        "max": 158000
+      },
+      "myRange": {
+        "min": 155000,
+        "max": 170000
+      },
+      "jobLink": "https://careers.bagend.example.com/jobs/ring-bearer-logistics",
+      "companyWebsite": "https://bagend.example.com",
+      "systemOfRecord": "Greenhouse",
+      "rounds": [
+        {
+          "id": "lotr0001r1",
+          "type": "Screen",
+          "date": "2026-08-29",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "Second breakfast was provided",
+          "people": [
+            {
+              "id": "lotr0001p1",
+              "firstContact": "2026-08-26",
+              "contactType": "Email",
+              "name": "Samwise Gamgee",
+              "role": "Technical Recruiter",
+              "email": "sam@bagend.example.com",
+              "phone": "",
+              "result": "Moved to tech interview",
+              "note": "Very loyal team; will not let you go alone",
+              "endDate": "2026-08-29",
+              "endType": "Moved Forward",
+              "endNotes": "Scheduling with Frodo"
+            }
+          ]
+        },
+        {
+          "id": "lotr0001r2",
+          "type": "Interview 1",
+          "date": "2026-10-06",
+          "time": "14:00",
+          "status": "Scheduled",
+          "end": "Pending",
+          "notes": "90 min — long-haul route planning to Mordor",
+          "people": [
+            {
+              "id": "lotr0001p2",
+              "firstContact": "2026-09-28",
+              "contactType": "Video",
+              "name": "Frodo Baggins",
+              "role": "Hiring Manager",
+              "email": "frodo@bagend.example.com",
+              "phone": "",
+              "result": "",
+              "note": "Asks about carrying heavy burdens under pressure",
+              "endDate": "",
+              "endType": "Pending",
+              "endNotes": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0002",
+      "num": 2,
+      "company": "Rivendell Council",
+      "postedOn": "2026-07-15",
+      "appliedOn": "2026-07-22",
+      "lastUpdate": "2026-09-25",
+      "status": "Offer",
+      "interest": "High",
+      "awaiting": "2026-10-03",
+      "appliedVia": "Company Site",
+      "roleTitle": "Principal Wizard, Platform Strategy",
+      "companyType": "Nonprofit",
+      "industry": "Government Services",
+      "roleType": "Full-time",
+      "workSetting": "Hybrid",
+      "postedRange": {
+        "min": 180000,
+        "max": 220000
+      },
+      "localRange": {
+        "min": 170000,
+        "max": 205000
+      },
+      "myRange": {
+        "min": 200000,
+        "max": 230000
+      },
+      "jobLink": "https://rivendell.example.com/council/careers/principal-wizard",
+      "companyWebsite": "https://rivendell.example.com",
+      "systemOfRecord": "Company Portal",
+      "rounds": [
+        {
+          "id": "lotr0002r1",
+          "type": "Screen",
+          "date": "2026-07-30",
+          "time": "09:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0002p1",
+              "firstContact": "2026-07-25",
+              "contactType": "Phone",
+              "name": "Merry Brandybuck",
+              "role": "Recruiter",
+              "email": "merry@rivendell.example.com",
+              "phone": "555-0101",
+              "result": "Advanced",
+              "note": "Asked about fireworks experience",
+              "endDate": "2026-07-30",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0002r2",
+          "type": "Final",
+          "date": "2026-09-10",
+          "time": "11:00",
+          "status": "Completed",
+          "end": "Offer",
+          "notes": "Panel of the Free Peoples",
+          "people": [
+            {
+              "id": "lotr0002p2",
+              "firstContact": "2026-09-01",
+              "contactType": "In-person",
+              "name": "Gandalf the Grey",
+              "role": "Head of Strategy",
+              "email": "gandalf@rivendell.example.com",
+              "phone": "",
+              "result": "Offer extended",
+              "note": "Arrives precisely when he means to",
+              "endDate": "2026-09-25",
+              "endType": "Offer",
+              "endNotes": "Verbal offer; written to follow"
+            },
+            {
+              "id": "lotr0002p3",
+              "firstContact": "2026-09-01",
+              "contactType": "In-person",
+              "name": "Aragorn, son of Arathorn",
+              "role": "Director of Field Operations",
+              "email": "strider@rivendell.example.com",
+              "phone": "",
+              "result": "Strong yes",
+              "note": "Prefers to go by Strider",
+              "endDate": "2026-09-25",
+              "endType": "Offer",
+              "endNotes": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0003",
+      "num": 3,
+      "company": "Lothlórien Woodcraft",
+      "postedOn": "2026-08-02",
+      "appliedOn": "2026-08-05",
+      "lastUpdate": "2026-09-12",
+      "status": "Rejected",
+      "interest": "Moderate",
+      "awaiting": "",
+      "appliedVia": "LinkedIn",
+      "roleTitle": "Staff Archery QA Engineer",
+      "companyType": "Private Company",
+      "industry": "Outdoor Recreation",
+      "roleType": "Full-time",
+      "workSetting": "On-Site",
+      "postedRange": {
+        "min": 125000,
+        "max": 150000
+      },
+      "localRange": {
+        "min": null,
+        "max": null
+      },
+      "myRange": {
+        "min": 140000,
+        "max": 155000
+      },
+      "jobLink": "https://lothlorien.example.com/jobs/staff-archery-qa",
+      "companyWebsite": "https://lothlorien.example.com",
+      "systemOfRecord": "LinkedIn",
+      "rounds": [
+        {
+          "id": "lotr0003r1",
+          "type": "Screen",
+          "date": "2026-08-14",
+          "time": "15:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0003p1",
+              "firstContact": "2026-08-10",
+              "contactType": "Email",
+              "name": "Legolas Greenleaf",
+              "role": "Engineering Lead",
+              "email": "legolas@lothlorien.example.com",
+              "phone": "",
+              "result": "Moved forward",
+              "note": "Counts defects for sport",
+              "endDate": "2026-08-14",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0003r2",
+          "type": "Take-home",
+          "date": "2026-08-28",
+          "time": "",
+          "status": "Completed",
+          "end": "Rejected",
+          "notes": "Hit 41 of 42 targets",
+          "people": [
+            {
+              "id": "lotr0003p2",
+              "firstContact": "2026-08-28",
+              "contactType": "Email",
+              "name": "Legolas Greenleaf",
+              "role": "Engineering Lead",
+              "email": "legolas@lothlorien.example.com",
+              "phone": "",
+              "result": "Not selected",
+              "note": "",
+              "endDate": "2026-09-12",
+              "endType": "Rejected",
+              "endNotes": "Went with an internal elf candidate"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0004",
+      "num": 4,
+      "company": "Erebor Mining Co.",
+      "postedOn": "2026-09-01",
+      "appliedOn": "2026-09-03",
+      "lastUpdate": "2026-09-24",
+      "status": "Phone Screen",
+      "interest": "Moderate",
+      "awaiting": "2026-10-02",
+      "appliedVia": "Workday",
+      "roleTitle": "Lead Test Engineer, Deep Systems",
+      "companyType": "Enterprise",
+      "industry": "Mining",
+      "roleType": "Full-time",
+      "workSetting": "On-Site",
+      "postedRange": {
+        "min": 130000,
+        "max": 160000
+      },
+      "localRange": {
+        "min": 128000,
+        "max": 150000
+      },
+      "myRange": {
+        "min": 145000,
+        "max": 160000
+      },
+      "jobLink": "https://erebor.example.com/careers/lead-test-engineer-deep-systems",
+      "companyWebsite": "https://erebor.example.com",
+      "systemOfRecord": "Workday",
+      "rounds": [
+        {
+          "id": "lotr0004r1",
+          "type": "Screen",
+          "date": "2026-10-02",
+          "time": "13:30",
+          "status": "Scheduled",
+          "end": "Pending",
+          "notes": "Bring an axe to grind",
+          "people": [
+            {
+              "id": "lotr0004p1",
+              "firstContact": "2026-09-24",
+              "contactType": "Phone",
+              "name": "Gimli, son of Glóin",
+              "role": "Hiring Manager",
+              "email": "gimli@erebor.example.com",
+              "phone": "555-0104",
+              "result": "",
+              "note": "Not keen on remote work involving elves",
+              "endDate": "",
+              "endType": "Pending",
+              "endNotes": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0005",
+      "num": 5,
+      "company": "Gondor Defense Systems",
+      "postedOn": "2026-06-30",
+      "appliedOn": "2026-07-08",
+      "lastUpdate": "2026-08-19",
+      "status": "Withdrawn",
+      "interest": "Low",
+      "awaiting": "",
+      "appliedVia": "Recruiter",
+      "roleTitle": "Quality Engineering Manager",
+      "companyType": "Public Company",
+      "industry": "Defense",
+      "roleType": "Full-time",
+      "workSetting": "On-Site",
+      "postedRange": {
+        "min": 160000,
+        "max": 190000
+      },
+      "localRange": {
+        "min": 150000,
+        "max": 175000
+      },
+      "myRange": {
+        "min": 175000,
+        "max": 195000
+      },
+      "jobLink": "https://gondor.example.com/jobs/qe-manager-minas-tirith",
+      "companyWebsite": "https://gondor.example.com",
+      "systemOfRecord": "Company Portal",
+      "rounds": [
+        {
+          "id": "lotr0005r1",
+          "type": "Screen",
+          "date": "2026-07-15",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0005p1",
+              "firstContact": "2026-07-10",
+              "contactType": "Video",
+              "name": "Boromir of Gondor",
+              "role": "Director, Quality",
+              "email": "boromir@gondor.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Kept asking to borrow my laptop",
+              "endDate": "2026-07-15",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0005r2",
+          "type": "Interview 1",
+          "date": "2026-08-01",
+          "time": "10:00",
+          "status": "Cancelled",
+          "end": "Withdrawn",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0005p2",
+              "firstContact": "2026-07-28",
+              "contactType": "Email",
+              "name": "Boromir of Gondor",
+              "role": "Director, Quality",
+              "email": "boromir@gondor.example.com",
+              "phone": "",
+              "result": "",
+              "note": "",
+              "endDate": "2026-08-19",
+              "endType": "Withdrawn",
+              "endNotes": "Culture fit concerns — one does not simply relocate to Minas Tirith"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0006",
+      "num": 6,
+      "company": "Green Dragon Inn",
+      "postedOn": "2026-09-15",
+      "appliedOn": "2026-09-18",
+      "lastUpdate": "2026-09-18",
+      "status": "Applied - Awaiting Response",
+      "interest": "Low",
+      "awaiting": "2026-10-09",
+      "appliedVia": "Company Site",
+      "roleTitle": "SDET, Hospitality Platform",
+      "companyType": "Private Company",
+      "industry": "Hospitality",
+      "roleType": "Contract",
+      "workSetting": "Hybrid",
+      "postedRange": {
+        "min": 55,
+        "max": 70
+      },
+      "localRange": {
+        "min": null,
+        "max": null
+      },
+      "myRange": {
+        "min": 65,
+        "max": 75
+      },
+      "jobLink": "https://greendragon.example.com/careers/sdet",
+      "companyWebsite": "https://greendragon.example.com",
+      "systemOfRecord": "Paylocity",
+      "rounds": [
+        {
+          "id": "lotr0006r1",
+          "type": "Screen",
+          "date": "",
+          "time": "",
+          "status": "Scheduled",
+          "end": "Pending",
+          "notes": "Hourly contract rate, not salary",
+          "people": [
+            {
+              "id": "lotr0006p1",
+              "firstContact": "2026-09-18",
+              "contactType": "Email",
+              "name": "Peregrin Took",
+              "role": "Talent Coordinator",
+              "email": "pippin@greendragon.example.com",
+              "phone": "",
+              "result": "",
+              "note": "Auto-reply: out for elevenses",
+              "endDate": "",
+              "endType": "Pending",
+              "endNotes": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0007",
+      "num": 7,
+      "company": "Prancing Pony Labs",
+      "postedOn": "2026-09-26",
+      "appliedOn": "",
+      "lastUpdate": "2026-09-30",
+      "status": "Ready",
+      "interest": "",
+      "awaiting": "",
+      "appliedVia": "",
+      "roleTitle": "Automation Engineer II",
+      "companyType": "Startup",
+      "industry": "",
+      "roleType": "",
+      "workSetting": "",
+      "postedRange": {
+        "min": null,
+        "max": null
+      },
+      "localRange": {
+        "min": null,
+        "max": null
+      },
+      "myRange": {
+        "min": null,
+        "max": null
+      },
+      "jobLink": "https://prancingpony.example.com/jobs/automation-engineer-ii",
+      "companyWebsite": "",
+      "systemOfRecord": "",
+      "rounds": [
+        {
+          "id": "lotr0007r1",
+          "type": "Screen",
+          "date": "",
+          "time": "",
+          "status": "Scheduled",
+          "end": "Pending",
+          "notes": "",
+          "people": []
+        }
+      ]
+    },
+    {
+      "id": "lotr0008",
+      "num": 8,
+      "company": "Thorin & Company",
+      "postedOn": "2026-07-02",
+      "appliedOn": "2026-07-05",
+      "lastUpdate": "2026-08-14",
+      "status": "Ghosted",
+      "interest": "Moderate",
+      "awaiting": "",
+      "appliedVia": "LinkedIn",
+      "roleTitle": "Senior Quest Automation Engineer",
+      "companyType": "Startup",
+      "industry": "Treasure Recovery",
+      "roleType": "Full-time",
+      "workSetting": "Remote",
+      "postedRange": {
+        "min": 125000,
+        "max": 150000
+      },
+      "localRange": {
+        "min": 120000,
+        "max": 142000
+      },
+      "myRange": {
+        "min": 140000,
+        "max": 155000
+      },
+      "jobLink": "https://thorinandco.example.com/careers/quest-automation",
+      "companyWebsite": "https://thorinandco.example.com",
+      "systemOfRecord": "Lever",
+      "rounds": [
+        {
+          "id": "lotr0008r1",
+          "type": "Screen",
+          "date": "2026-07-10",
+          "time": "13:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "Thirteen people joined one call",
+          "people": [
+            {
+              "id": "lotr0008p1",
+              "firstContact": "2026-07-06",
+              "contactType": "LinkedIn",
+              "name": "Balin",
+              "role": "Talent Partner",
+              "email": "balin@thorinandco.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Kind, and the best organised of the lot",
+              "endDate": "2026-07-10",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0008r2",
+          "type": "Interview 1",
+          "date": "2026-07-24",
+          "time": "15:00",
+          "status": "Completed",
+          "end": "No Response",
+          "notes": "They wanted a burglar, not a tester",
+          "people": [
+            {
+              "id": "lotr0008p2",
+              "firstContact": "2026-07-18",
+              "contactType": "Video",
+              "name": "Thorin Oakenshield",
+              "role": "Hiring Manager",
+              "email": "thorin@thorinandco.example.com",
+              "phone": "",
+              "result": "",
+              "note": "Spent most of the hour on the Arkenstone roadmap",
+              "endDate": "2026-08-14",
+              "endType": "No Response",
+              "endNotes": "Three follow-ups unanswered"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0009",
+      "num": 9,
+      "company": "Beorn's Honey Farm",
+      "postedOn": "2026-09-08",
+      "appliedOn": "2026-09-12",
+      "lastUpdate": "2026-09-29",
+      "status": "Recruiter Screen",
+      "interest": "Moderate",
+      "awaiting": "2026-10-05",
+      "appliedVia": "Referral",
+      "roleTitle": "QA Analyst, Apiary Systems",
+      "companyType": "Small Business",
+      "industry": "Agriculture",
+      "roleType": "Part-time",
+      "workSetting": "On-Site",
+      "postedRange": {
+        "min": 45000,
+        "max": 55000
+      },
+      "localRange": {
+        "min": null,
+        "max": null
+      },
+      "myRange": {
+        "min": 52000,
+        "max": 58000
+      },
+      "jobLink": "https://beornshoney.example.com/jobs/qa-analyst",
+      "companyWebsite": "https://beornshoney.example.com",
+      "systemOfRecord": "Email",
+      "rounds": [
+        {
+          "id": "lotr0009r1",
+          "type": "Screen",
+          "date": "2026-10-05",
+          "time": "11:00",
+          "status": "Scheduled",
+          "end": "Pending",
+          "notes": "Arrive in pairs, not all at once",
+          "people": [
+            {
+              "id": "lotr0009p1",
+              "firstContact": "2026-09-26",
+              "contactType": "Referral",
+              "name": "Beorn",
+              "role": "Owner",
+              "email": "beorn@beornshoney.example.com",
+              "phone": "",
+              "result": "",
+              "note": "Referred by Gandalf; does not like surprise visitors",
+              "endDate": "",
+              "endType": "Pending",
+              "endNotes": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0010",
+      "num": 10,
+      "company": "Lake-town Trading Co.",
+      "postedOn": "2026-06-10",
+      "appliedOn": "2026-06-14",
+      "lastUpdate": "2026-07-20",
+      "status": "Closed",
+      "interest": "Moderate",
+      "awaiting": "",
+      "appliedVia": "Indeed",
+      "roleTitle": "Test Engineer, Barrel Logistics",
+      "companyType": "Private Company",
+      "industry": "Import/Export",
+      "roleType": "Full-time",
+      "workSetting": "On-Site",
+      "postedRange": {
+        "min": 95000,
+        "max": 115000
+      },
+      "localRange": {
+        "min": 92000,
+        "max": 110000
+      },
+      "myRange": {
+        "min": 105000,
+        "max": 115000
+      },
+      "jobLink": "https://laketown.example.com/careers/barrel-logistics-test",
+      "companyWebsite": "https://laketown.example.com",
+      "systemOfRecord": "Indeed",
+      "rounds": [
+        {
+          "id": "lotr0010r1",
+          "type": "Screen",
+          "date": "2026-06-24",
+          "time": "10:30",
+          "status": "Cancelled",
+          "end": "Expired",
+          "notes": "Posting pulled after the dragon incident",
+          "people": [
+            {
+              "id": "lotr0010p1",
+              "firstContact": "2026-06-18",
+              "contactType": "Email",
+              "name": "Bard the Bowman",
+              "role": "Head of Operations",
+              "email": "bard@laketown.example.com",
+              "phone": "",
+              "result": "",
+              "note": "Very good aim on estimates",
+              "endDate": "2026-07-20",
+              "endType": "Expired",
+              "endNotes": "Role closed while the town is rebuilt"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0011",
+      "num": 11,
+      "company": "Mirkwood Realm",
+      "postedOn": "2026-08-01",
+      "appliedOn": "2026-08-03",
+      "lastUpdate": "2026-09-30",
+      "status": "Final",
+      "interest": "High",
+      "awaiting": "2026-10-08",
+      "appliedVia": "Recruiter",
+      "roleTitle": "Staff SDET, Canopy Infrastructure",
+      "companyType": "Government",
+      "industry": "Forestry",
+      "roleType": "Full-time",
+      "workSetting": "On-Site",
+      "postedRange": {
+        "min": 170000,
+        "max": 195000
+      },
+      "localRange": {
+        "min": 160000,
+        "max": 185000
+      },
+      "myRange": {
+        "min": 185000,
+        "max": 200000
+      },
+      "jobLink": "https://mirkwood.example.com/realm/careers/staff-sdet",
+      "companyWebsite": "https://mirkwood.example.com",
+      "systemOfRecord": "Workday",
+      "rounds": [
+        {
+          "id": "lotr0011r1",
+          "type": "Screen",
+          "date": "2026-08-12",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0011p1",
+              "firstContact": "2026-08-05",
+              "contactType": "Email",
+              "name": "Galion",
+              "role": "Talent Coordinator",
+              "email": "galion@mirkwood.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Fond of the wine cellar; relaxed screen",
+              "endDate": "2026-08-12",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0011r2",
+          "type": "Interview 1",
+          "date": "2026-08-26",
+          "time": "13:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "Live coding: test plan for the spider-web cache",
+          "people": [
+            {
+              "id": "lotr0011p2",
+              "firstContact": "2026-08-14",
+              "contactType": "Video",
+              "name": "Legolas",
+              "role": "Engineering Manager",
+              "email": "legolas@mirkwood.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Spots bugs from very far off",
+              "endDate": "2026-08-26",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0011r3",
+          "type": "Interview 2",
+          "date": "2026-09-15",
+          "time": "14:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "System design — do not stray from the path",
+          "people": [
+            {
+              "id": "lotr0011p3",
+              "firstContact": "2026-08-28",
+              "contactType": "Video",
+              "name": "Legolas",
+              "role": "Engineering Manager",
+              "email": "legolas@mirkwood.example.com",
+              "phone": "",
+              "result": "Advanced to final",
+              "note": "",
+              "endDate": "2026-09-15",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0011r4",
+          "type": "Final",
+          "date": "2026-10-08",
+          "time": "10:00",
+          "status": "Scheduled",
+          "end": "Pending",
+          "notes": "Onsite in the Elvenking's halls — bring no Dwarves",
+          "people": [
+            {
+              "id": "lotr0011p4",
+              "firstContact": "2026-09-30",
+              "contactType": "In-person",
+              "name": "Thranduil",
+              "role": "VP Engineering",
+              "email": "thranduil@mirkwood.example.com",
+              "phone": "",
+              "result": "",
+              "note": "",
+              "endDate": "",
+              "endType": "Pending",
+              "endNotes": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0012",
+      "num": 12,
+      "company": "Riders of the Mark",
+      "postedOn": "2026-07-20",
+      "appliedOn": "2026-07-21",
+      "lastUpdate": "2026-09-30",
+      "status": "Negotiating",
+      "interest": "High",
+      "awaiting": "2026-10-02",
+      "appliedVia": "LinkedIn",
+      "roleTitle": "Director of Test Engineering",
+      "companyType": "Public Company",
+      "industry": "Equestrian Logistics",
+      "roleType": "Full-time",
+      "workSetting": "Hybrid",
+      "postedRange": {
+        "min": 210000,
+        "max": 240000
+      },
+      "localRange": {
+        "min": 200000,
+        "max": 228000
+      },
+      "myRange": {
+        "min": 235000,
+        "max": 255000
+      },
+      "jobLink": "https://rohan.example.com/careers/director-test-engineering",
+      "companyWebsite": "https://rohan.example.com",
+      "systemOfRecord": "Greenhouse",
+      "rounds": [
+        {
+          "id": "lotr0012r1",
+          "type": "Screen",
+          "date": "2026-07-29",
+          "time": "09:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0012p1",
+              "firstContact": "2026-07-23",
+              "contactType": "LinkedIn",
+              "name": "Éowyn",
+              "role": "People Partner",
+              "email": "eowyn@rohan.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Asked whether I lead from the front",
+              "endDate": "2026-07-29",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0012r2",
+          "type": "Interview 1",
+          "date": "2026-08-07",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0012p2",
+              "firstContact": "2026-07-30",
+              "contactType": "Video",
+              "name": "Éomer",
+              "role": "Head of Platform",
+              "email": "eomer@rohan.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "",
+              "endDate": "2026-08-07",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0012r3",
+          "type": "Interview 2",
+          "date": "2026-08-21",
+          "time": "13:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "Panel with two Marshals of the Mark",
+          "people": [
+            {
+              "id": "lotr0012p3",
+              "firstContact": "2026-08-12",
+              "contactType": "Video",
+              "name": "Elfhelm",
+              "role": "Marshal, East Engineering",
+              "email": "elfhelm@rohan.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "",
+              "endDate": "2026-08-21",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            },
+            {
+              "id": "lotr0012p4",
+              "firstContact": "2026-08-12",
+              "contactType": "Video",
+              "name": "Grimbold",
+              "role": "Marshal, West Engineering",
+              "email": "grimbold@rohan.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Deep questions on incident response",
+              "endDate": "2026-08-21",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0012r4",
+          "type": "Final",
+          "date": "2026-09-04",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "In person at the Golden Hall, Edoras",
+          "people": [
+            {
+              "id": "lotr0012p5",
+              "firstContact": "2026-08-25",
+              "contactType": "In-person",
+              "name": "Théoden",
+              "role": "CEO",
+              "email": "theoden@rohan.example.com",
+              "phone": "",
+              "result": "Offer approved",
+              "note": "Seemed ten years younger by the end",
+              "endDate": "2026-09-04",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0012r5",
+          "type": "Offer Call",
+          "date": "2026-09-22",
+          "time": "16:00",
+          "status": "Completed",
+          "end": "Offer",
+          "notes": "Offered 225k; countered at 245k",
+          "people": [
+            {
+              "id": "lotr0012p6",
+              "firstContact": "2026-09-18",
+              "contactType": "Phone",
+              "name": "Éowyn",
+              "role": "People Partner",
+              "email": "eowyn@rohan.example.com",
+              "phone": "555-0123",
+              "result": "Offer extended",
+              "note": "",
+              "endDate": "2026-09-22",
+              "endType": "Offer",
+              "endNotes": "Waiting on their answer to the counter"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0013",
+      "num": 13,
+      "company": "Isengard Industries",
+      "postedOn": "2026-06-20",
+      "appliedOn": "2026-06-22",
+      "lastUpdate": "2026-08-05",
+      "status": "Withdrawn",
+      "interest": "Low",
+      "awaiting": "",
+      "appliedVia": "Recruiter",
+      "roleTitle": "Principal Automation Architect",
+      "companyType": "Enterprise",
+      "industry": "Manufacturing",
+      "roleType": "Full-time",
+      "workSetting": "On-Site",
+      "postedRange": {
+        "min": 230000,
+        "max": 260000
+      },
+      "localRange": {
+        "min": 215000,
+        "max": 245000
+      },
+      "myRange": {
+        "min": 240000,
+        "max": 260000
+      },
+      "jobLink": "https://isengard.example.com/careers/principal-automation-architect",
+      "companyWebsite": "https://isengard.example.com",
+      "systemOfRecord": "Workday",
+      "rounds": [
+        {
+          "id": "lotr0013r1",
+          "type": "Screen",
+          "date": "2026-06-30",
+          "time": "11:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0013p1",
+              "firstContact": "2026-06-24",
+              "contactType": "Phone",
+              "name": "Gríma Wormtongue",
+              "role": "Technical Recruiter",
+              "email": "grima@isengard.example.com",
+              "phone": "555-0134",
+              "result": "Advanced",
+              "note": "Flattering. Far too flattering.",
+              "endDate": "2026-06-30",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0013r2",
+          "type": "Interview 1",
+          "date": "2026-07-14",
+          "time": "15:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "Tour of the new forges",
+          "people": [
+            {
+              "id": "lotr0013p2",
+              "firstContact": "2026-07-02",
+              "contactType": "In-person",
+              "name": "Saruman",
+              "role": "Chief Technology Officer",
+              "email": "saruman@isengard.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Wants to replace the whole forest with a test farm",
+              "endDate": "2026-07-14",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0013r3",
+          "type": "Interview 2",
+          "date": "2026-08-05",
+          "time": "10:00",
+          "status": "Cancelled",
+          "end": "Withdrawn",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0013p3",
+              "firstContact": "2026-07-20",
+              "contactType": "Email",
+              "name": "Saruman",
+              "role": "Chief Technology Officer",
+              "email": "saruman@isengard.example.com",
+              "phone": "",
+              "result": "",
+              "note": "",
+              "endDate": "2026-08-05",
+              "endType": "Withdrawn",
+              "endNotes": "Withdrew: the whole org reports up one tower"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0014",
+      "num": 14,
+      "company": "Barad-dûr Enterprises",
+      "postedOn": "2026-08-10",
+      "appliedOn": "2026-08-11",
+      "lastUpdate": "2026-08-22",
+      "status": "Rejected",
+      "interest": "Low",
+      "awaiting": "",
+      "appliedVia": "Company Site",
+      "roleTitle": "VP of Quality, Surveillance Platform",
+      "companyType": "Enterprise",
+      "industry": "Security",
+      "roleType": "Full-time",
+      "workSetting": "On-Site",
+      "postedRange": {
+        "min": 260000,
+        "max": 300000
+      },
+      "localRange": {
+        "min": null,
+        "max": null
+      },
+      "myRange": {
+        "min": 280000,
+        "max": 300000
+      },
+      "jobLink": "https://barad-dur.example.com/careers/vp-quality",
+      "companyWebsite": "https://barad-dur.example.com",
+      "systemOfRecord": "Taleo",
+      "rounds": [
+        {
+          "id": "lotr0014r1",
+          "type": "Screen",
+          "date": "2026-08-20",
+          "time": "09:00",
+          "status": "Completed",
+          "end": "Rejected",
+          "notes": "Interviewer kept one eye on me the whole time",
+          "people": [
+            {
+              "id": "lotr0014p1",
+              "firstContact": "2026-08-14",
+              "contactType": "Video",
+              "name": "The Mouth of Sauron",
+              "role": "Herald & Head of Recruiting",
+              "email": "mouth@barad-dur.example.com",
+              "phone": "",
+              "result": "",
+              "note": "",
+              "endDate": "2026-08-22",
+              "endType": "Rejected",
+              "endNotes": "Rejected: insufficient commitment to the One Platform"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0015",
+      "num": 15,
+      "company": "Shire Post Office",
+      "postedOn": "2026-06-01",
+      "appliedOn": "2026-06-02",
+      "lastUpdate": "2026-09-01",
+      "status": "Accepted",
+      "interest": "High",
+      "awaiting": "",
+      "appliedVia": "Company Site",
+      "roleTitle": "Junior QA Tester, Quick Post",
+      "companyType": "Government",
+      "industry": "Postal Services",
+      "roleType": "Full-time",
+      "workSetting": "On-Site",
+      "postedRange": {
+        "min": 62000,
+        "max": 72000
+      },
+      "localRange": {
+        "min": 60000,
+        "max": 70000
+      },
+      "myRange": {
+        "min": 68000,
+        "max": 72000
+      },
+      "jobLink": "https://shirepost.example.com/careers/junior-qa",
+      "companyWebsite": "https://shirepost.example.com",
+      "systemOfRecord": "Company Portal",
+      "rounds": [
+        {
+          "id": "lotr0015r1",
+          "type": "Screen",
+          "date": "2026-06-10",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0015p1",
+              "firstContact": "2026-06-05",
+              "contactType": "Phone",
+              "name": "Rosie Cotton",
+              "role": "HR Generalist",
+              "email": "rosie@shirepost.example.com",
+              "phone": "555-0142",
+              "result": "Advanced",
+              "note": "",
+              "endDate": "2026-06-10",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0015r2",
+          "type": "Interview 1",
+          "date": "2026-06-24",
+          "time": "14:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "In person at Michel Delving",
+          "people": [
+            {
+              "id": "lotr0015p2",
+              "firstContact": "2026-06-12",
+              "contactType": "In-person",
+              "name": "Will Whitfoot",
+              "role": "Mayor & Postmaster",
+              "email": "will@shirepost.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Very kind; asked about my favourite mushrooms",
+              "endDate": "2026-06-24",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0015r3",
+          "type": "Offer Call",
+          "date": "2026-08-28",
+          "time": "11:00",
+          "status": "Completed",
+          "end": "Offer",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0015p3",
+              "firstContact": "2026-08-20",
+              "contactType": "Phone",
+              "name": "Will Whitfoot",
+              "role": "Mayor & Postmaster",
+              "email": "will@shirepost.example.com",
+              "phone": "555-0143",
+              "result": "Offer accepted",
+              "note": "",
+              "endDate": "2026-09-01",
+              "endType": "Offer",
+              "endNotes": "Starts the Monday after second breakfast"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0016",
+      "num": 16,
+      "company": "Khazad-dûm Excavation",
+      "postedOn": "2026-05-18",
+      "appliedOn": "2026-05-20",
+      "lastUpdate": "2026-06-30",
+      "status": "Closed",
+      "interest": "Moderate",
+      "awaiting": "",
+      "appliedVia": "Workday",
+      "roleTitle": "Test Lead, Deep Delving",
+      "companyType": "Enterprise",
+      "industry": "Mining",
+      "roleType": "Full-time",
+      "workSetting": "On-Site",
+      "postedRange": {
+        "min": 140000,
+        "max": 160000
+      },
+      "localRange": {
+        "min": 135000,
+        "max": 150000
+      },
+      "myRange": {
+        "min": 150000,
+        "max": 160000
+      },
+      "jobLink": "https://moria.example.com/careers/test-lead-deep-delving",
+      "companyWebsite": "https://moria.example.com",
+      "systemOfRecord": "Workday",
+      "rounds": [
+        {
+          "id": "lotr0016r1",
+          "type": "Screen",
+          "date": "2026-05-28",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0016p1",
+              "firstContact": "2026-05-22",
+              "contactType": "Email",
+              "name": "Ori",
+              "role": "Recruiting Coordinator",
+              "email": "ori@moria.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Keeps meticulous records",
+              "endDate": "2026-05-28",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0016r2",
+          "type": "Interview 1",
+          "date": "2026-06-11",
+          "time": "11:00",
+          "status": "No Show",
+          "end": "No Response",
+          "notes": "Interviewer never joined; drums in the deep",
+          "people": [
+            {
+              "id": "lotr0016p2",
+              "firstContact": "2026-06-01",
+              "contactType": "Video",
+              "name": "Balin son of Fundin",
+              "role": "Hiring Manager",
+              "email": "balin@moria.example.com",
+              "phone": "",
+              "result": "",
+              "note": "",
+              "endDate": "2026-06-30",
+              "endType": "No Response",
+              "endNotes": "Req closed; the team dug too deep"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0017",
+      "num": 17,
+      "company": "Houses of Healing",
+      "postedOn": "2026-08-25",
+      "appliedOn": "2026-08-26",
+      "lastUpdate": "2026-10-01",
+      "status": "Interview",
+      "interest": "High",
+      "awaiting": "2026-10-01",
+      "appliedVia": "Referral",
+      "roleTitle": "SDET, Clinical Systems",
+      "companyType": "Nonprofit",
+      "industry": "Healthcare",
+      "roleType": "Full-time",
+      "workSetting": "Hybrid",
+      "postedRange": {
+        "min": 135000,
+        "max": 155000
+      },
+      "localRange": {
+        "min": 128000,
+        "max": 148000
+      },
+      "myRange": {
+        "min": 145000,
+        "max": 160000
+      },
+      "jobLink": "https://minastirith.example.com/healing/careers/sdet",
+      "companyWebsite": "https://minastirith.example.com/healing",
+      "systemOfRecord": "iCIMS",
+      "rounds": [
+        {
+          "id": "lotr0017r1",
+          "type": "Screen",
+          "date": "2026-09-04",
+          "time": "09:30",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0017p1",
+              "firstContact": "2026-08-28",
+              "contactType": "Phone",
+              "name": "Ioreth",
+              "role": "Recruiter",
+              "email": "ioreth@minastirith.example.com",
+              "phone": "555-0177",
+              "result": "Advanced",
+              "note": "Talks a great deal, but every detail was right",
+              "endDate": "2026-09-04",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0017r2",
+          "type": "Interview 1",
+          "date": "2026-09-18",
+          "time": "13:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0017p2",
+              "firstContact": "2026-09-08",
+              "contactType": "Video",
+              "name": "The Warden of the Houses",
+              "role": "Engineering Manager",
+              "email": "warden@minastirith.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "",
+              "endDate": "2026-09-18",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0017r3",
+          "type": "Interview 2",
+          "date": "2026-10-01",
+          "time": "10:00",
+          "status": "In Progress",
+          "end": "Pending",
+          "notes": "Pairing on the athelas lookup test suite",
+          "people": [
+            {
+              "id": "lotr0017p3",
+              "firstContact": "2026-09-22",
+              "contactType": "In-person",
+              "name": "Aragorn son of Arathorn",
+              "role": "Chief Medical Officer",
+              "email": "aragorn@minastirith.example.com",
+              "phone": "",
+              "result": "",
+              "note": "The hands of the king are the hands of a healer",
+              "endDate": "",
+              "endType": "Pending",
+              "endNotes": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0018",
+      "num": 18,
+      "company": "Grey Havens Shipwrights",
+      "postedOn": "2026-09-28",
+      "appliedOn": "",
+      "lastUpdate": "2026-09-29",
+      "status": "Ready",
+      "interest": "High",
+      "awaiting": "",
+      "appliedVia": "",
+      "roleTitle": "Release Engineer, Final Voyages",
+      "companyType": "Private Company",
+      "industry": "Shipbuilding",
+      "roleType": "Full-time",
+      "workSetting": "Remote",
+      "postedRange": {
+        "min": 150000,
+        "max": 170000
+      },
+      "localRange": {
+        "min": null,
+        "max": null
+      },
+      "myRange": {
+        "min": null,
+        "max": null
+      },
+      "jobLink": "https://greyhavens.example.com/careers/release-engineer",
+      "companyWebsite": "https://greyhavens.example.com",
+      "systemOfRecord": "",
+      "rounds": []
+    },
+    {
+      "id": "lotr0019",
+      "num": 19,
+      "company": "Bree Town Watch",
+      "postedOn": "2026-09-02",
+      "appliedOn": "2026-09-04",
+      "lastUpdate": "2026-09-04",
+      "status": "Applied - Awaiting Response",
+      "interest": "Moderate",
+      "awaiting": "2026-09-25",
+      "appliedVia": "Indeed",
+      "roleTitle": "Security Test Engineer",
+      "companyType": "Government",
+      "industry": "Public Safety",
+      "roleType": "Full-time",
+      "workSetting": "On-Site",
+      "postedRange": {
+        "min": 105000,
+        "max": 120000
+      },
+      "localRange": {
+        "min": 100000,
+        "max": 115000
+      },
+      "myRange": {
+        "min": 115000,
+        "max": 125000
+      },
+      "jobLink": "https://bree.example.com/watch/careers/security-test-engineer",
+      "companyWebsite": "https://bree.example.com",
+      "systemOfRecord": "Indeed",
+      "rounds": [
+        {
+          "id": "lotr0019r1",
+          "type": "Screen",
+          "date": "",
+          "time": "",
+          "status": "Scheduled",
+          "end": "Pending",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0019p1",
+              "firstContact": "2026-09-04",
+              "contactType": "Text",
+              "name": "Harry Goatleaf",
+              "role": "Gatekeeper & Recruiter",
+              "email": "",
+              "phone": "555-0150",
+              "result": "",
+              "note": "Only replies after dark; asks a lot of questions at the gate",
+              "endDate": "",
+              "endType": "Pending",
+              "endNotes": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0020",
+      "num": 20,
+      "company": "Toys of Dale",
+      "postedOn": "2026-09-14",
+      "appliedOn": "2026-09-16",
+      "lastUpdate": "2026-09-30",
+      "status": "Recruiter Screen",
+      "interest": "Moderate",
+      "awaiting": "2026-10-02",
+      "appliedVia": "LinkedIn",
+      "roleTitle": "Automation Engineer, Mechanical Toys",
+      "companyType": "Small Business",
+      "industry": "Consumer Goods",
+      "roleType": "Contract",
+      "workSetting": "Remote",
+      "postedRange": {
+        "min": 60,
+        "max": 80
+      },
+      "localRange": {
+        "min": null,
+        "max": null
+      },
+      "myRange": {
+        "min": 75,
+        "max": 85
+      },
+      "jobLink": "https://toysofdale.example.com/jobs/automation-engineer",
+      "companyWebsite": "https://toysofdale.example.com",
+      "systemOfRecord": "Email",
+      "rounds": [
+        {
+          "id": "lotr0020r1",
+          "type": "Screen",
+          "date": "2026-10-02",
+          "time": "09:30",
+          "status": "Scheduled",
+          "end": "Pending",
+          "notes": "Hourly contract rate, not salary",
+          "people": [
+            {
+              "id": "lotr0020p1",
+              "firstContact": "2026-09-20",
+              "contactType": "LinkedIn",
+              "name": "Bain son of Bard",
+              "role": "Founder",
+              "email": "bain@toysofdale.example.com",
+              "phone": "",
+              "result": "",
+              "note": "",
+              "endDate": "",
+              "endType": "Pending",
+              "endNotes": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0021",
+      "num": 21,
+      "company": "Rivendell Council",
+      "postedOn": "2026-07-28",
+      "appliedOn": "2026-07-29",
+      "lastUpdate": "2026-09-05",
+      "status": "Ghosted",
+      "interest": "Moderate",
+      "awaiting": "",
+      "appliedVia": "Company Site",
+      "roleTitle": "Senior Lore Archivist, QA",
+      "companyType": "Nonprofit",
+      "industry": "Government Services",
+      "roleType": "Full-time",
+      "workSetting": "Hybrid",
+      "postedRange": {
+        "min": 120000,
+        "max": 140000
+      },
+      "localRange": {
+        "min": 115000,
+        "max": 132000
+      },
+      "myRange": {
+        "min": 130000,
+        "max": 145000
+      },
+      "jobLink": "https://rivendell.example.com/council/careers/lore-archivist-qa",
+      "companyWebsite": "https://rivendell.example.com",
+      "systemOfRecord": "Company Portal",
+      "rounds": [
+        {
+          "id": "lotr0021r1",
+          "type": "Screen",
+          "date": "2026-08-08",
+          "time": "14:00",
+          "status": "Completed",
+          "end": "No Response",
+          "notes": "Screen ran four hours; time passes strangely here",
+          "people": [
+            {
+              "id": "lotr0021p1",
+              "firstContact": "2026-08-01",
+              "contactType": "Video",
+              "name": "Erestor",
+              "role": "Chief Counsellor",
+              "email": "erestor@rivendell.example.com",
+              "phone": "",
+              "result": "",
+              "note": "",
+              "endDate": "2026-09-05",
+              "endType": "No Response",
+              "endNotes": "No reply in four weeks"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0022",
+      "num": 22,
+      "company": "Fangorn Forestry Collective",
+      "postedOn": "2026-04-20",
+      "appliedOn": "2026-05-01",
+      "lastUpdate": "2026-09-29",
+      "status": "Interview",
+      "interest": "Moderate",
+      "awaiting": "2026-10-14",
+      "appliedVia": "Referral",
+      "roleTitle": "Principal Performance Test Engineer, Very Long-Running Load and Soak Testing for Ancient Distributed Root Systems",
+      "companyType": "Nonprofit",
+      "industry": "Environmental Conservation",
+      "roleType": "Full-time",
+      "workSetting": "Remote",
+      "postedRange": {
+        "min": 155000,
+        "max": 175000
+      },
+      "localRange": {
+        "min": 148000,
+        "max": 165000
+      },
+      "myRange": {
+        "min": 165000,
+        "max": 180000
+      },
+      "jobLink": "https://fangorn.example.com/careers/principal-performance-test",
+      "companyWebsite": "https://fangorn.example.com",
+      "systemOfRecord": "Greenhouse",
+      "rounds": [
+        {
+          "id": "lotr0022r1",
+          "type": "Screen",
+          "date": "2026-05-20",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "Do not be hasty",
+          "people": [
+            {
+              "id": "lotr0022p1",
+              "firstContact": "2026-05-15",
+              "contactType": "Referral",
+              "name": "Bregalad (Quickbeam)",
+              "role": "Talent Partner",
+              "email": "quickbeam@fangorn.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "The hastiest Ent — replied in only two weeks",
+              "endDate": "2026-05-20",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0022r2",
+          "type": "Interview 1",
+          "date": "2026-06-10",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0022p2",
+              "firstContact": "2026-05-25",
+              "contactType": "In-person",
+              "name": "Treebeard",
+              "role": "Hiring Manager",
+              "email": "treebeard@fangorn.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Took an hour to say good morning",
+              "endDate": "2026-06-10",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0022r3",
+          "type": "Interview 2",
+          "date": "2026-07-08",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "Soak-test design",
+          "people": [
+            {
+              "id": "lotr0022p3",
+              "firstContact": "2026-06-20",
+              "contactType": "In-person",
+              "name": "Treebeard",
+              "role": "Hiring Manager",
+              "email": "treebeard@fangorn.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "",
+              "endDate": "2026-07-08",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0022r4",
+          "type": "Interview 3",
+          "date": "2026-08-05",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0022p4",
+              "firstContact": "2026-07-15",
+              "contactType": "Video",
+              "name": "Fladrif (Skinbark)",
+              "role": "Staff Engineer",
+              "email": "skinbark@fangorn.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Still upset about the Orcs",
+              "endDate": "2026-08-05",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0022r5",
+          "type": "Interview 4",
+          "date": "2026-09-02",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0022p5",
+              "firstContact": "2026-08-12",
+              "contactType": "Video",
+              "name": "Finglas (Leaflock)",
+              "role": "Principal Engineer",
+              "email": "leaflock@fangorn.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Mostly slept through it",
+              "endDate": "2026-09-02",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0022r6",
+          "type": "Interview 5",
+          "date": "2026-10-14",
+          "time": "09:00",
+          "status": "Scheduled",
+          "end": "Pending",
+          "notes": "Entmoot: the whole team decides together, over three days",
+          "people": [
+            {
+              "id": "lotr0022p6",
+              "firstContact": "2026-09-29",
+              "contactType": "In-person",
+              "name": "Treebeard",
+              "role": "Hiring Manager",
+              "email": "treebeard@fangorn.example.com",
+              "phone": "",
+              "result": "",
+              "note": "",
+              "endDate": "",
+              "endType": "Pending",
+              "endNotes": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0023",
+      "num": 23,
+      "company": "Dol Amroth Naval Yards",
+      "postedOn": "2026-09-05",
+      "appliedOn": "2026-09-09",
+      "lastUpdate": "2026-09-27",
+      "status": "Phone Screen",
+      "interest": "Moderate",
+      "awaiting": "2026-10-07",
+      "appliedVia": "Recruiter",
+      "roleTitle": "QA Engineer, Navigation Systems",
+      "companyType": "Public Company",
+      "industry": "Maritime",
+      "roleType": "Full-time",
+      "workSetting": "Hybrid",
+      "postedRange": {
+        "min": 115000,
+        "max": 135000
+      },
+      "localRange": {
+        "min": 110000,
+        "max": 128000
+      },
+      "myRange": {
+        "min": 125000,
+        "max": 140000
+      },
+      "jobLink": "https://dolamroth.example.com/careers/qa-navigation",
+      "companyWebsite": "https://dolamroth.example.com",
+      "systemOfRecord": "SmartRecruiters",
+      "rounds": [
+        {
+          "id": "lotr0023r1",
+          "type": "Other",
+          "date": "2026-09-15",
+          "time": "16:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "Informal chat on the harbour wall",
+          "people": [
+            {
+              "id": "lotr0023p1",
+              "firstContact": "2026-09-10",
+              "contactType": "In-person",
+              "name": "Prince Imrahil",
+              "role": "VP Engineering",
+              "email": "imrahil@dolamroth.example.com",
+              "phone": "",
+              "result": "Invited to apply formally",
+              "note": "",
+              "endDate": "2026-09-15",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0023r2",
+          "type": "Screen",
+          "date": "2026-10-07",
+          "time": "13:00",
+          "status": "Scheduled",
+          "end": "Pending",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0023p2",
+              "firstContact": "2026-09-27",
+              "contactType": "Phone",
+              "name": "Prince Imrahil",
+              "role": "VP Engineering",
+              "email": "imrahil@dolamroth.example.com",
+              "phone": "555-0161",
+              "result": "",
+              "note": "",
+              "endDate": "",
+              "endType": "Pending",
+              "endNotes": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0024",
+      "num": 24,
+      "company": "Old Forest Consulting",
+      "postedOn": "2026-08-15",
+      "appliedOn": "2026-08-16",
+      "lastUpdate": "2026-09-30",
+      "status": "Offer",
+      "interest": "High",
+      "awaiting": "2026-10-04",
+      "appliedVia": "Referral",
+      "roleTitle": "Freelance Test Consultant",
+      "companyType": "Small Business",
+      "industry": "Consulting",
+      "roleType": "Contract",
+      "workSetting": "Remote",
+      "postedRange": {
+        "min": 90,
+        "max": 110
+      },
+      "localRange": {
+        "min": null,
+        "max": null
+      },
+      "myRange": {
+        "min": 100,
+        "max": 120
+      },
+      "jobLink": "https://oldforest.example.com/work-with-tom",
+      "companyWebsite": "https://oldforest.example.com",
+      "systemOfRecord": "Email",
+      "rounds": [
+        {
+          "id": "lotr0024r1",
+          "type": "Screen",
+          "date": "2026-08-20",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "The whole screen was sung",
+          "people": [
+            {
+              "id": "lotr0024p1",
+              "firstContact": "2026-08-17",
+              "contactType": "Video",
+              "name": "Goldberry",
+              "role": "Operations Lead",
+              "email": "goldberry@oldforest.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Calming presence; the River-daughter",
+              "endDate": "2026-08-20",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0024r2",
+          "type": "Interview 1",
+          "date": "2026-09-03",
+          "time": "11:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0024p2",
+              "firstContact": "2026-08-24",
+              "contactType": "In-person",
+              "name": "Tom Bombadil",
+              "role": "Founder",
+              "email": "tom@oldforest.example.com",
+              "phone": "",
+              "result": "Offer coming",
+              "note": "The Ring had no power over his test suite",
+              "endDate": "2026-09-03",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0024r3",
+          "type": "Offer Call",
+          "date": "2026-10-04",
+          "time": "11:00",
+          "status": "Scheduled",
+          "end": "Pending",
+          "notes": "Offer letter arrived in verse",
+          "people": [
+            {
+              "id": "lotr0024p3",
+              "firstContact": "2026-09-30",
+              "contactType": "Phone",
+              "name": "Tom Bombadil",
+              "role": "Founder",
+              "email": "tom@oldforest.example.com",
+              "phone": "555-0199",
+              "result": "",
+              "note": "",
+              "endDate": "",
+              "endType": "Pending",
+              "endNotes": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lotr0025",
+      "num": 25,
+      "company": "Hornburg Defense Works",
+      "postedOn": "2026-08-05",
+      "appliedOn": "2026-08-09",
+      "lastUpdate": "2026-09-26",
+      "status": "Final",
+      "interest": "Moderate",
+      "awaiting": "2026-10-09",
+      "appliedVia": "Company Site",
+      "roleTitle": "Resilience Test Engineer, Perimeter Systems",
+      "companyType": "Government",
+      "industry": "Defense",
+      "roleType": "Full-time",
+      "workSetting": "On-Site",
+      "postedRange": {
+        "min": 130000,
+        "max": 150000
+      },
+      "localRange": {
+        "min": 125000,
+        "max": 142000
+      },
+      "myRange": {
+        "min": 140000,
+        "max": 155000
+      },
+      "jobLink": "https://hornburg.example.com/careers/resilience-test-engineer",
+      "companyWebsite": "https://hornburg.example.com",
+      "systemOfRecord": "Company Portal",
+      "rounds": [
+        {
+          "id": "lotr0025r1",
+          "type": "Screen",
+          "date": "2026-08-18",
+          "time": "10:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0025p1",
+              "firstContact": "2026-08-12",
+              "contactType": "Phone",
+              "name": "Gamling",
+              "role": "Recruiting Lead",
+              "email": "gamling@hornburg.example.com",
+              "phone": "555-0188",
+              "result": "Advanced",
+              "note": "",
+              "endDate": "2026-08-18",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0025r2",
+          "type": "Take-home",
+          "date": "2026-08-28",
+          "time": "",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "Chaos test: hold the Deeping Wall through one night",
+          "people": [
+            {
+              "id": "lotr0025p2",
+              "firstContact": "2026-08-19",
+              "contactType": "Email",
+              "name": "Gamling",
+              "role": "Recruiting Lead",
+              "email": "gamling@hornburg.example.com",
+              "phone": "",
+              "result": "Passed",
+              "note": "",
+              "endDate": "2026-08-28",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0025r3",
+          "type": "Interview 1",
+          "date": "2026-09-10",
+          "time": "14:00",
+          "status": "Completed",
+          "end": "Moved Forward",
+          "notes": "",
+          "people": [
+            {
+              "id": "lotr0025p3",
+              "firstContact": "2026-09-01",
+              "contactType": "Video",
+              "name": "Háma",
+              "role": "Captain of the Guard",
+              "email": "hama@hornburg.example.com",
+              "phone": "",
+              "result": "Advanced",
+              "note": "Strict about checking weapons at the door",
+              "endDate": "2026-09-10",
+              "endType": "Moved Forward",
+              "endNotes": ""
+            }
+          ]
+        },
+        {
+          "id": "lotr0025r4",
+          "type": "Final",
+          "date": "2026-10-09",
+          "time": "09:00",
+          "status": "Scheduled",
+          "end": "Pending",
+          "notes": "Onsite; look to the east at dawn",
+          "people": [
+            {
+              "id": "lotr0025p4",
+              "firstContact": "2026-09-26",
+              "contactType": "In-person",
+              "name": "Erkenbrand",
+              "role": "Lord of the Westfold",
+              "email": "erkenbrand@hornburg.example.com",
+              "phone": "",
+              "result": "",
+              "note": "",
+              "endDate": "",
+              "endType": "Pending",
+              "endNotes": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
