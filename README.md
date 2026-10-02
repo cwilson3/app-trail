@@ -32,14 +32,46 @@
 
 ## About
 
-As my brother said "So you made a clickable nerd web page thing instead of a spreadsheet to track the job applications?" Yes. Yes I did. AppTrail is a light weight single-page job application tracker. One HTML file, no build step. Your data lives in a folder of its own, outside the repository (see [Where your data lives](#where-your-data-lives)).
+As my brother said "So you made a clickable nerd web page thing instead of a spreadsheet to track the job applications?" Yes. Yes I did. AppTrail is a lightweight single-page job application tracker. One HTML file, no build step, and no dependencies outside of testing tools. Your data lives in a folder of its own, outside the repository (see [Where your data lives](#where-your-data-lives)).
 
 ## Getting Started
 
-**With the local backend (recommended)** — every edit is written straight to your `data.json`:
+### Prerequisites
+
+Install Node.js 24 from [nodejs.org](https://nodejs.org/en/) (the version `package.json` pins under `engines`).
+
+### Clone Repo
+
+Clone the repo into `~/src` using https or ssh, then change into it:
 
 ```sh
-node src/server.js          # http://localhost:8787
+git clone https://github.com/cwilson3/app-trail.git ~/src/app-trail
+cd ~/src/app-trail
+```
+
+### Install Dependencies
+
+The app itself has no dependencies and no build step, so there is nothing to
+install to run it. The packages in `package.json` are only needed for the unit
+tests and type checks (see [Testing](#testing)):
+
+```sh
+npm install
+```
+
+### Start the App
+
+Start the local backend (recommended) — every edit is written straight to your `data.json`:
+
+```sh
+npm start
+```
+
+Then open [http://localhost:8787](http://localhost:8787) in a browser. To use a
+different port, pass it after `--`:
+
+```sh
+npm start -- 9000
 ```
 
 `server.js` is plain Node (no packages to install) and binds to `127.0.0.1` only.
@@ -48,20 +80,48 @@ accepts `PUT /data/data.json` from the page. Saves are atomic and the previous
 file is kept as `data.json.bak`. The data folder is created on first run if it
 isn't there, and the server prints its path when it starts.
 
-**On test data** — to try the app on one of the Playwright suite's datasets
-without touching your own tracker:
+### Optional: Choose the Note
+
+You can set a note in your Apple Notes app to update with a table containing the current table from the Tracker section of the page. To pick which Apple Note the **Note** button writes to, copy the example config
+into your data folder and edit its `title` (macOS path shown — see
+[Where your data lives](#where-your-data-lives) for other systems):
 
 ```sh
-npm run demo:fellowship     # 25 applications, http://localhost:8789
+cp config.example.json ~/Library/Application\ Support/app-trail/config.json
+```
+
+### Try It on Test Data
+
+To try the app on one of the Playwright suite's datasets without touching your
+own tracker, run one of these and open [http://localhost:8789](http://localhost:8789):
+
+```sh
+npm run demo:fellowship     # 25 applications
 npm run demo:homestar       # 13 applications
 ```
 
 Each run starts from a fresh copy in `.demo-data/<name>/`, so edits are thrown away next time.
 
-**Without the server** — open `src/index.html` directly in a browser. It still works fully;
-edits are kept in that browser's local storage, and in Chrome/Edge/Opera **Actions → Open**
-links the page to a JSON file on disk so **Save** writes back to it. **Export**
-always writes a JSON copy you can back up or move to another machine.
+### Without the Server
+
+Open `src/index.html` directly in a browser:
+
+```sh
+open src/index.html         # macOS; on Linux use xdg-open
+```
+
+It still works fully; edits are kept in that browser's local storage, and in
+Chrome/Edge/Opera **Actions → Open** links the page to a JSON file on disk so
+**Save** writes back to it. **Export** always writes a JSON copy you can back up
+or move to another machine.
+
+### Verify Setup
+
+Confirm everything is in place by running the unit tests:
+
+```sh
+npm test
+```
 
 ## Where your data lives
 
