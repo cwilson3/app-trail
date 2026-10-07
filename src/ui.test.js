@@ -82,6 +82,119 @@ describe("the Settings panel", () => {
   });
 });
 
+/* Handed out from inside the app's IIFE. The card is opened directly, so the
+   list under test does not depend on which rows the table is showing - the
+   default filter hides the finished ones. `state` is reassigned during boot,
+   so it crosses as an accessor. */
+const CARD_EXPORTS = `
+window.__app = {
+  get state(){ return state; }, set state(v){ state = v; },
+  normalize, renderTable, openDetail
+};
+`;
+
+describe("the Other Roles list on the detail card", () => {
+  /* Rows go through the app's own normalize(), so a fixture cannot drift into
+     a shape the app would never hold, and the card is opened on the row with
+     the given role title. */
+  async function openCard(rows, roleTitle){
+    const app = await loadApp(null, { exports: CARD_EXPORTS });
+    app.state = app.normalize({ applications: rows });
+    app.renderTable();
+    app.openDetail(app.state.applications.find(a => a.roleTitle === roleTitle));
+    return app;
+  }
+
+  const headings = () => [...document.querySelectorAll("#dOtherRoles .ocell.head")].map(c => c.textContent);
+  const note = () => {
+    const p = document.querySelector("#dOtherRoles .none");
+    return p && p.textContent;
+  };
+  /* The list is one grid of cells, as wide as its header row, the rows under
+     the header following it in order. */
+  function listed(){
+    const cells = [...document.querySelectorAll("#dOtherRoles .ocell")];
+    const width = headings().length;
+    const rows = [];
+    for (let i = width; width && i < cells.length; i += width) rows.push(cells.slice(i, i + width).map(c => c.textContent));
+    return rows;
+  }
+
+  const ACME_AND_GLOBEX = [
+    { id:"a1", company:"Acme",   roleTitle:"Staff Engineer",     status:"Interview", lastUpdate:"2026-09-01" },
+    { id:"a2", company:"Acme",   roleTitle:"Developer Advocate", status:"Ready",     lastUpdate:"2026-08-15" },
+    { id:"a3", company:"Acme",   roleTitle:"Platform Lead",      status:"Offer",     lastUpdate:"2026-10-02" },
+    { id:"a4", company:"Globex", roleTitle:"Designer",           status:"Phone Screen", lastUpdate:"2026-08-11" }
+  ];
+
+  it("heads its columns with the role title, the status and the last update", async () => {
+    await openCard(ACME_AND_GLOBEX, "Staff Engineer");
+
+    expect(headings()).toEqual(["Role Title", "Status", "Last Update"]);
+  });
+
+  it("lists only the company's other roles, newest update first", async () => {
+    await openCard(ACME_AND_GLOBEX, "Staff Engineer");
+
+    expect(listed()).toEqual([
+      ["Platform Lead", "Offer", "2026-10-02"],
+      ["Developer Advocate", "Ready", "2026-08-15"]
+    ]);
+  });
+
+  it("counts company names that differ only in case or spacing as one company", async () => {
+    await openCard([
+      { id:"a1", company:"Acme",   roleTitle:"Staff Engineer",     status:"Interview", lastUpdate:"2026-09-01" },
+      { id:"a2", company:" acme ", roleTitle:"Developer Advocate", status:"Ready",     lastUpdate:"2026-08-15" },
+      { id:"a3", company:"ACME",   roleTitle:"Platform Lead",      status:"Offer",     lastUpdate:"2026-10-02" }
+    ], "Staff Engineer");
+
+    expect(listed().map(r => r[0])).toEqual(["Platform Lead", "Developer Advocate"]);
+  });
+
+  it("lists a role the table's filter is hiding", async () => {
+    await openCard([
+      { id:"a1", company:"Acme", roleTitle:"Staff Engineer", status:"Interview", lastUpdate:"2026-09-01" },
+      { id:"a2", company:"Acme", roleTitle:"Platform Lead",  status:"Rejected",  lastUpdate:"2026-10-02" }
+    ], "Staff Engineer");
+
+    expect([listed(), [...document.querySelectorAll("#tbody tr")].length])
+      .toEqual([[["Platform Lead", "Rejected", "2026-10-02"]], 1]);
+  });
+
+  it("shows a dash where a listed role has no title and no last update", async () => {
+    await openCard([
+      { id:"a1", company:"Acme", roleTitle:"Staff Engineer", status:"Interview", lastUpdate:"2026-09-01" },
+      { id:"a2", company:"Acme", roleTitle:"",               status:"Ready",     lastUpdate:"" }
+    ], "Staff Engineer");
+
+    expect(listed()).toEqual([["\u2014", "Ready", "\u2014"]]);
+  });
+
+  it("says there are none when the company holds only this role", async () => {
+    await openCard(ACME_AND_GLOBEX, "Designer");
+
+    expect([note(), listed()]).toEqual(["No other roles at Globex.", []]);
+  });
+
+  it("asks for a company name when the card has none", async () => {
+    await openCard([{ id:"a1", company:"", roleTitle:"Staff Engineer", status:"Interview", lastUpdate:"2026-09-01" }],
+      "Staff Engineer");
+
+    expect(note()).toBe("Name the company to see its other roles.");
+  });
+
+  it("follows an edit to Company Name", async () => {
+    await openCard(ACME_AND_GLOBEX, "Staff Engineer");
+
+    const input = $('#overlay [data-bind="company"]');
+    input.value = "Globex";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+
+    expect(listed()).toEqual([["Designer", "Phone Screen", "2026-08-11"]]);
+  });
+});
+
 describe("the table behind the detail card", () => {
   const companies = () => [...document.querySelectorAll("#tbody td.company")].map(td => td.textContent);
 

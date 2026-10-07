@@ -434,7 +434,10 @@ is recognisable against the browser's own chrome.
   **System of Record** (where the application lives — Workday, Greenhouse, the company
   portal, …).
 - **Company Details** — Company Name, Role Title, Company Type, Industry, Role Type,
-  **Work Setting** (Remote, Hybrid or On-Site) and **Company Website**.
+  **Work Setting** (Remote, Hybrid or On-Site) and **Company Website**. Under them,
+  **Other Roles** lists every other application at the same company — role title, status
+  and last update — newest update first. It shows them whatever the table's filter is
+  hiding, and names that differ only in case or spacing count as one company.
 - **Salary** — Posted Role Range, **Adjusted for local market** (the posted range
   restated for where you live) and My Range Given. Each is two dollar fields; type `125k` or `125000` and
   they reformat to `$125,000`, and the table shows a pair as `$125,000-$145,000`.
