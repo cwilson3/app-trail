@@ -544,9 +544,11 @@
   /* ---------- table ---------- */
   .tablewrap{border:1px solid var(--line);border-radius:12px;overflow:auto;box-shadow:var(--shadow);background:var(--surface)}
   table{border-collapse:separate;border-spacing:0;width:100%;min-width:1260px}
-  /* the small uppercase label: table and flow headings, field labels, and the
-     names over each filter group */
-  thead th, .f label, .minilabel, .fgroup-head .name, .flowtable th{
+  /* the small uppercase label: table and flow headings, field labels, the
+     names over each filter group, and a card sub-section with its own header
+     row */
+  thead th, .f label, .minilabel, .fgroup-head .name, .flowtable th,
+  .subsec h4, .ocell.head{
     font-size:10.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);
   }
   thead th{
@@ -624,6 +626,20 @@
   input[type=date].inp,
   input[type=time].inp{font-variant-numeric:tabular-nums}
   textarea.inp{height:auto;min-height:74px;padding:9px 11px;line-height:1.5;resize:vertical}
+
+  /* other roles - a sub-section of Company Details. The list is a single grid
+     so the three columns line up between the header row and the rows under
+     it, however wide a role title or a status pill is. */
+  .subsec{margin:22px 0 10px}
+  .subsec h4{margin:0}
+  .oroles{display:grid;grid-template-columns:1fr auto auto;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  .ocell{display:flex;align-items:center;min-width:0;padding:10px 12px;border-top:1px solid var(--line-2);font-size:13px;color:var(--ink-2)}
+  .ocell.head{border-top:0;padding:8px 12px;background:var(--head)}
+  .ocell.role{color:var(--ink);font-weight:550}
+  .ocell.date{font-variant-numeric:tabular-nums;white-space:nowrap}
+  /* a long role title is cut with an ellipsis rather than widening the card */
+  .oclip{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .oblank{color:var(--faint)}
 
   /* job description */
   .jd-btns{display:flex;gap:6px;align-items:center}
@@ -857,6 +873,7 @@
     position:fixed;top:0;bottom:0;left:0;z-index:20;width:76px;
     display:flex;flex-direction:column;gap:4px;padding:14px 8px;
     background:var(--surface);border-right:1px solid var(--line);
+    transition:transform .18s,visibility .18s;
   }
   .navitem{
     display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 2px;
@@ -870,6 +887,28 @@
   body[data-route="flow"]    .navitem[data-route="flow"],
   body[data-route="tracker"] .navitem[data-route="tracker"],
   body[data-route="builder"] .navitem[data-route="builder"]{background:var(--accent);color:var(--accent-ink)}
+  /* a half-tab clipped to the outer edge of the bar, low down - it rides out
+     with the bar and is the one piece left on screen, so it carries the bar
+     back in. Rounded on the free side only, so it reads as part of the edge. */
+  .navtab{
+    position:absolute;right:-18px;bottom:28px;
+    width:18px;height:38px;padding:0;
+    display:flex;align-items:center;justify-content:center;
+    border:1px solid var(--line);border-left:0;border-radius:0 9px 9px 0;
+    background:var(--surface);color:var(--muted);cursor:pointer;
+    box-shadow:var(--shadow);
+    transition:visibility .18s,background .12s,color .12s;
+  }
+  .navtab svg{width:13px;height:13px;transition:transform .18s}
+  .navtab:hover{background:var(--btn-hover);color:var(--ink)}
+  .navtab:focus-visible{outline:2px solid var(--border-strong);outline-offset:1px}
+  /* the bar is translated out rather than hidden, so the slide is animatable;
+     visibility takes the off-screen links out of the tab order with it, while
+     the tab - carried to the screen edge by the same translate - stays put */
+  body.nav-collapsed{padding-left:0}
+  body.nav-collapsed .sidenav{transform:translateX(-76px);visibility:hidden}
+  body.nav-collapsed .navtab{visibility:visible}
+  body.nav-collapsed .navtab svg{transform:rotate(180deg)}
   body:not([data-route="flow"])    #viewFlow,
   body:not([data-route="tracker"]) #viewTracker,
   body:not([data-route="builder"]) #viewBuilder{display:none}
@@ -912,6 +951,9 @@
     .sidenav{bottom:auto;right:0;width:auto;height:58px;flex-direction:row;padding:6px 10px;border-right:0;border-bottom:1px solid var(--line)}
     .navitem{flex-direction:row;gap:7px;padding:0 12px;font-size:12.5px}
     .navitem svg{width:17px;height:17px}
+    .navtab{display:none}
+    body.nav-collapsed{padding-left:0;padding-top:58px}
+    body.nav-collapsed .sidenav{transform:none;visibility:visible}
     .wrap{padding:22px 16px 60px}
     .grid{grid-template-columns:repeat(2,1fr)}
     .card-body{max-height:none}
@@ -986,6 +1028,7 @@ function setChevron(){
   setChevron();
   var w=localStorage.getItem("at-width");
   if(w==="margins"||w==="full") document.body.classList.add("width-"+w);
+  if(localStorage.getItem("at-nav")==="collapsed") document.body.classList.add("nav-collapsed");
 }catch(e){}})();
 /* the view comes from the URL hash - #flow, #builder - and is the tracker otherwise */
 var ROUTES = ["tracker","flow","builder"], DEFAULT_ROUTE = "tracker";
@@ -995,10 +1038,10 @@ function routeFromHash(){
 }
 document.body.dataset.route = routeFromHash();</script>
 
-<nav class="sidenav" aria-label="Sections">
+<nav class="sidenav" id="sidenav" aria-label="Sections">
   <a class="navitem" href="#tracker" data-route="tracker">
     <i data-icon="tracker"></i>
-    Tracker
+    Trail
   </a>
   <a class="navitem" href="#flow" data-route="flow">
     <i data-icon="flow"></i>
@@ -1008,6 +1051,10 @@ document.body.dataset.route = routeFromHash();</script>
     <i data-icon="builder"></i>
     Builder
   </a>
+  <button class="navtab" id="navToggle" type="button"
+          aria-controls="sidenav" aria-expanded="true" aria-label="Collapse sidebar">
+    <i data-icon="chevronLeft"></i>
+  </button>
 </nav>
 
 <div class="wrap" id="viewFlow">
@@ -1032,7 +1079,7 @@ document.body.dataset.route = routeFromHash();</script>
   </section>
   <div class="empty" id="flowEmpty" hidden>
     <h3>No applications yet</h3>
-    <p>The pipeline fills in as you add applications in the <a href="#tracker">Tracker</a>.</p>
+    <p>The pipeline fills in as you add applications in the <a href="#tracker">Trail</a>.</p>
   </div>
 </div>
 
@@ -1061,7 +1108,7 @@ document.body.dataset.route = routeFromHash();</script>
         <i data-icon="tracker"></i>
       </div>
       <div>
-        <h1>Tracker</h1>
+        <h1>Trail</h1>
         <p class="sub" id="sub">Loading…</p>
       </div>
     </div>
@@ -1290,10 +1337,11 @@ const APP_FIELDS = [
   { key:"myRange",        label:"My Range Given",            type:"range",  section:"salary", wide:true },
   { key:"lastUpdate",     label:"Last Update",               type:"date",   initial: () => todayISO() }   // set by every edit
 ];
-/* The card's sections, in order, and the fields each holds. */
+/* The card's sections, in order, and the fields each holds. `sub` is markup
+   placed under the section's grid - a host a render function fills. */
 const CARD_SECTIONS = [
   { id:"application", title:"Application Details" },
-  { id:"company",     title:"Company Details" },
+  { id:"company",     title:"Company Details", sub:'<div id="dOtherRoles"></div>' },
   { id:"salary",      title:"Salary" }
 ];
 
@@ -1379,6 +1427,15 @@ function withColumnDefaults(c){
    drift apart. */
 const NOTE_COLUMN_KEYS = ["company", "roleTitle", "status", "interest", "_round", "lastUpdate"];
 
+/* The Other Roles sub-section of the detail card shows these columns, in this
+   order, taken from COLUMNS for the same reason: one label and one status
+   pill, wherever they are drawn. `cls` styles the cell. */
+const OTHER_ROLE_COLUMNS = [
+  { key:"roleTitle",  cls:"role" },
+  { key:"status",     cls:"" },
+  { key:"lastUpdate", cls:"date" }
+].map(c => Object.assign({}, COLUMNS.find(x => x.key === c.key), c));
+
 /* Which note to write. config.json is the same file the server reads; this copy
    only names the note in the toast and in the no-server fallback. */
 const noteConfig = { title: "JS-2026", folder: "" };
@@ -1389,6 +1446,7 @@ const stroked = (paths, width) => '<svg viewBox="0 0 24 24" fill="none" stroke="
   '" stroke-linecap="round" stroke-linejoin="round">' + paths + "</svg>";
 const ICONS = {
   chevron: stroked('<path d="m6 9 6 6 6-6"/>', 2),
+  chevronLeft: stroked('<path d="m15 18-6-6 6-6"/>', 2),
   layers: stroked('<path d="m12 2 9 5-9 5-9-5 9-5z"/><path d="m3 12 9 5 9-5M3 17l9 5 9-5"/>'),
   users: stroked('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>'),
   trash: stroked('<path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>'),
@@ -2329,7 +2387,8 @@ function openDetail(app){
           '<div class="sec"><h3>' + esc(sec.title) + "</h3></div>" +
           '<div class="grid">' +
             APP_FIELDS.filter(f => f.section === sec.id).map(f => gridField(f, app[f.key])).join("") +
-          "</div>"
+          "</div>" +
+          (sec.sub || "")
         ).join('<hr class="rule">') +
         '<hr class="rule">' +
         '<div class="sec">' +
@@ -2355,6 +2414,7 @@ function openDetail(app){
     "</div>");
 
   renderHeader();
+  renderOtherRoles();
   renderRounds();
 
   $("#dClose").onclick = closeDetail;
@@ -2379,6 +2439,42 @@ function renderHeader(){
   const rounds = (app.rounds || []).length;
   const people = (app.rounds || []).reduce((n,r) => n + (r.people || []).length, 0);
   $("#dNote").textContent = plural(rounds, "round") + " · " + plural(people, "contact");
+}
+
+/* ---- Other Roles: the rest of the applications at this company ----
+
+   Company Name is free text, so the names are matched on their trimmed,
+   case-folded text: a row typed "acme " belongs under Acme rather than
+   reading as a second company. The list ignores the table's filter - it is
+   about the company, not the view - and shows the newest update first. */
+const companyKey = name => String(name == null ? "" : name).trim().toLowerCase();
+
+function otherRoles(app){
+  const key = companyKey(app.company);
+  if (!key) return [];
+  return state.applications
+    .filter(a => a.id !== app.id && companyKey(a.company) === key)
+    .sort((a, b) => byText(a.lastUpdate || "", b.lastUpdate || "", -1));
+}
+
+function renderOtherRoles(){
+  const app = current, name = String(app.company == null ? "" : app.company).trim();
+  const others = otherRoles(app);
+  const cell = (cls, inner) => '<span class="ocell' + (cls ? " " + cls : "") + '">' + inner + "</span>";
+  const clip = inner => '<span class="oclip">' + inner + "</span>";
+
+  $("#dOtherRoles").innerHTML =
+    '<div class="subsec"><h4>Other Roles</h4></div>' +
+    (others.length
+      ? '<div class="oroles">' +
+          OTHER_ROLE_COLUMNS.map(c => cell("head", esc(c.label))).join("") +
+          others.map(o => OTHER_ROLE_COLUMNS.map(c =>
+            cell(c.cls, clip(c.render(o) || '<span class="oblank">\u2014</span>')))
+            .join("")).join("") +
+        "</div>"
+      : '<p class="none">' + (name
+          ? "No other roles at " + esc(name) + "."
+          : "Name the company to see its other roles.") + "</p>");
 }
 
 function renderRounds(){
@@ -2700,6 +2796,7 @@ function onEdit(e){
   if (LINK_FIELDS.includes(el.dataset.bind)) syncLinkButtons(el, val);
   touch(current);
   renderHeader();
+  if (el.dataset.bind === "company" && el.dataset.r === undefined) renderOtherRoles();
   scheduleTableRender();
 }
 
@@ -3057,7 +3154,7 @@ $("#btnDocs").onclick = () => {
         "<h3>The detail card</h3>" +
         "<ul>" +
           "<li><b>Application Details</b> &mdash; dates, status, how you applied, the job link and the system of record.</li>" +
-          "<li><b>Company Details</b> &mdash; the company, the role, and the company website.</li>" +
+          "<li><b>Company Details</b> &mdash; the company, the role, and the company website. <b>Other Roles</b> under them lists every other application at the same company &mdash; role title, status and last update &mdash; newest update first, whatever the table&rsquo;s filter is hiding.</li>" +
           "<li><b>Salary</b> &mdash; the posted range, that range adjusted for your local market, and the range you gave.</li>" +
           "<li>Between them these hold the fields the table leaves out: the application ID, role type, work setting, system of record, the local-market range, and both links &mdash; each with a button that opens it in a new tab, and <b>Job Link</b> with a copy button beside it.</li>" +
           "<li><b>Local Job Description</b> &mdash; starts collapsed. <b>Load JD</b> shows the posting saved under <code>jds/</code> in your data folder by the <code>/job-from-url</code> skill, matched to this row by its company and role title. Press it again to hide it. The button beside it appears whenever a file exists for the row, open or not, and opens that file in a new tab. Needs <code>server.js</code> running.</li>" +
@@ -3271,6 +3368,25 @@ window.addEventListener("resize", () => {
     if (w !== flowWidth){ flowWidth = w; renderFlow(); }
   }, 120);
 });
+
+/* The bar collapses to its tab and stays that way across reloads - the
+   pre-paint script puts the class back before the first paint. Sliding it out
+   widens the page without firing a resize, so the sankey is re-measured once
+   the slide has finished. */
+function setNavCollapsed(collapsed){
+  document.body.classList.toggle("nav-collapsed", collapsed);
+  const btn = $("#navToggle");
+  btn.setAttribute("aria-expanded", String(!collapsed));
+  btn.setAttribute("aria-label", collapsed ? "Expand sidebar" : "Collapse sidebar");
+  try { localStorage.setItem("at-nav", collapsed ? "collapsed" : "open"); } catch(e){}
+  setTimeout(() => {
+    const w = $("#sankey").clientWidth;
+    if (w !== flowWidth){ flowWidth = w; renderFlow(); }
+  }, 220);
+}
+$("#navToggle").onclick = () =>
+  setNavCollapsed(!document.body.classList.contains("nav-collapsed"));
+setNavCollapsed(document.body.classList.contains("nav-collapsed"));
 
 window.addEventListener("beforeunload", e => {
   if (mode === "dataset" && dataset.unsaved){ e.preventDefault(); e.returnValue = ""; return; }
