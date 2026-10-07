@@ -464,7 +464,9 @@ Edits save automatically. `Esc` closes any open card.
   "savedAt": "2026-09-03T…",       // stamped on every save
   "applications": [
     {
-      "id": "…", "num": 1,
+      "id": "…",                       // identifies the row
+      "roleId": "…",                   // identifies the opening, across a title edit
+      "num": 1,
       "company": "", "postedOn": "", "appliedOn": "", "lastUpdate": "", "status": "Ready",
       "interest": "",                                // "High" | "Moderate" | "Low" | ""
       "awaiting": "", "appliedVia": "", "roleTitle": "", "companyType": "",

@@ -587,6 +587,15 @@ components:
             properties:
               id:
                 type: string
+                description: Identifies the row - this tracker's record of having applied.
+              roleId:
+                type: string
+                description: >
+                  Identifies the opening itself, rather than the row, so the same
+                  role can be followed where it is posted outside the tracker. It
+                  survives an edit to roleTitle. Minted when a row is created, and
+                  backfilled on load for a row written before it existed, so a
+                  hand-edited file may leave it out.
               company:
                 type: string
               roleTitle:
