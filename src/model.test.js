@@ -138,6 +138,18 @@ describe("the outcomes the flow view ends in", () => {
       "Accepted", "Rejected", "Ghosted", "Withdrawn", "Closed"
     ]);
   });
+
+  it("dresses the one still waiting on a reply in a cool of its own, apart from the warm endings", () => {
+    const waiting = app.OUTCOMES.find(o => o.label === "Awaiting response");
+
+    expect(waiting.tone).toBe("cool");
+  });
+
+  it("dresses the ones nobody decided in the warm tone rather than the one bad news wears", () => {
+    const undecided = app.OUTCOMES.filter(o => ["Withdrawn", "Closed"].includes(o.label));
+
+    expect(undecided.map(o => o.tone)).toEqual(["warm", "warm"]);
+  });
 });
 
 describe("the themes", () => {
@@ -154,6 +166,12 @@ describe("the themes", () => {
       expect([/--bg:/.test(block(id)), /--accent:/.test(block(id))]).toEqual([true, true]);
     });
   }
+
+  it("each carry the flow view's cool tone, which has no fallback to land on", () => {
+    const missing = ids.filter(id => !/--cool-ink:/.test(block(id)));
+
+    expect(missing).toEqual([]);
+  });
 
   it("dress each swatch in Settings in its own theme's class", () => {
     const swatches = [...document.querySelectorAll("#themeCtl button")].map(b => [b.dataset.theme, b.querySelector(".sw").className]);

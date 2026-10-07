@@ -402,6 +402,35 @@ say it got, then out to where it stands now:
   pipeline, so the counts are of every application you have, not of the rows
   the table happens to be showing.
 
+### Depth and Traditional
+
+**Depth** and **Traditional**, in the corner of the panel, draw the same walk up
+the ladder two ways. Depth is the one above, and the default: an ending belongs
+to the stage it left from, so *Closed* appears once for the postings that went
+before you applied and again for the ones that died after a screen, and no
+ribbon ever crosses another. How far something got is read off the column its
+ending sits in.
+
+Traditional gathers every ending into a column of its own on the right, so each
+one carries its whole total and a ribbon runs the length of the pipeline to
+reach it. The same 25 applications, counted the same way:
+
+<div align="center">
+
+  <img src="docs/images/flow-traditional.png" width="900"
+       alt="The Flow view in its Traditional layout: the same 25 applications, with every ending gathered in one column on the right - accepted 1, in progress 12, withdrawn 2, rejected 2, ghosted 2, closed 2, awaiting response 2 and ready to apply 2">
+
+</div>
+
+That column is ordered by where its ribbons come from rather than by the status
+order Depth uses — an ending fed from *Offer* sits above one fed from *Applied*,
+and two fed from the same place keep the usual good-news-first order — which is
+what holds the crossings down. *Not applied* still branches off at the start,
+since it never entered the pipeline at all.
+
+Which layout you are in is remembered in the browser, like the theme and the
+width settings.
+
 The diagram follows the table rather than a snapshot of it: add an application,
 move a status or finish a round and it redraws — including changes that arrive
 from `/job-from-url` while you have the page open.
