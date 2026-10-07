@@ -25,6 +25,12 @@ const HTML = readFileSync(resolve(import.meta.dirname, "index.html"), "utf8");
 let app;
 beforeEach(async () => { app = await loadApp(null, { exports: EXPORTS }); });
 
+/* Ids come from Math.random(), so a test that tells two of them apart needs it
+   to stop being random. A counter in its place gives every id a value of its
+   own - ++n / 36**8 is n itself once uid() has it in base 36 - without the test
+   having to know how many ids the page mints, or in what order. */
+const countingIds = window => { let n = 0; window.Math.random = () => ++n / 36 ** 8; };
+
 const loaded = row => app.normalize({ applications: [row] }).applications[0];
 
 describe("normalize", () => {
@@ -55,6 +61,18 @@ describe("normalize", () => {
   it("treats a list holding something other than rounds as no rounds", () => {
     expect(loaded({ rounds: "soon" }).rounds).toEqual([]);
   });
+
+  it("keeps the role id a row already carries, so the role stays the same role", () => {
+    expect(loaded({ roleId: "smr10001" }).roleId).toBe("smr10001");
+  });
+
+  it("gives a row written before role ids existed one of its own", () => {
+    expect(loaded({ company: "Acme" }).roleId).toMatch(/^[0-9a-z]+$/);
+  });
+
+  it("cuts a hand-edited role id down to word characters, the way it does an id", () => {
+    expect(loaded({ roleId: "smr/100 01" }).roleId).toBe("smr_100_01");
+  });
 });
 
 describe("a new application", () => {
@@ -62,6 +80,16 @@ describe("a new application", () => {
     const row = app.blankApp();
 
     expect([row.status, row.rounds.map(r => [r.type, r.status, r.end])]).toEqual(["Ready", [["Screen", "Scheduled", "Pending"]]]);
+  });
+
+  it("is born with a role id", () => {
+    expect(app.blankApp().roleId).toMatch(/^[0-9a-z]+$/);
+  });
+
+  it("gets a role id of its own, not the one the row before it got", async () => {
+    app = await loadApp(null, { exports: EXPORTS, before: countingIds });
+
+    expect(app.blankApp().roleId).not.toBe(app.blankApp().roleId);
   });
 });
 

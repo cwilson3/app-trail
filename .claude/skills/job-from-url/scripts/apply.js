@@ -52,13 +52,22 @@ const uid = () => Math.random().toString(36).slice(2, 10);
    Pending" reads as a real one. */
 function blankApp(nextNum){
   return {
-    id: uid(), num: nextNum,
+    id: uid(), roleId: uid(), num: nextNum,
     company: "", postedOn: "", appliedOn: "", lastUpdate: todayISO(), status: "Ready",
     interest: "", awaiting: "", appliedVia: "", roleTitle: "", companyType: "", industry: "",
     roleType: "", workSetting: "", postedRange: { min: null, max: null }, localRange: { min: null, max: null },
     myRange: { min: null, max: null }, jobLink: "", companyWebsite: "", systemOfRecord: "",
     rounds: []
   };
+}
+
+/* A row this importer updates may predate roleId - it was written before the
+   tracker minted one, and the page backfills only what it loads. Minting it
+   here keeps data.json consistent whether or not the page has opened it since.
+   A row from blankApp() already has one, so this is a no-op for a new row. */
+function ensureRoleId(app){
+  if (!app.roleId) app.roleId = uid();
+  return app;
 }
 
 async function serverAt(port, dataPath){
@@ -219,6 +228,7 @@ async function main(){
 
   const isNew = !target;
   if (isNew) target = blankApp(data.applications.reduce((m, a) => Math.max(m, a.num || 0), 0) + 1);
+  ensureRoleId(target);
 
   const changes = [];
   const skipped = [];
@@ -332,4 +342,4 @@ if (require.main === module) {
   main().catch(e => { console.error("apply failed: " + (e.stack || e)); process.exit(1); });
 }
 
-module.exports = { load, save, sameLink, serverAt };
+module.exports = { blankApp, ensureRoleId, load, save, sameLink, serverAt };

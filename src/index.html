@@ -1569,8 +1569,17 @@ const cleanOf = (fields, src) => Object.fromEntries(fields.map(f => [f.key, clea
 /* The objects in a list that should hold records - anything else is dropped. */
 const records = v => (Array.isArray(v) ? v : []).filter(r => r && typeof r === "object");
 
+/* Two identities, minted once each and then left alone.
+
+   `id` identifies the row - this tracker's record of having applied. `roleId`
+   identifies the opening itself, so the same role can be followed where it is
+   posted outside the tracker: a posting on a board carries its own status
+   there, which is not the row's status here, and one role can be posted in
+   several places at once. A role keeps its id while its title is edited, which
+   is what makes it worth having - the title is text someone retypes, not a
+   handle anything can be hung off. */
 function blankApp(){
-  return Object.assign({ id: uid(), num: nextNum() }, blankOf(APP_FIELDS), { rounds:[ blankRound() ] });
+  return Object.assign({ id: uid(), roleId: uid(), num: nextNum() }, blankOf(APP_FIELDS), { rounds:[ blankRound() ] });
 }
 function blankRound(){ return Object.assign({ id: uid() }, blankOf(ROUND_FIELDS), { people:[] }); }
 function blankPerson(){ return Object.assign({ id: uid() }, blankOf(PERSON_FIELDS)); }
@@ -1604,7 +1613,7 @@ function normalize(raw){
     savedAt: raw && raw.savedAt || null,
     applications: list.map((a, i) => {
       a = a && typeof a === "object" ? a : {};
-      return Object.assign({ id: safeId(a.id) || uid(), num: Number(a.num) || i + 1 },
+      return Object.assign({ id: safeId(a.id) || uid(), roleId: safeId(a.roleId) || uid(), num: Number(a.num) || i + 1 },
         cleanOf(APP_FIELDS, a), { rounds: records(a.rounds).map(normRound) });
     })
   };

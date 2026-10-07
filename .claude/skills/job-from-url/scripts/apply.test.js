@@ -9,7 +9,7 @@
  */
 
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { load, sameLink, save } from "./apply.js";
+import { blankApp, ensureRoleId, load, sameLink, save } from "./apply.js";
 
 const ORIGIN = "http://127.0.0.1:8787";
 const DATA_PATH = "/nowhere/data.json";     // never read: every case has a server
@@ -93,5 +93,27 @@ describe("sameLink", () => {
 
   it("does not match a different query value", () => {
     expect(sameLink("https://acme.com/careers/123?team=ops&loc=ny", LINK)).toBe(false);
+  });
+});
+
+/* blankApp() has to stay in step with the one in index.html: a row the importer
+   writes and a row the + button writes are read back by the same page. */
+describe("the row the importer starts from", () => {
+  it("is born with a role id", () => {
+    expect(blankApp(1).roleId).toMatch(/^[0-9a-z]+$/);
+  });
+
+  it("gets a role id of its own, not the one the row before it got", () => {
+    expect(blankApp(1).roleId).not.toBe(blankApp(2).roleId);
+  });
+});
+
+describe("a row the importer is about to update", () => {
+  it("is given a role id when it was written before role ids existed", () => {
+    expect(ensureRoleId({ id: "a1", company: "Acme" }).roleId).toMatch(/^[0-9a-z]+$/);
+  });
+
+  it("keeps the role id it already carries", () => {
+    expect(ensureRoleId({ id: "a1", roleId: "smr10001" }).roleId).toBe("smr10001");
   });
 });

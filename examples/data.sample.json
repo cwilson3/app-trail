@@ -4,6 +4,7 @@
   "applications": [
     {
       "id": "smp10001",
+      "roleId": "smr10001",
       "num": 1,
       "company": "Aurora Systems",
       "postedOn": "2026-07-28",
@@ -80,6 +81,7 @@
     },
     {
       "id": "smp10002",
+      "roleId": "smr10002",
       "num": 2,
       "company": "Brightline Health",
       "postedOn": "2026-07-09",
@@ -134,6 +136,7 @@
     },
     {
       "id": "smp10003",
+      "roleId": "smr10003",
       "num": 3,
       "company": "Cardinal Labs",
       "postedOn": "",
