@@ -873,6 +873,7 @@
     position:fixed;top:0;bottom:0;left:0;z-index:20;width:76px;
     display:flex;flex-direction:column;gap:4px;padding:14px 8px;
     background:var(--surface);border-right:1px solid var(--line);
+    transition:transform .18s,visibility .18s;
   }
   .navitem{
     display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 2px;
@@ -886,6 +887,28 @@
   body[data-route="flow"]    .navitem[data-route="flow"],
   body[data-route="tracker"] .navitem[data-route="tracker"],
   body[data-route="builder"] .navitem[data-route="builder"]{background:var(--accent);color:var(--accent-ink)}
+  /* a half-tab clipped to the outer edge of the bar, low down - it rides out
+     with the bar and is the one piece left on screen, so it carries the bar
+     back in. Rounded on the free side only, so it reads as part of the edge. */
+  .navtab{
+    position:absolute;right:-18px;bottom:28px;
+    width:18px;height:38px;padding:0;
+    display:flex;align-items:center;justify-content:center;
+    border:1px solid var(--line);border-left:0;border-radius:0 9px 9px 0;
+    background:var(--surface);color:var(--muted);cursor:pointer;
+    box-shadow:var(--shadow);
+    transition:visibility .18s,background .12s,color .12s;
+  }
+  .navtab svg{width:13px;height:13px;transition:transform .18s}
+  .navtab:hover{background:var(--btn-hover);color:var(--ink)}
+  .navtab:focus-visible{outline:2px solid var(--border-strong);outline-offset:1px}
+  /* the bar is translated out rather than hidden, so the slide is animatable;
+     visibility takes the off-screen links out of the tab order with it, while
+     the tab - carried to the screen edge by the same translate - stays put */
+  body.nav-collapsed{padding-left:0}
+  body.nav-collapsed .sidenav{transform:translateX(-76px);visibility:hidden}
+  body.nav-collapsed .navtab{visibility:visible}
+  body.nav-collapsed .navtab svg{transform:rotate(180deg)}
   body:not([data-route="flow"])    #viewFlow,
   body:not([data-route="tracker"]) #viewTracker,
   body:not([data-route="builder"]) #viewBuilder{display:none}
@@ -928,6 +951,9 @@
     .sidenav{bottom:auto;right:0;width:auto;height:58px;flex-direction:row;padding:6px 10px;border-right:0;border-bottom:1px solid var(--line)}
     .navitem{flex-direction:row;gap:7px;padding:0 12px;font-size:12.5px}
     .navitem svg{width:17px;height:17px}
+    .navtab{display:none}
+    body.nav-collapsed{padding-left:0;padding-top:58px}
+    body.nav-collapsed .sidenav{transform:none;visibility:visible}
     .wrap{padding:22px 16px 60px}
     .grid{grid-template-columns:repeat(2,1fr)}
     .card-body{max-height:none}
@@ -1002,6 +1028,7 @@ function setChevron(){
   setChevron();
   var w=localStorage.getItem("at-width");
   if(w==="margins"||w==="full") document.body.classList.add("width-"+w);
+  if(localStorage.getItem("at-nav")==="collapsed") document.body.classList.add("nav-collapsed");
 }catch(e){}})();
 /* the view comes from the URL hash - #flow, #builder - and is the tracker otherwise */
 var ROUTES = ["tracker","flow","builder"], DEFAULT_ROUTE = "tracker";
@@ -1011,7 +1038,7 @@ function routeFromHash(){
 }
 document.body.dataset.route = routeFromHash();</script>
 
-<nav class="sidenav" aria-label="Sections">
+<nav class="sidenav" id="sidenav" aria-label="Sections">
   <a class="navitem" href="#tracker" data-route="tracker">
     <i data-icon="tracker"></i>
     Tracker
@@ -1024,6 +1051,10 @@ document.body.dataset.route = routeFromHash();</script>
     <i data-icon="builder"></i>
     Builder
   </a>
+  <button class="navtab" id="navToggle" type="button"
+          aria-controls="sidenav" aria-expanded="true" aria-label="Collapse sidebar">
+    <i data-icon="chevronLeft"></i>
+  </button>
 </nav>
 
 <div class="wrap" id="viewFlow">
@@ -1415,6 +1446,7 @@ const stroked = (paths, width) => '<svg viewBox="0 0 24 24" fill="none" stroke="
   '" stroke-linecap="round" stroke-linejoin="round">' + paths + "</svg>";
 const ICONS = {
   chevron: stroked('<path d="m6 9 6 6 6-6"/>', 2),
+  chevronLeft: stroked('<path d="m15 18-6-6 6-6"/>', 2),
   layers: stroked('<path d="m12 2 9 5-9 5-9-5 9-5z"/><path d="m3 12 9 5 9-5M3 17l9 5 9-5"/>'),
   users: stroked('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/>'),
   trash: stroked('<path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>'),
@@ -3336,6 +3368,25 @@ window.addEventListener("resize", () => {
     if (w !== flowWidth){ flowWidth = w; renderFlow(); }
   }, 120);
 });
+
+/* The bar collapses to its tab and stays that way across reloads - the
+   pre-paint script puts the class back before the first paint. Sliding it out
+   widens the page without firing a resize, so the sankey is re-measured once
+   the slide has finished. */
+function setNavCollapsed(collapsed){
+  document.body.classList.toggle("nav-collapsed", collapsed);
+  const btn = $("#navToggle");
+  btn.setAttribute("aria-expanded", String(!collapsed));
+  btn.setAttribute("aria-label", collapsed ? "Expand sidebar" : "Collapse sidebar");
+  try { localStorage.setItem("at-nav", collapsed ? "collapsed" : "open"); } catch(e){}
+  setTimeout(() => {
+    const w = $("#sankey").clientWidth;
+    if (w !== flowWidth){ flowWidth = w; renderFlow(); }
+  }, 220);
+}
+$("#navToggle").onclick = () =>
+  setNavCollapsed(!document.body.classList.contains("nav-collapsed"));
+setNavCollapsed(document.body.classList.contains("nav-collapsed"));
 
 window.addEventListener("beforeunload", e => {
   if (mode === "dataset" && dataset.unsaved){ e.preventDefault(); e.returnValue = ""; return; }
