@@ -428,6 +428,7 @@ const NEVER = {
   localRange: "yours to set",
   rounds: "yours to set",
   id: "not auto-fillable",
+  roleId: "not auto-fillable",
   num: "not auto-fillable",
   lastUpdate: "not auto-fillable"
 };
