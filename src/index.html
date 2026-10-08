@@ -1312,17 +1312,45 @@ const STATUS_TABLE = [
   { name:"Accepted",                    tone:"good", stage:4, outcome:"good" },
   { name:"Rejected",                    tone:"bad",  outcome:"bad" },
   { name:"Withdrawn",                   tone:"bad",  outcome:"undecided" },
-  { name:"Ghosted",                     tone:"warm", outcome:"bad" },
-  { name:"Closed",                      tone:"bad",  outcome:"undecided" }   /* the posting is gone, not a decision about you */
+  { name:"Ghosted",                     tone:"warm", outcome:"bad" }
 ];
 const STATUSES = STATUS_TABLE.map(s => s.name);
 const statusInfo = name => STATUS_TABLE.find(s => s.name === name) || {};
+
+/* Where the opening itself stands, which is not where your application stands.
+   A status above is a decision about you - you were rejected, you withdrew.
+   This is the posting's own state, read from wherever the role is advertised,
+   and the two move independently: a role can be Filled while your application
+   still says Interview, and that disagreement is worth seeing rather than
+   resolving behind your back. Which is why `Closed` is no longer a status an
+   application can hold - it never described you, only the posting.
+
+   Every row is Unknown until something checks. `roleStatusSource` says what
+   did the checking, so a reading can be weighed - a posting that 404s is gone
+   from that board, which is not quite the same as the role being filled. */
+const ROLE_STATUS_TABLE = [
+  { name:"Unknown",  tone:"" },
+  { name:"Live",     tone:"good" },
+  { name:"Reposted", tone:"warm" },
+  { name:"Filled",   tone:"bad" },
+  { name:"Closed",   tone:"bad" },
+  { name:"Removed",  tone:"bad" }
+];
+const ROLE_STATUSES = ROLE_STATUS_TABLE.map(s => s.name);
+const roleStatusInfo = name => ROLE_STATUS_TABLE.find(s => s.name === name) || {};
+const normRoleStatus = s => ROLE_STATUSES.includes(s) ? s : "Unknown";
 
 const ROUND_TYPES = ["Screen","Interview 1","Interview 2","Interview 3","Interview 4","Interview 5","Final","Take-home","Offer Call","Other"];
 /* Statuses that have been renamed. Rows saved before a rename - and filters
    already stored in someone's browser - still carry the old wording, so both
    are mapped through this on the way in. */
-const STATUS_RENAMES = { "Applied": "Applied - Awaiting Response" };
+const STATUS_RENAMES = {
+  "Applied": "Applied - Awaiting Response",
+  /* Closed said the posting was gone, which was never a decision about the
+     application. The posting's state moves to roleStatus (see APP_FIELDS) and
+     the row itself becomes Ghosted: no answer ever reached you. */
+  "Closed": "Ghosted"
+};
 
 function normStatus(s){
   s = STATUS_RENAMES[s] || s;
@@ -1363,6 +1391,18 @@ const APP_FIELDS = [
   { key:"appliedVia",     label:"Applied Via",               type:"text",   section:"application" },
   { key:"jobLink",        label:"Job Link",                  type:"link",   section:"application", wide:true, copy:"Job link" },
   { key:"systemOfRecord", label:"System of Record",          type:"text",   section:"application" },
+  /* The role's own state, kept apart from `status` above. `roleStatus` is a
+     reading of the posting, `roleCheckedOn` when it was taken and
+     `roleStatusSource` what it was taken from - without the last two a stale
+     Live is indistinguishable from a fresh one. A row saved while Closed was
+     still an application status carries the posting's state in the wrong
+     field, so it is lifted across here on load; STATUS_RENAMES sends what is
+     left of that row to Ghosted. */
+  { key:"roleStatus",     label:"Role Status",               type:"select", section:"role", options:ROLE_STATUSES,
+                                                             initial:"Unknown", clean:normRoleStatus,
+                                                             from: a => a.roleStatus || (a.status === "Closed" ? "Closed" : "") },
+  { key:"roleCheckedOn",  label:"Checked",                   type:"date",   section:"role" },
+  { key:"roleStatusSource", label:"Checked Against",         type:"text",   section:"role" },
   { key:"company",        label:"Company Name",              type:"text",   section:"company" },
   { key:"roleTitle",      label:"Role Title",                type:"text",   section:"company" },
   { key:"companyType",    label:"Company Type",              type:"text",   section:"company" },
@@ -1379,6 +1419,7 @@ const APP_FIELDS = [
    placed under the section's grid - a host a render function fills. */
 const CARD_SECTIONS = [
   { id:"application", title:"Application Details" },
+  { id:"role",        title:"Role Status" },
   { id:"company",     title:"Company Details", sub:'<div id="dOtherRoles"></div>' },
   { id:"salary",      title:"Salary" }
 ];
@@ -3172,7 +3213,8 @@ $("#btnDocs").onclick = () => {
         "<h3>The table</h3>" +
         "<p>One row per application, sorted by company. Click any column heading to re-sort; click any row to open its detail card.</p>" +
         "<table>" +
-          "<tr><td>Status</td><td>Where the application stands. <i>Closed</i> is for a posting that has been taken down or a role that is no longer available &mdash; the opening ended it, rather than you (<i>Withdrawn</i>) or them (<i>Rejected</i>).</td></tr>" +
+          "<tr><td>Status</td><td>Where <em>your application</em> stands &mdash; a decision about you, by you (<i>Withdrawn</i>) or by them (<i>Rejected</i>, <i>Offer</i>). <i>Ghosted</i> is for an application no answer ever reached.</td></tr>" +
+          "<tr><td>Role Status</td><td>Where <em>the opening</em> stands, which is a different thing: <i>Live</i>, <i>Reposted</i>, <i>Filled</i>, <i>Closed</i> or <i>Removed</i>. It is a reading of the posting, not of you, so a role can be <i>Filled</i> while your application is still <i>Interview</i>. <i>Checked</i> and <i>Checked Against</i> say when the reading was taken and from where.</td></tr>" +
           "<tr><td>Round</td><td>The round you&rsquo;re currently on &mdash; the latest round whose end state is still <i>Pending</i>.</td></tr>" +
           "<tr><td>#</td><td>Row number in the current sort order &mdash; it renumbers when you re-sort.</td></tr>" +
           "<tr><td>Posted</td><td>The date the role was posted, when the listing shows it.</td></tr>" +

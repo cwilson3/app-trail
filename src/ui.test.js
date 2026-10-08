@@ -93,6 +93,69 @@ window.__app = {
 };
 `;
 
+/* The role's status is on the card in a section of its own, apart from the
+   application's. The split is the point: these check it is drawn as two
+   separate controls holding two separate values, because a single Status
+   field is exactly the confusion the second one was added to end. */
+describe("the Role Status section on the detail card", () => {
+  async function openCard(row){
+    const app = await loadApp(null, { exports: CARD_EXPORTS });
+    app.state = app.normalize({ applications: [row] });
+    app.renderTable();
+    app.openDetail(app.state.applications[0]);
+    return app;
+  }
+
+  const sections = () => [...document.querySelectorAll(".card-body .sec h3")].map(h => h.textContent.trim());
+  const field = key => document.querySelector('.card-body [data-bind="' + key + '"]');
+
+  const ROW = { id:"a1", company:"Acme", roleTitle:"Staff Engineer", status:"Interview",
+                roleStatus:"Filled", roleCheckedOn:"2026-10-08", roleStatusSource:"jobLink" };
+
+  it("gives the role a section of its own, between the application and the company", async () => {
+    await openCard(ROW);
+
+    expect(sections().slice(0, 3)).toEqual(["Application Details", "Role Status", "Company Details"]);
+  });
+
+  it("shows the role's status", async () => {
+    await openCard(ROW);
+
+    expect(field("roleStatus").value).toBe("Filled");
+  });
+
+  it("shows the application's own status apart from it, unchanged", async () => {
+    await openCard(ROW);
+
+    expect(field("status").value).toBe("Interview");
+  });
+
+  it("shows when the role was last checked", async () => {
+    await openCard(ROW);
+
+    expect(field("roleCheckedOn").value).toBe("2026-10-08");
+  });
+
+  it("shows what it was checked against", async () => {
+    await openCard(ROW);
+
+    expect(field("roleStatusSource").value).toBe("jobLink");
+  });
+
+  it("offers every role status the app knows, and no application status", async () => {
+    await openCard(ROW);
+
+    expect([...field("roleStatus").options].map(o => o.value))
+      .toEqual(["Unknown", "Live", "Reposted", "Filled", "Closed", "Removed"]);
+  });
+
+  it("no longer offers Closed as something the application can be", async () => {
+    await openCard(ROW);
+
+    expect([...field("status").options].map(o => o.value)).not.toContain("Closed");
+  });
+});
+
 describe("the Other Roles list on the detail card", () => {
   /* Rows go through the app's own normalize(), so a fixture cannot drift into
      a shape the app would never hold, and the card is opened on the row with

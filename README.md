@@ -309,7 +309,7 @@ to open its detail card).
 | Company | Company name |
 | Posted | Date the role was posted, when the listing shows one |
 | Applied | Date you applied |
-| Status | Overall status — Ready, Applied - Awaiting Response, Interview, Offer, Rejected, Closed, … (*Closed* = the posting came down or the role is no longer available) |
+| Status | Where **your application** stands — Ready, Applied - Awaiting Response, Interview, Offer, Rejected, Ghosted, … A decision about you, by you or by them. Where *the role* stands is a separate field, **Role Status**, on the detail card |
 | Interest | How much you want the role — High, Moderate or Low (blank until you set it) |
 | Last Update | Date of the most recent change (set automatically) |
 | Round | Number of the current active round — the latest round whose end state is still *Pending* |
@@ -329,7 +329,7 @@ count beside each value is how many applications carry it. A row has to match
 every column that has something ticked.
 
 The table opens filtered to work still in play: every status except *Accepted*,
-*Rejected*, *Withdrawn*, *Ghosted* and *Closed*. **Reset to default** puts that
+*Rejected*, *Withdrawn* and *Ghosted*. **Reset to default** puts that
 back, **Clear all** shows everything, and the badge on the button counts the
 columns currently narrowing the table. The subtitle reads "12 of 13
 applications" whenever something is hidden.
@@ -376,8 +376,8 @@ say it got, then out to where it stands now:
 
 **Depth** and **Traditional**, in the corner of the panel, draw the same walk up
 the ladder two ways. Depth is the one above, and the default: an ending belongs
-to the stage it left from, so *Closed* appears once for the postings that went
-before you applied and again for the ones that died after a screen, and no
+to the stage it left from, so *Ghosted* appears once for the applications that
+went quiet before a screen and again for the ones that died after one, and no
 ribbon ever crosses another. How far something got is read off the column its
 ending sits in.
 
@@ -431,7 +431,16 @@ is recognisable against the browser's own chrome.
 
 - **Application Details** — Posted, Applied, Await, Status, **Interest**, Applied Via, **Job Link** and
   **System of Record** (where the application lives — Workday, Greenhouse, the company
-  portal, …).
+  portal, …). *Status* is where **your application** stands: a decision about you.
+- **Role Status** — where **the opening itself** stands, which is a different thing:
+  *Unknown*, *Live*, *Reposted*, *Filled*, *Closed* or *Removed*. It is a reading of
+  the posting rather than of you, so a role can be *Filled* while your application is
+  still *Interview* — and seeing that disagreement is the point of keeping the two
+  apart. **Checked** and **Checked Against** say when the reading was taken and from
+  where, so a stale *Live* can be told from a fresh one. The
+  [backpack](https://github.com/cwilson3/app-trail-backpack)'s Role Reconciler fills
+  these in by reading each **Job Link**; nothing else writes them, and nothing that
+  reads a posting may touch your application's own status.
 - **Company Details** — Company Name, Role Title, Company Type, Industry, Role Type,
   **Work Setting** (Remote, Hybrid or On-Site) and **Company Website**. Under them,
   **Other Roles** lists every other application at the same company — role title, status
@@ -469,7 +478,12 @@ Edits save automatically. `Esc` closes any open card.
       "id": "…",                       // identifies the row
       "roleId": "…",                   // identifies the opening, across a title edit
       "num": 1,
-      "company": "", "postedOn": "", "appliedOn": "", "lastUpdate": "", "status": "Ready",
+      "company": "", "postedOn": "", "appliedOn": "", "lastUpdate": "",
+      "status": "Ready",               // where YOUR APPLICATION stands - a decision about you
+      "roleStatus": "Unknown",         // where THE ROLE stands: Live | Reposted | Filled
+                                       //   | Closed | Removed - a reading of the posting
+      "roleCheckedOn": "",             // when roleStatus was last read
+      "roleStatusSource": "",          // what it was read from, e.g. "jobLink"
       "interest": "",                                // "High" | "Moderate" | "Low" | ""
       "awaiting": "", "appliedVia": "", "roleTitle": "", "companyType": "",
       "industry": "", "roleType": "",
@@ -494,6 +508,11 @@ Edits save automatically. `Esc` closes any open card.
 
 `data.json` is safe to hand-edit — the page normalises anything it loads, so missing
 fields and unknown values fall back to sane defaults instead of breaking the UI.
+
+A row saved when *Closed* was still an application status is read as *Ghosted* with
+`roleStatus` set to *Closed*: the posting coming down was never a decision about the
+application, so the two parts of that row are moved to the fields that mean them.
+Nothing is lost and old files keep loading.
 
 ## License
 

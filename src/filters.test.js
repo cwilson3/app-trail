@@ -55,7 +55,7 @@ describe("the default filter", () => {
       { company:"Live",     status:"Interview" },
       { company:"Gone",     status:"Rejected" },
       { company:"Won",      status:"Accepted" },
-      { company:"Pulled",   status:"Closed" },
+      { company:"Pulled",   status:"Ghosted", roleStatus:"Closed" },
       { company:"Quit",     status:"Withdrawn" },
       { company:"Silent",   status:"Ghosted" },
       { company:"Waiting",  status:"Applied - Awaiting Response" }
@@ -63,8 +63,8 @@ describe("the default filter", () => {
     expect(shown().sort()).toEqual(["Live", "Waiting"]);
   });
 
-  it("counts exactly the five closed-out statuses", () => {
-    expect(app.CLOSED_STATUSES).toEqual(["Accepted","Rejected","Withdrawn","Ghosted","Closed"]);
+  it("counts exactly the four closed-out statuses", () => {
+    expect(app.CLOSED_STATUSES).toEqual(["Accepted","Rejected","Withdrawn","Ghosted"]);
     expect(app.OPEN_STATUSES).toEqual(
       ["Ready","Applied - Awaiting Response","Recruiter Screen","Phone Screen","Interview","Final","Offer","Negotiating"]);
     expect([...app.OPEN_STATUSES, ...app.CLOSED_STATUSES].sort()).toEqual([...app.STATUSES].sort());
@@ -276,7 +276,7 @@ describe("what is remembered between visits", () => {
 
   it("restores an empty filter as 'show everything', not as the default", async () => {
     app = await loadApp(JSON.stringify({ company:[], status:[], interest:[] }));
-    seed(app, [{ company:"Gone", status:"Closed" }]);
+    seed(app, [{ company:"Gone", status:"Ghosted" }]);
     expect(rowCount()).toBe(1);
   });
 
@@ -334,7 +334,7 @@ describe("the table under a filter", () => {
 
 describe("when nothing is on screen", () => {
   it("distinguishes a filtered-out table from an empty one", () => {
-    seed(app, [{ company:"Gone", status:"Closed" }]);
+    seed(app, [{ company:"Gone", status:"Ghosted" }]);
     expect(rowCount()).toBe(0);
     expect(text("#emptyTitle")).toBe("Nothing matches your filters");
     expect(text("#emptyText")).toContain("All 1 applications are hidden");
@@ -350,7 +350,7 @@ describe("when nothing is on screen", () => {
   });
 
   it("clears every filter from the empty state", () => {
-    seed(app, [{ company:"Gone", status:"Closed" }]);
+    seed(app, [{ company:"Gone", status:"Ghosted" }]);
     document.querySelector("#btnEmptyFilter").click();
     expect(app.activeFilterCount()).toBe(0);
     expect(shown()).toEqual(["Gone"]);
