@@ -13,7 +13,7 @@
   [About](#about) •
   [Getting Started](#getting-started) •
   [Your Data](#where-your-data-lives) •
-  [Files](#files) •
+  [Files](ARCH.md) •
   [Sending the table to Notes](#sending-the-table-to-notes) •
   [Testing](#testing) •
   [Adding a job from its URL](#adding-a-job-from-its-url) •
@@ -82,7 +82,7 @@ isn't there, and the server prints its path when it starts.
 
 ### Optional: Choose the Note
 
-You can set a note in your Apple Notes app to update with a table containing the current table from the Tracker section of the page. To pick which Apple Note the **Note** button writes to, copy the example config
+You can set a note in your Apple Notes app to update with a table containing the current table from the Trail section of the page. To pick which Apple Note the **Note** button writes to, copy the example config
 into your data folder and edit its `title` (macOS path shown — see
 [Where your data lives](#where-your-data-lives) for other systems):
 
@@ -144,36 +144,6 @@ Keeping it out of the repository means none of it can be committed by accident,
 `git clean` can't delete it, and every clone and worktree sees the same tracker.
 `paths.js` is the one place that decides the folder; `server.js` and the
 importer both ask it.
-
-**Upgrading from a checkout that kept data in the repository.** The first time
-the default folder is used, it copies `data/*`, `config.json` and `jds/` across
-from the repository and says so. It only copies — the old files are left where
-they were, now gitignored and unused, for you to delete once you're happy — and
-it never replaces a file already in the new folder. A folder set with
-`APP_TRAIL_DATA_DIR` is never seeded this way.
-
-**Backups.** Git no longer keeps your tracker's history. If you want that back,
-make the data folder its own private git repository, or point
-`APP_TRAIL_DATA_DIR` at a synced folder. **Export** writes a JSON copy any time.
-
-## Files
-
-| File | What it is |
-| --- | --- |
-| `src/index.html` | The whole app — markup, styles, and logic |
-| `src/server.js` | Small static server + the `data.json` read/write endpoint. `createApp()` builds the request handler; running the file listens |
-| `src/routes.js` | Every route the server answers, and the methods each takes — the table `spec.yml` documents |
-| `src/store.js` | Reading and writing a tracker file: the ETag, the backup, the temporary file renamed into place. The server and the importer both save through it |
-| `src/note.js` | The Note button's server side: the table's limits, the note's HTML, and running `osascript` |
-| `src/paths.js` | Where the data folder is, and the one-time copy out of older checkouts |
-| `spec.yml` | The server's HTTP contract (OpenAPI 3.1) |
-| `examples/data.sample.json` | Three example applications; import it (**Actions → Import**) to see the app populated |
-| `config.example.json` | A starting `config.json` — copy it into your data folder to choose the note **Note** writes to |
-| `src/jd-name.js` | How a job description's file is named — loaded by the page and by `/job-from-url`, so both agree |
-| `src/*.test.js` | Unit tests (`npm test`), each beside the code it covers; `src/test-support/` holds the page loader they share |
-| `package.json` | Test tooling only — the app itself still has no dependencies |
-| `.claude/skills/job-from-url/` | The `/job-from-url` skill — adds an application from a posting's URL |
-| `.claude/agents/job-extract.md` | The sandboxed reader that skill uses |
 
 ## Sending the table to Notes
 
@@ -398,7 +368,7 @@ say it got, then out to where it stands now:
   applications · 67% of Screen"; a block gives its own total and its share of
   everything tracked. **Show as a table** puts the same from/to counts in a
   table under the diagram.
-- **It always shows everything.** The Tracker's filter doesn't narrow the
+- **It always shows everything.** The Trail's filter doesn't narrow the
   pipeline, so the counts are of every application you have, not of the rows
   the table happens to be showing.
 
