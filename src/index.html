@@ -45,6 +45,11 @@
     --warm-bg:#fff4e5;  --warm-ink:#8a5300;
     --bad-bg:#f5f0f0;   --bad-ink:#8a3a34;
     --live-bg:#eaf0fb;  --live-ink:#2f4d8f;
+    /* the flow view's sixth tone: awaiting a reply is still open, so it
+       wears a cool of its own rather than the warm the endings nobody
+       decided wear. Each theme picks its own, far enough from that
+       theme's other five to stay apart under colour-blind simulation. */
+    --cool-ink:#2884c4;
     color-scheme:light;
   }
 
@@ -82,6 +87,7 @@
     --warm-bg:rgba(212,145,30,.16);  --warm-ink:#e3b25e;
     --bad-bg:rgba(190,90,80,.16);    --bad-ink:#e29a92;
     --live-bg:rgba(90,130,220,.18);  --live-ink:#9db6ee;
+    --cool-ink:#0098cc;
     color-scheme:dark;
   }
 
@@ -120,6 +126,7 @@
     --warm-bg:rgba(255,102,0,.18);   --warm-ink:#ff9a4d;
     --bad-bg:rgba(194,54,184,.16);   --bad-ink:#e98ce0;
     --live-bg:rgba(0,229,229,.16);   --live-ink:#5ff2f2;
+    --cool-ink:#5840e8;
     color-scheme:dark;
   }
 
@@ -158,6 +165,7 @@
     --warm-bg:rgba(255,230,0,.16);   --warm-ink:#f5dd3d;
     --bad-bg:rgba(255,20,147,.12);   --bad-ink:#ff74bd;
     --live-bg:rgba(0,229,255,.14);   --live-ink:#5ceeff;
+    --cool-ink:#1cacfc;
     color-scheme:dark;
   }
 
@@ -197,6 +205,7 @@
     --warm-bg:rgba(255,102,0,.18);   --warm-ink:#ff9a4d;
     --bad-bg:rgba(194,54,184,.16);   --bad-ink:#e98ce0;
     --live-bg:rgba(0,229,229,.16);   --live-ink:#5ff2f2;
+    --cool-ink:#009098;
     color-scheme:dark;
   }
 
@@ -235,6 +244,7 @@
     --warm-bg:rgba(240,165,0,.16);   --warm-ink:#f0b73c;
     --bad-bg:rgba(196,92,74,.14);    --bad-ink:#dd8d7e;
     --live-bg:rgba(212,160,23,.14);  --live-ink:#e0bc5b;
+    --cool-ink:#00b0fc;
     color-scheme:dark;
   }
 
@@ -273,6 +283,7 @@
     --warm-bg:#ebebd0;  --warm-ink:#676700;
     --bad-bg:#e6dada;   --bad-ink:#8a2020;
     --live-bg:#d4dcec;  --live-ink:#000080;
+    --cool-ink:#5040d4;
     color-scheme:light;
   }
 
@@ -311,6 +322,7 @@
     --warm-bg:#fdf3d4;  --warm-ink:#806700;
     --bad-bg:#f6e6dc;   --bad-ink:#a33a00;
     --live-bg:#e3e9fd;  --live-ink:#2f3fb8;
+    --cool-ink:#2898fc;
     color-scheme:light;
   }
 
@@ -349,6 +361,7 @@
     --warm-bg:rgba(102,255,0,.14);   --warm-ink:#8cff33;
     --bad-bg:rgba(26,136,0,.24);     --bad-ink:#1fb300;
     --live-bg:rgba(51,255,0,.12);    --live-ink:#5cff33;
+    --cool-ink:#a4ccac;
     color-scheme:dark;
   }
 
@@ -387,6 +400,7 @@
     --warm-bg:rgba(245,179,66,.16);  --warm-ink:#f5b342;
     --bad-bg:rgba(221,23,23,.16);    --bad-ink:#ff8f8f;
     --live-bg:rgba(159,203,238,.14); --live-ink:#9fcbee;
+    --cool-ink:#848cfc;
     color-scheme:dark;
   }
 
@@ -425,6 +439,7 @@
     --warm-bg:rgba(255,201,77,.16);  --warm-ink:#ffc94d;
     --bad-bg:rgba(255,111,168,.14);  --bad-ink:#ffa1c5;
     --live-bg:rgba(201,139,255,.16); --live-ink:#d8b0ff;
+    --cool-ink:#3c7ce4;
     color-scheme:dark;
   }
 
@@ -463,6 +478,7 @@
     --warm-bg:rgba(240,209,178,.16); --warm-ink:#f0d1b2;
     --bad-bg:rgba(239,139,128,.10);  --bad-ink:#f2a9a0;
     --live-bg:rgba(153,204,204,.12); --live-ink:#9bcdcd;
+    --cool-ink:#a4a6fe;
     color-scheme:dark;
   }
 
@@ -502,6 +518,7 @@
     --warm-bg:rgba(220,161,84,.12);  --warm-ink:#dfa861;
     --bad-bg:rgba(113,46,52,.45);    --bad-ink:#e3999c;
     --live-bg:rgba(112,185,176,.14); --live-ink:#8ccfc6;
+    --cool-ink:#8094e8;
     color-scheme:dark;
   }
   *{box-sizing:border-box}
@@ -918,6 +935,18 @@
   .panel-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
   .panel-head h2{margin:0;font-size:15px;font-weight:650}
   .panel-head p{margin:0;font-size:12.5px;color:var(--muted)}
+  /* the layout toggle rides on the right of the panel head, with the line that
+     says what the diagram is showing */
+  .flowhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-left:auto}
+  .flowctl{display:inline-flex;gap:2px;padding:3px;border-radius:10px;background:var(--btn-hover)}
+  .flowctl button{
+    height:26px;padding:0 10px;border:0;border-radius:7px;background:transparent;
+    color:var(--faint);font:inherit;font-size:12px;font-weight:600;cursor:pointer;
+    transition:background .12s,color .12s;
+  }
+  .flowctl button:hover{background:var(--surface);color:var(--ink-2)}
+  .flowctl button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+  .flowctl button:focus-visible{outline:2px solid var(--border-strong);outline-offset:1px}
   /* drawn at the width it has, never narrower than 760px - a phone scrolls it sideways rather than shrinking the labels */
   .sankey{position:relative;overflow-x:auto}
   .sankey svg{display:block;overflow:visible}
@@ -929,6 +958,7 @@
   .sankey [data-tip]{cursor:default}
   .tone-all{fill:var(--ink-2)} .tone-live{fill:var(--live-ink)} .tone-good{fill:var(--good-ink)}
   .tone-warm{fill:var(--warm-ink)} .tone-bad{fill:var(--bad-ink)} .tone-muted{fill:var(--faint)}
+  .tone-cool{fill:var(--cool-ink)}
   .sankey-tip{
     position:absolute;z-index:5;pointer-events:none;max-width:260px;padding:7px 10px;border-radius:8px;
     background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-pop);
@@ -1072,7 +1102,13 @@ document.body.dataset.route = routeFromHash();</script>
   <section class="panel" id="pipelinePanel" aria-labelledby="pipelineTitle">
     <div class="panel-head">
       <h2 id="pipelineTitle">Pipeline</h2>
-      <p>How far each application has got, and where it ended up</p>
+      <div class="flowhead">
+        <p id="pipelineHint">How far each application has got, and where it ended up</p>
+        <div class="flowctl" id="flowCtl" role="group" aria-label="Diagram layout">
+          <button type="button" data-flow="depth">Depth</button>
+          <button type="button" data-flow="traditional">Traditional</button>
+        </div>
+      </div>
     </div>
     <div class="sankey" id="sankey"></div>
     <details class="flowtable" id="flowTable"></details>
@@ -1259,9 +1295,11 @@ const DATA_FILE = "data/" + DATA_NAME;
      tone     the colour of its pill in the table
      stage    how far up the pipeline it puts an application, as an index into
               STAGES in the flow view (0 applied ... 4 offer); none for Ready
-     outcome  for a status that ends an application, the colour it wears as an
-              outcome in the flow view. These are the closed statuses, which
-              the default filter hides. */
+     outcome  for a status that ends an application, which of the three groups
+              it falls into as an outcome in the flow view - good news, bad
+              news, and the ones nobody decided. The group sets both where it
+              sits down a column and the colour it wears there. These are the
+              closed statuses, which the default filter hides. */
 const STATUS_TABLE = [
   { name:"Ready",                       tone:"live" },
   { name:"Applied - Awaiting Response", tone:"good", stage:0 },
@@ -1273,9 +1311,9 @@ const STATUS_TABLE = [
   { name:"Negotiating",                 tone:"good", stage:4 },
   { name:"Accepted",                    tone:"good", stage:4, outcome:"good" },
   { name:"Rejected",                    tone:"bad",  outcome:"bad" },
-  { name:"Withdrawn",                   tone:"bad",  outcome:"muted" },
+  { name:"Withdrawn",                   tone:"bad",  outcome:"undecided" },
   { name:"Ghosted",                     tone:"warm", outcome:"bad" },
-  { name:"Closed",                      tone:"bad",  outcome:"muted" }   /* the posting is gone, not a decision about you */
+  { name:"Closed",                      tone:"bad",  outcome:"undecided" }   /* the posting is gone, not a decision about you */
 ];
 const STATUSES = STATUS_TABLE.map(s => s.name);
 const statusInfo = name => STATUS_TABLE.find(s => s.name === name) || {};
@@ -3205,14 +3243,18 @@ const ROUND_STAGE = { "Screen":1, "Other":1, "Take-home":2, "Final":3, "Offer Ca
 /* top-to-bottom order within a column, and the colour each one wears: the
    three ways an application can still be open, then each closed status - good
    news first, then bad, then the ones nobody decided */
-const OUTCOME_ORDER = ["good", "bad", "muted"];
+const OUTCOME_ORDER = ["good", "bad", "undecided"];
+/* and the colour each group wears. Nobody decided the last two - the posting
+   went, or you walked away - so they wear the warm tone rather than the one
+   that reads as a rejection. */
+const OUTCOME_TONE = { good:"good", bad:"bad", undecided:"warm" };
 const OUTCOMES = [
   { label:"In progress",       tone:"live"  },
-  { label:"Awaiting response", tone:"warm"  },
+  { label:"Awaiting response", tone:"cool"  },
   { label:"Ready to apply",    tone:"muted" }
 ].concat(STATUS_TABLE.filter(s => s.outcome)
   .sort((a, b) => OUTCOME_ORDER.indexOf(a.outcome) - OUTCOME_ORDER.indexOf(b.outcome))
-  .map(s => ({ label: s.name, tone: s.outcome })));
+  .map(s => ({ label: s.name, tone: OUTCOME_TONE[s.outcome] })));
 
 /* -1 = never applied, otherwise an index into STAGES */
 function stageReached(app){
@@ -3230,9 +3272,20 @@ function outcomeOf(app, stage){
   return stage < 0 ? "Ready to apply" : stage === 0 ? "Awaiting response" : "In progress";
 }
 
-/* A tree: every node but the root has exactly one parent, so a column can be
-   ordered by its parents' order and the ribbons never cross. */
-function pipelineGraph(apps){
+/* Two shapes, from the same walk up the ladder:
+
+   depth        an outcome belongs to the stage it left from, so the graph is
+                a tree - every node but the root has exactly one parent, a
+                column can be ordered by its parents' order, and no ribbon
+                ever crosses another. How far an application got is read off
+                the column its ending sits in.
+   traditional  an outcome is keyed by its label alone, so every ending is one
+                node carrying its whole total, gathered in a column of its own
+                on the right. An outcome now has several parents - this one is
+                a graph, not a tree - and layoutSankey orders that last column
+                itself, accepting the crossings that come with it. */
+function pipelineGraph(apps, mode){
+  const merged = mode === "traditional";
   const nodes = new Map(), links = new Map();
   const node = (id, label, parent, rank, tone) => {
     if (!nodes.has(id)) nodes.set(id, { id, label, parent, rank, tone, col: parent ? parent.col + 1 : 0, value:0 });
@@ -3253,9 +3306,18 @@ function pipelineGraph(apps){
     if (stage < 0) at = step(at, "unapplied", "Not applied", 1, "muted");
     for (let s = 0; s <= stage; s++) at = step(at, "s" + s, STAGES[s], 0, "live");
     const o = OUTCOMES.findIndex(x => x.label === outcome);
-    step(at, at.id + ":" + outcome, outcome, 2 + o, OUTCOMES[o].tone);
+    step(at, (merged ? "out" : at.id) + ":" + outcome, outcome, 2 + o, OUTCOMES[o].tone);
   }
-  return { nodes:[...nodes.values()], links:[...links.values()] };
+  /* An outcome - rank 2 and up - keeps the parent it was first reached from,
+     which is the one the depth layout orders by. Merged, it sits past the end
+     of the ladder instead of one column on from that parent, so the ribbon
+     that leaves Applied for Rejected runs the full width to get there. */
+  const all = [...nodes.values()];
+  if (merged){
+    const last = Math.max(...all.filter(n => n.rank < 2).map(n => n.col)) + 1;
+    all.forEach(n => { if (n.rank >= 2) n.col = last; });
+  }
+  return { nodes:all, links:[...links.values()], merged };
 }
 
 const SANKEY = { nodeW:12, gap:16, labelW:170, rowH:44, minH:320 };
@@ -3263,23 +3325,48 @@ const SANKEY = { nodeW:12, gap:16, labelW:170, rowH:44, minH:320 };
 function layoutSankey(g, W){
   const cols = [];
   g.nodes.forEach(n => (cols[n.col] = cols[n.col] || []).push(n));
-  cols.forEach(c => {
+  const shared = g.merged ? cols.length - 1 : -1;   /* the column the outcomes share, if they share one */
+  const index = c => c.forEach((n, i) => n.order = i);
+  cols.forEach((c, i) => {
+    if (i === shared) return;
     c.sort((a, b) => (a.parent ? a.parent.order - b.parent.order : 0) || a.rank - b.rank);
-    c.forEach((n, i) => n.order = i);
+    index(c);
   });
   const H = Math.max(SANKEY.minH, Math.max(...cols.map(c => c.length)) * SANKEY.rowH);
   const k = Math.min(...cols.map(c => (H - SANKEY.gap * (c.length - 1)) / c.reduce((t, n) => t + n.value, 0)));
   const colX = (W - SANKEY.labelW - SANKEY.nodeW) / Math.max(1, cols.length - 1);
-  cols.forEach((c, i) => {
+  const place = (c, i) => {
     let y = 0;
     c.forEach(n => { n.x = i * colX; n.y = y; n.h = n.value * k; y += n.h + SANKEY.gap; });
-  });
-  /* stack each node's ribbons in the order of the nodes at their other end */
+  };
+  cols.forEach((c, i) => { if (i !== shared) place(c, i); });
+  if (shared > 0){
+    /* Every ribbon pulls its outcome towards the middle of the node it comes
+       from, by as many applications as it carries, and the column is ordered
+       by where each one is pulled to - the weighted mean the usual sankey
+       relaxation uses. One pass settles it here: the ladder it reads from is
+       already placed, and no column of that ladder holds more than two nodes,
+       so a second pass has nothing left to move. Outcomes pulled to the same
+       place fall back to OUTCOMES' order, good news first. */
+    const pull = n => g.links.filter(l => l.target === n)
+      .reduce((t, l) => t + l.value * (l.source.y + l.source.h / 2), 0) / n.value;
+    cols[shared].forEach(n => n.pull = pull(n));
+    cols[shared].sort((a, b) => a.pull - b.pull || a.rank - b.rank);
+    index(cols[shared]);
+    place(cols[shared], shared);
+  }
+  /* Stack each node's ribbons in the order of the nodes at their other end.
+     Every departure is placed before any arrival is, so an outcome fed by
+     several stages can stack its arrivals in the order they actually leave -
+     which is what stops them crossing each other on the way in. */
   g.nodes.forEach(n => {
-    let sy = n.y, ty = n.y;
-    g.links.filter(l => l.source === n).sort((a, b) => a.target.y - b.target.y)
+    let sy = n.y;
+    g.links.filter(l => l.source === n).sort((a, b) => a.target.y - b.target.y || a.target.col - b.target.col)
       .forEach(l => { l.sy = sy; sy += l.value * k; });
-    g.links.filter(l => l.target === n).sort((a, b) => a.source.y - b.source.y)
+  });
+  g.nodes.forEach(n => {
+    let ty = n.y;
+    g.links.filter(l => l.target === n).sort((a, b) => a.sy - b.sy)
       .forEach(l => { l.ty = ty; ty += l.value * k; });
   });
   g.links.forEach(l => l.h = l.value * k);
@@ -3288,6 +3375,37 @@ function layoutSankey(g, W){
 
 const pct = (n, of) => Math.round(100 * n / of) + "%";
 
+/* Which of the two layouts the diagram is drawn in. Kept in localStorage like
+   the theme and the sidebar, but not put back before the first paint: the
+   diagram is drawn by renderFlow() rather than by the markup, so there is
+   nothing on the page yet for the wrong layout to show through. */
+const FLOW_MODES = ["depth", "traditional"], DEFAULT_FLOW_MODE = "depth";
+const FLOW_HINT = {
+  depth:       "How far each application has got, and where it ended up",
+  traditional: "How far each application has got, with every ending gathered on the right"
+};
+let flowMode = DEFAULT_FLOW_MODE;
+try {
+  const m = localStorage.getItem("at-flow");
+  if (FLOW_MODES.includes(m)) flowMode = m;
+} catch(e){}
+
+const flowBtns = [...document.querySelectorAll("#flowCtl button[data-flow]")];
+const markFlow = m => flowBtns.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.flow === m)));
+function applyFlowMode(m){
+  flowMode = m;
+  markFlow(m);
+  $("#pipelineHint").textContent = FLOW_HINT[m];
+  try { localStorage.setItem("at-flow", m); } catch(e){}
+  renderFlow();
+}
+markFlow(flowMode);
+$("#pipelineHint").textContent = FLOW_HINT[flowMode];
+$("#flowCtl").addEventListener("click", e => {
+  const b = e.target.closest("button[data-flow]");
+  if (b && b.dataset.flow !== flowMode) applyFlowMode(b.dataset.flow);
+});
+
 function renderFlow(){
   if (document.body.dataset.route !== "flow") return;
   const apps = state.applications;
@@ -3295,7 +3413,7 @@ function renderFlow(){
   $("#flowEmpty").hidden = !!apps.length;
   if (!apps.length){ $("#flowSub").textContent = "Nothing tracked yet"; return; }
 
-  const g = pipelineGraph(apps);
+  const g = pipelineGraph(apps, flowMode);
   const total = apps.length;
   const applied = g.nodes.find(n => n.id === "s0");
   $("#flowSub").innerHTML = "<b>" + total + "</b> " + noun(total, "application") +
