@@ -23,6 +23,7 @@
   [Themes](#themes) •
   [The detail card](#the-detail-card) •
   [Data format](#data-format) •
+  [AI use](#ai-use) •
   [License](#license)
 
   <img src="docs/images/tracker.png" width="900"
@@ -513,6 +514,71 @@ A row saved when *Closed* was still an application status is read as *Ghosted* w
 `roleStatus` set to *Closed*: the posting coming down was never a decision about the
 application, so the two parts of that row are moved to the fields that mean them.
 Nothing is lost and old files keep loading.
+
+## AI use
+
+AI is a tool, and its use here is recorded rather than implied. Both marks below are
+written as the work lands, so the record lives in the history itself instead of in a
+separate log that can drift away from it.
+
+**On a commit** — a `Co-authored-by` trailer naming the model:
+
+```text
+Co-authored-by: Claude Opus 5 <noreply@anthropic.com>
+```
+
+The *model* is named, not just the vendor or the tool. That is the part worth having
+later: behaviour traced to a commit can be traced to the model that wrote it, and this
+history already spans more than one — `Claude Opus 5.5` on the earliest assisted
+commits, `Claude Opus 5` after.
+
+**On a pull request** — a line at the end of the description naming the tool and the
+model:
+
+```text
+🤖 Generated with [Claude Code](https://claude.com/claude-code) · Model: Claude Opus 5 (`claude-opus-5`)
+```
+
+The exact model id travels with the display name, because the display name alone is
+ambiguous across releases while the id is what an audit can match on. Pull requests
+opened before this convention carry the tool half only; the model behind those is read
+off their squashed commit instead.
+
+Because this repository squash-merges, a PR's commits collapse into one and their
+trailers collapse with them, so the model behind a merged change is read off the
+squashed commit rather than off the individual commits that fed it.
+
+### Reading the record back
+
+Every assisted commit, and the model that wrote it:
+
+```bash
+git log -i --grep='co-authored-by: claude' --format='%h %s'
+```
+
+The trailer's capitalisation varies — Claude Code writes `Co-Authored-By`, GitHub's
+squash writes `Co-authored-by` — so the search has to be case-insensitive (`-i`).
+Expect the trailer to repeat inside a squashed commit, once for each commit that went
+into it.
+
+Which pull requests are marked, and with which model:
+
+```bash
+gh pr list --state all --limit 50 --json number,title,body \
+  -q '.[] | select(.body | test("Claude Code"))
+      | "#\(.number) \(.body | capture("Model: (?<m>[^\n]+)").m // "unspecified") — \(.title)"'
+```
+
+### What a mark does and does not claim
+
+A mark says a model contributed to the change. It does not say how much, and it does
+not divide responsibility — review and intent stay with the human author, which is why
+the trailer is `Co-authored-by` rather than an author line.
+
+Absence of a mark is not a claim that nothing was assisted. The trailer is written by
+the tool that makes the commit, so an assisted edit committed by hand carries nothing,
+and a convention adopted partway through a history leaves everything before it
+unmarked. Read the marks as a floor on AI involvement rather than a full census of it.
 
 ## License
 
