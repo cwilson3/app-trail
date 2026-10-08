@@ -99,6 +99,29 @@ Anything matching no route can only be the page itself, and is 404 otherwise.
 — so `.git/`, `node_modules` and the rest of the checkout stay private. The
 server listens on 127.0.0.1 only.
 
+## Two statuses, because they are two facts
+
+`status` says where the application stands. `roleStatus` says where the opening
+stands. They are not two views of one thing and they move independently: a role
+can be filled while your application still says Interview, and that
+disagreement is information rather than an inconsistency to resolve.
+
+The split was forced by what `roleId` was already for — "a posting on a board
+carries its own status there, which is not the row's status here". The id for
+that was there; the field to hold the reading was not, so the posting's state
+had been living in the application's `status` as `Closed`, with a comment
+admitting it was "the posting is gone, not a decision about you". `Closed` is
+no longer a status an application can hold. `STATUS_RENAMES` carries an old row
+to `Ghosted` and `roleStatus`'s `from` lifts the posting's state across, so a
+file written before the split loads with both halves in the right place.
+
+What makes this worth enforcing rather than documenting is the backpack's Role
+Reconciler, which reads postings. A tool that scrapes the outside world can
+only ever speak about the role, so the three fields it may write —
+`roleStatus`, `roleCheckedOn`, `roleStatusSource` — are an allow-list on its
+side, and `status` is not in it. The reading says the opening is gone; only you
+say what happened to your application.
+
 ## Two agreements the code enforces rather than documents
 
 **The job-description filename.** `src/jd-name.js` derives `jds/<company>-<role>.md`

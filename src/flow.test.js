@@ -40,9 +40,9 @@ const downTheColumn = g => {
 
 describe("the depth layout", () => {
   it("keeps one ending reached from two places as a block for each place", () => {
-    const g = app.pipelineGraph([row("Closed"), row("Closed", [], "")], "depth");
+    const g = app.pipelineGraph([row("Withdrawn"), row("Withdrawn", [], "")], "depth");
 
-    expect(named(g, "Closed").map(n => n.value)).toEqual([1, 1]);
+    expect(named(g, "Withdrawn").map(n => n.value)).toEqual([1, 1]);
   });
 
   it("puts an ending in the column after the stage it was reached from", () => {
@@ -54,9 +54,9 @@ describe("the depth layout", () => {
 
 describe("the traditional layout", () => {
   it("gathers one ending reached from two places into a block carrying both", () => {
-    const g = app.pipelineGraph([row("Closed"), row("Closed", [], "")], "traditional");
+    const g = app.pipelineGraph([row("Withdrawn"), row("Withdrawn", [], "")], "traditional");
 
-    expect(named(g, "Closed").map(n => n.value)).toEqual([2]);
+    expect(named(g, "Withdrawn").map(n => n.value)).toEqual([2]);
   });
 
   it("puts every ending in one column past the end of the ladder", () => {
@@ -83,9 +83,9 @@ describe("the traditional layout", () => {
   });
 
   it("falls back to the endings' own order when two are pulled to the same place", () => {
-    const g = app.pipelineGraph([row("Rejected"), row("Closed")], "traditional");
+    const g = app.pipelineGraph([row("Rejected"), row("Withdrawn")], "traditional");
 
-    expect(downTheColumn(g)).toEqual(["Rejected", "Closed"]);
+    expect(downTheColumn(g)).toEqual(["Rejected", "Withdrawn"]);
   });
 });
 

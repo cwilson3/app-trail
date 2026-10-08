@@ -602,3 +602,28 @@ components:
                 type: string
               status:
                 type: string
+                description: >
+                  Where the application stands - a decision about the candidate.
+                  Never the posting's own state: a role being taken down is not
+                  something that happened to the application, and is carried by
+                  roleStatus instead. A row saved while "Closed" was still an
+                  application status is read as "Ghosted", with the posting's
+                  state lifted into roleStatus.
+                example: Interview
+              roleStatus:
+                type: string
+                enum: [Unknown, Live, Reposted, Filled, Closed, Removed]
+                default: Unknown
+                description: >
+                  Where the opening itself stands, read from wherever the role is
+                  advertised. Independent of status - a role can be Filled while
+                  the application is still Interview - so neither reading
+                  overwrites the other. Unknown until something checks.
+              roleCheckedOn:
+                type: string
+                format: date
+                description: When roleStatus was last read. Without it a stale Live cannot be told from a fresh one.
+              roleStatusSource:
+                type: string
+                description: What roleStatus was read from, so a reading can be weighed.
+                example: jobLink

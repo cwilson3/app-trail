@@ -15,7 +15,7 @@ import { loadApp } from "./test-support/loadIndexApp.js";
 const EXPORTS = `
 window.__app = {
   get state(){ return state; }, set state(v){ state = v; },
-  normalize, blankApp, sorted, OUTCOMES, setFilter,
+  normalize, blankApp, sorted, OUTCOMES, setFilter, STATUSES, ROLE_STATUSES,
   sortBy(key, dir){ sortKey = key; sortDir = dir; }
 };
 `;
@@ -75,6 +75,58 @@ describe("normalize", () => {
   });
 });
 
+/* The role's status and the application's are two readings of two different
+   things - the opening, and you - so the pair of them is what these cover:
+   that each survives on its own, and that a row saved when the posting's state
+   was kept in the application's field has it moved to the right one. */
+describe("the role's status, apart from the application's", () => {
+  it("starts a row nothing has checked yet at Unknown", () => {
+    expect(loaded({ company: "Acme" }).roleStatus).toBe("Unknown");
+  });
+
+  it("keeps a role status a row already carries", () => {
+    expect(loaded({ roleStatus: "Filled" }).roleStatus).toBe("Filled");
+  });
+
+  it("falls back to Unknown for a role status it does not know", () => {
+    expect(loaded({ roleStatus: "Vanished" }).roleStatus).toBe("Unknown");
+  });
+
+  it("keeps when the role was last checked, and what it was checked against", () => {
+    const row = loaded({ roleCheckedOn: "2026-10-08", roleStatusSource: "jobLink" });
+
+    expect([row.roleCheckedOn, row.roleStatusSource]).toEqual(["2026-10-08", "jobLink"]);
+  });
+
+  it("lets a filled role hold an application that is still interviewing", () => {
+    const row = loaded({ status: "Interview", roleStatus: "Filled" });
+
+    expect([row.status, row.roleStatus]).toEqual(["Interview", "Filled"]);
+  });
+
+  it("no longer offers Closed as something an application can be", () => {
+    expect(app.STATUSES).not.toContain("Closed");
+  });
+
+  it("offers it as something the role can be", () => {
+    expect(app.ROLE_STATUSES).toContain("Closed");
+  });
+});
+
+describe("a row saved when Closed was an application status", () => {
+  it("has the posting's state lifted into the role's field", () => {
+    expect(loaded({ status: "Closed" }).roleStatus).toBe("Closed");
+  });
+
+  it("has its own status sent to Ghosted, since no answer ever reached it", () => {
+    expect(loaded({ status: "Closed" }).status).toBe("Ghosted");
+  });
+
+  it("does not overwrite a role status the row already carries", () => {
+    expect(loaded({ status: "Closed", roleStatus: "Filled" }).roleStatus).toBe("Filled");
+  });
+});
+
 describe("a new application", () => {
   it("starts at Ready, with one Screen round waiting to be scheduled", () => {
     const row = app.blankApp();
@@ -84,6 +136,12 @@ describe("a new application", () => {
 
   it("is born with a role id", () => {
     expect(app.blankApp().roleId).toMatch(/^[0-9a-z]+$/);
+  });
+
+  it("is born with a role nothing has checked yet", () => {
+    const row = app.blankApp();
+
+    expect([row.roleStatus, row.roleCheckedOn, row.roleStatusSource]).toEqual(["Unknown", "", ""]);
   });
 
   it("gets a role id of its own, not the one the row before it got", async () => {
@@ -135,7 +193,7 @@ describe("the outcomes the flow view ends in", () => {
   it("lists the open ones, then the closed statuses good news first, then bad, then the ones nobody decided", () => {
     expect(app.OUTCOMES.map(o => o.label)).toEqual([
       "In progress", "Awaiting response", "Ready to apply",
-      "Accepted", "Rejected", "Ghosted", "Withdrawn", "Closed"
+      "Accepted", "Rejected", "Ghosted", "Withdrawn"
     ]);
   });
 
@@ -145,10 +203,10 @@ describe("the outcomes the flow view ends in", () => {
     expect(waiting.tone).toBe("cool");
   });
 
-  it("dresses the ones nobody decided in the warm tone rather than the one bad news wears", () => {
-    const undecided = app.OUTCOMES.filter(o => ["Withdrawn", "Closed"].includes(o.label));
+  it("dresses the one nobody decided in the warm tone rather than the one bad news wears", () => {
+    const undecided = app.OUTCOMES.filter(o => o.label === "Withdrawn");
 
-    expect(undecided.map(o => o.tone)).toEqual(["warm", "warm"]);
+    expect(undecided.map(o => o.tone)).toEqual(["warm"]);
   });
 });
 
