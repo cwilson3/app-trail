@@ -65,14 +65,14 @@ npm install
 Start the local backend (recommended) — every edit is written straight to your `data.json`:
 
 ```sh
-npm start
+npm run server
 ```
 
 Then open [http://localhost:8787](http://localhost:8787) in a browser. To use a
 different port, pass it after `--`:
 
 ```sh
-npm start -- 9000
+npm run server -- 9000
 ```
 
 `server.js` is plain Node (no packages to install) and binds to `127.0.0.1` only.
