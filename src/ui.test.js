@@ -258,6 +258,99 @@ describe("the Other Roles list on the detail card", () => {
   });
 });
 
+/* The boards a role was seen on sit under Application Details, apart from the
+   Job Link. These drive the card the way a person does - a press, a keystroke
+   - and read the result off the open row, which is what gets saved. */
+describe("the Postings list on the detail card", () => {
+  const LINKEDIN = "https://www.linkedin.com/jobs/view/4012345678/";
+  const LADDERS = "https://www.theladders.com/job/staff-engineer-acme_12345";
+
+  async function openCard(row){
+    const app = await loadApp(null, { exports: CARD_EXPORTS });
+    app.state = app.normalize({ applications: [Object.assign({ id:"a1", company:"Acme" }, row)] });
+    app.renderTable();
+    app.openDetail(app.state.applications[0]);
+    return app;
+  }
+
+  const postings = app => app.state.applications[0].postings;
+  const control = (key, gi) => $('#dPostings [data-bind="' + key + '"][data-post="' + gi + '"]');
+  const press = sel => $("#dPostings " + sel).click();
+  function edit(el, value){
+    if (el.type === "checkbox") el.checked = value; else el.value = value;
+    el.dispatchEvent(new Event(el.type === "checkbox" ? "change" : "input", { bubbles: true }));
+  }
+
+  it("shows each board the role is posted on", async () => {
+    await openCard({ postings: [{ board:"LinkedIn" }, { board:"TheLadders" }] });
+
+    expect([control("board", 0).value, control("board", 1).value]).toEqual(["LinkedIn", "TheLadders"]);
+  });
+
+  it("says when the role is tracked on no board", async () => {
+    await openCard({ postings: [] });
+
+    expect($("#dPostings .none").textContent).toBe("Not tracked on any job board yet.");
+  });
+
+  it("adds the Job Link as the posting when it is a board's and no posting holds it", async () => {
+    const app = await openCard({ jobLink: LINKEDIN, postings: [] });
+
+    press('[data-act="add-posting"]');
+
+    expect(postings(app).map(p => [p.board, p.link, p.found, p.seenOn])).toEqual([["LinkedIn", LINKEDIN, true, ""]]);
+  });
+
+  it("adds a blank posting when the Job Link is the company's own page", async () => {
+    const app = await openCard({ jobLink: "https://careers.acme.com/jobs/123", postings: [] });
+
+    press('[data-act="add-posting"]');
+
+    expect(postings(app).map(p => [p.board, p.link, p.found])).toEqual([["Other", "", false]]);
+  });
+
+  it("does not mark a posting from the Job Link found when another board already is", async () => {
+    const app = await openCard({ jobLink: LINKEDIN, postings: [{ board:"TheLadders", link: LADDERS, found: true }] });
+
+    press('[data-act="add-posting"]');
+
+    expect(postings(app).map(p => p.found)).toEqual([true, false]);
+  });
+
+  it("sets the board from a posting link typed in", async () => {
+    const app = await openCard({ postings: [{ board:"Other" }] });
+
+    edit(control("link", 0), LADDERS);
+
+    expect([postings(app)[0].board, control("board", 0).value]).toEqual(["TheLadders", "TheLadders"]);
+  });
+
+  it("clears Found Here on the other postings when one is marked", async () => {
+    const app = await openCard({ postings: [{ board:"LinkedIn", found: true }, { board:"TheLadders" }] });
+
+    edit(control("found", 1), true);
+
+    expect([postings(app).map(p => p.found), control("found", 0).checked]).toEqual([[false, true], false]);
+  });
+
+  it("removes a posting", async () => {
+    const app = await openCard({ postings: [{ board:"LinkedIn" }, { board:"TheLadders" }] });
+
+    press('[data-act="del-posting"][data-post="0"]');
+
+    expect(postings(app).map(p => p.board)).toEqual(["TheLadders"]);
+  });
+
+  it("opens the posting's own link, not the Job Link", async () => {
+    await openCard({ jobLink: "https://careers.acme.com/jobs/123", postings: [{ board:"TheLadders", link: LADDERS }] });
+    const open = vi.spyOn(window, "open").mockReturnValue(null);
+
+    press('[data-act="open-link"][data-post="0"]');
+
+    expect(open).toHaveBeenCalledWith(LADDERS, "_blank", "noopener");
+  });
+});
+
 describe("the table behind the detail card", () => {
   const companies = () => [...document.querySelectorAll("#tbody td.company")].map(td => td.textContent);
 

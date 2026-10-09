@@ -658,6 +658,16 @@
   .oclip{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .oblank{color:var(--faint)}
 
+  /* postings - a sub-section of Application Details, one box per board */
+  .postings{display:flex;flex-direction:column;gap:10px;margin-bottom:10px}
+  .posting{border:1px solid var(--line);border-radius:9px;background:var(--surface-2);padding:12px 14px 14px}
+  .posting-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+  .posting-head .minilabel{color:var(--ink-2)}
+  /* a box and its words, which are not a field's label though they sit in one */
+  .f .checkrow{display:flex;align-items:center;gap:8px;height:38px;font-size:13px;font-weight:400;
+    letter-spacing:normal;text-transform:none;color:var(--ink-2);cursor:pointer}
+  .checkrow input{width:16px;height:16px;margin:0;accent-color:var(--accent);cursor:pointer}
+
   /* job description */
   .jd-btns{display:flex;gap:6px;align-items:center}
   /* .openbtn sets display:grid, which outranks the hidden attribute's display:none */
@@ -1340,6 +1350,30 @@ const ROLE_STATUSES = ROLE_STATUS_TABLE.map(s => s.name);
 const roleStatusInfo = name => ROLE_STATUS_TABLE.find(s => s.name === name) || {};
 const normRoleStatus = s => ROLE_STATUSES.includes(s) ? s : "Unknown";
 
+/* The job boards a role can be posted on. `jobLink` is where you apply - the
+   hiring company's own page, ideally - and a board is where you came across
+   the role, so the two are kept apart: each row carries a list of `postings`,
+   one per board it was seen on, and at most one of them is marked `found`, the
+   board that actually turned the role up. Comparing boards over time needs
+   their names to be one spelling each, which is why this is a list and not
+   free text. `host` recognises a board from a link; Other has none. */
+const BOARD_TABLE = [
+  { name:"LinkedIn",   host:/(^|\.)linkedin\.com$/i },
+  { name:"TheLadders", host:/(^|\.)theladders\.com$/i },
+  { name:"Other" }
+];
+const BOARDS = BOARD_TABLE.map(b => b.name);
+
+/* The board a link is a posting on, or "" when the link names none. */
+function boardOf(link){
+  const href = linkHref(link);
+  if (!href) return "";
+  let host;
+  try { host = new URL(href).hostname; } catch { return ""; }
+  const board = BOARD_TABLE.find(b => b.host && b.host.test(host));
+  return board ? board.name : "";
+}
+
 const ROUND_TYPES = ["Screen","Interview 1","Interview 2","Interview 3","Interview 4","Interview 5","Final","Take-home","Offer Call","Other"];
 /* Statuses that have been renamed. Rows saved before a rename - and filters
    already stored in someone's browser - still carry the old wording, so both
@@ -1368,12 +1402,13 @@ const WORK_SETTING_OPTIONS = [{ value:"", label:"—" }].concat(WORK_SETTINGS);
 
 const CONTACT_TYPES = ["Email","Phone","Video","In-person","LinkedIn","Referral","Text"];
 
-/* ---- the fields of an application, a round and a person ----
+/* ---- the fields of an application, a round, a person and a posting ----
 
    One list each. blankApp() and its kin, normalize() and the detail card are
    all built from them, so a new field is one line here.
-     type      how the card edits it - text, date, time, area, select, link
-               or range - and how a loaded value is cleaned up
+     type      how the card edits it - text, date, time, area, select, link,
+               range or check - and how a loaded value is cleaned up
+     hint      the words beside a check box
      options   a select's values; a loaded value outside them becomes `initial`
      initial   what a new record starts with ("" unless given; a function is
                called for each new record)
@@ -1418,7 +1453,7 @@ const APP_FIELDS = [
 /* The card's sections, in order, and the fields each holds. `sub` is markup
    placed under the section's grid - a host a render function fills. */
 const CARD_SECTIONS = [
-  { id:"application", title:"Application Details" },
+  { id:"application", title:"Application Details", sub:'<div id="dPostings"></div>' },
   { id:"role",        title:"Role Status" },
   { id:"company",     title:"Company Details", sub:'<div id="dOtherRoles"></div>' },
   { id:"salary",      title:"Salary" }
@@ -1449,7 +1484,18 @@ const PERSON_FIELDS = [
   { key:"endNotes",     label:"End Contact Notes", type:"text" }
 ];
 
-const LINK_FIELDS = APP_FIELDS.filter(f => f.type === "link").map(f => f.key);
+/* One board a role was seen on. `seenOn` is when it was first seen there and
+   `checkedOn` when something last confirmed it was still up - the pair is what
+   says how long a board carried the role. A loaded board it does not know is
+   read off the link before it falls back to Other. */
+const POSTING_FIELDS = [
+  { key:"board",     label:"Board",        type:"select", options:BOARDS, initial:"Other",
+                                                  from: p => BOARDS.includes(p.board) ? p.board : boardOf(p.link) },
+  { key:"link",      label:"Posting Link", type:"link",   wide:true, copy:"Posting link" },
+  { key:"found",     label:"Found Here",   type:"check",  initial:false, hint:"Found the role here", clean: v => v === true },
+  { key:"seenOn",    label:"Seen",         type:"date",   initial: () => todayISO() },
+  { key:"checkedOn", label:"Checked",      type:"date" }
+];
 
 /* ---- the table's columns ----
 
@@ -1690,7 +1736,8 @@ const optionValue = o => o && typeof o === "object" ? o.value : o;
 
 function initialValue(f){
   if (f.type === "range") return blankRange();
-  return typeof f.initial === "function" ? f.initial() : (f.initial || "");
+  if (typeof f.initial === "function") return f.initial();
+  return f.initial === undefined ? "" : f.initial;
 }
 
 /* A loaded value made safe to hold: a select's must be one of its options. */
@@ -1716,10 +1763,24 @@ const records = v => (Array.isArray(v) ? v : []).filter(r => r && typeof r === "
    is what makes it worth having - the title is text someone retypes, not a
    handle anything can be hung off. */
 function blankApp(){
-  return Object.assign({ id: uid(), roleId: uid(), num: nextNum() }, blankOf(APP_FIELDS), { rounds:[ blankRound() ] });
+  return Object.assign({ id: uid(), roleId: uid(), num: nextNum() }, blankOf(APP_FIELDS), { postings:[], rounds:[ blankRound() ] });
 }
 function blankRound(){ return Object.assign({ id: uid() }, blankOf(ROUND_FIELDS), { people:[] }); }
 function blankPerson(){ return Object.assign({ id: uid() }, blankOf(PERSON_FIELDS)); }
+function blankPosting(){ return Object.assign({ id: uid() }, blankOf(POSTING_FIELDS)); }
+
+/* A new posting for the open row. While the Job Link is still a board's
+   posting that no entry holds, that is the posting meant: it is where the row
+   came from, so it is marked found unless another board already is. When it
+   was first seen is not known, so it is left for you rather than guessed. */
+function postingFor(app){
+  const p = blankPosting();
+  const board = boardOf(app.jobLink), link = String(app.jobLink || "").trim();
+  if (board && !app.postings.some(x => String(x.link).trim() === link)){
+    Object.assign(p, { board, link, seenOn:"", found: !app.postings.some(x => x.found) });
+  }
+  return p;
+}
 function nextNum(){
   return state.applications.reduce((m,a) => Math.max(m, a.num||0), 0) + 1;
 }
@@ -1750,10 +1811,40 @@ function normalize(raw){
     savedAt: raw && raw.savedAt || null,
     applications: list.map((a, i) => {
       a = a && typeof a === "object" ? a : {};
-      return Object.assign({ id: safeId(a.id) || uid(), roleId: safeId(a.roleId) || uid(), num: Number(a.num) || i + 1 },
-        cleanOf(APP_FIELDS, a), { rounds: records(a.rounds).map(normRound) });
+      const id = safeId(a.id) || uid();
+      return Object.assign({ id, roleId: safeId(a.roleId) || uid(), num: Number(a.num) || i + 1 },
+        cleanOf(APP_FIELDS, a),
+        { postings: "postings" in a ? normPostings(a.postings) : seedPostings(id, a.jobLink),
+          rounds: records(a.rounds).map(normRound) });
     })
   };
+}
+/* Only one board can be the one that turned the role up; a hand-edited file
+   claiming more keeps the first. */
+function normPostings(list){
+  let found = false;
+  return records(list).map(normPosting).map(p => {
+    if (p.found && found) p.found = false;
+    found = found || p.found;
+    return p;
+  });
+}
+/* A posting keeps any extra keys it came with, as a person does, so a tool
+   that records more about a board loses nothing to a save from here. */
+function normPosting(p){
+  return Object.assign({}, p, cleanOf(POSTING_FIELDS, p), { id: safeId(p.id) || uid() });
+}
+/* A row written before postings existed - or by the importer, which knows
+   nothing of them - and whose Job Link is a board's posting came from that
+   board, so it is given that posting, marked found. When it was first seen is
+   not known and is left blank rather than guessed. The id is derived from the
+   row's, so loading the row again gives the same posting rather than a new
+   one each time. A row that has a `postings` list, even an empty one, is never
+   given one: an empty list is a posting someone removed. */
+function seedPostings(rowId, jobLink){
+  const board = boardOf(jobLink);
+  if (!board) return [];
+  return [normPosting({ id: rowId + "-p1", board, link: String(jobLink).trim(), seenOn:"", found:true })];
 }
 function normRound(r){
   return Object.assign({ id: r.id || uid() }, cleanOf(ROUND_FIELDS, r), { people: records(r.people).map(normPerson) });
@@ -2401,19 +2492,20 @@ function moneyRange(bind, r){
    being copied for the toast and the screen reader. Copy is offered for
    anything typed in, not just what parses as a URL: a requisition number is
    still worth pasting somewhere. */
-function linkInput(bind, value, placeholder, copyLabel){
+function linkInput(bind, value, placeholder, copyLabel, attrs){
   const typed = !!String(value || "").trim();
+  attrs = attrs || "";
   return '<div class="linkrow">' +
     '<input class="inp" type="url" placeholder="' + esc(placeholder) + '" data-bind="' + bind +
-    '" value="' + esc(value || "") + '">' +
+    '" value="' + esc(value || "") + '"' + attrs + '>' +
     (copyLabel
-      ? '<button class="openbtn" type="button" data-act="copy-link" data-link="' + bind +
-        '" data-label="' + esc(copyLabel) + '" title="Copy to the clipboard"' +
+      ? '<button class="openbtn" type="button" data-act="copy-link" data-link="' + bind + '"' + attrs +
+        ' data-label="' + esc(copyLabel) + '" title="Copy to the clipboard"' +
         ' aria-label="Copy the ' + esc(copyLabel.toLowerCase()) + ' to the clipboard"' +
         (typed ? "" : " disabled") + ">" + ICONS.copy + "</button>"
       : "") +
-    '<button class="openbtn" type="button" data-act="open-link" data-link="' + bind +
-    '" title="Open in a new tab" aria-label="Open in a new tab"' +
+    '<button class="openbtn" type="button" data-act="open-link" data-link="' + bind + '"' + attrs +
+    ' title="Open in a new tab" aria-label="Open in a new tab"' +
     (linkHref(value) ? "" : " disabled") + ">" + ICONS.external + "</button>" +
   "</div>";
 }
@@ -2434,8 +2526,11 @@ function control(f, value, attrs){
     case "text": case "date": case "time": return input(f.type)(f.key, value, attrs);
     case "area":   return area(f.key, value, attrs);
     case "select": return select(f.key, f.options, value, attrs);
-    case "link":   return linkInput(f.key, value, "https://…", f.copy);
+    case "link":   return linkInput(f.key, value, "https://…", f.copy, attrs);
     case "range":  return moneyRange(f.key, value);
+    case "check":
+      return '<label class="checkrow"><input type="checkbox" data-bind="' + f.key + '"' + (value ? " checked" : "") +
+             (attrs || "") + "><span>" + esc(f.hint || f.label) + "</span></label>";
   }
   throw new Error("no control for a " + f.type + " field");
 }
@@ -2493,6 +2588,7 @@ function openDetail(app){
     "</div>");
 
   renderHeader();
+  renderPostings();
   renderOtherRoles();
   renderRounds();
 
@@ -2554,6 +2650,32 @@ function renderOtherRoles(){
       : '<p class="none">' + (name
           ? "No other roles at " + esc(name) + "."
           : "Name the company to see its other roles.") + "</p>");
+}
+
+/* ---- Postings: the boards the role was seen on ----
+
+   A sub-section of Application Details, under the Job Link it is kept apart
+   from. Each posting is addressed by its place in the list, as a round is. */
+function renderPostings(){
+  const list = current.postings;
+  $("#dPostings").innerHTML =
+    '<div class="subsec"><h4>Postings</h4></div>' +
+    (list.length
+      ? '<div class="postings">' + list.map(postingCard).join("") + "</div>"
+      : '<p class="none">Not tracked on any job board yet.</p>') +
+    '<button class="add-dashed" data-act="add-posting">' + ICONS.plus + " Add posting</button>";
+}
+
+function postingCard(p, gi){
+  const a = ' data-post="' + gi + '"';
+  return '<div class="posting">' +
+    '<div class="posting-head">' +
+      '<span class="minilabel">Posting ' + (gi + 1) + "</span>" +
+      '<span class="spacer"></span>' +
+      '<button class="iconbtn" data-act="del-posting"' + a + ' aria-label="Remove posting ' + (gi + 1) + '">' + ICONS.trash + "</button>" +
+    "</div>" +
+    '<div class="grid">' + POSTING_FIELDS.map(f => gridField(f, p[f.key], a)).join("") + "</div>" +
+  "</div>";
 }
 
 function renderRounds(){
@@ -2872,7 +2994,8 @@ function onEdit(e){
   const el = e.target;
   if (!current || !el.dataset || !el.dataset.bind || e.type !== editEvent(el)) return;
   const val = applyEdit(el);
-  if (LINK_FIELDS.includes(el.dataset.bind)) syncLinkButtons(el, val);
+  if (el.type === "url") syncLinkButtons(el, val);
+  if (el.dataset.post !== undefined) postingEdited(el, val);
   touch(current);
   renderHeader();
   if (el.dataset.bind === "company" && el.dataset.r === undefined) renderOtherRoles();
@@ -2881,15 +3004,41 @@ function onEdit(e){
 
 /* Writes what one control holds into the open application; returns the value. */
 function applyEdit(el){
-  const { bind, part, r, p } = el.dataset;
+  const { bind, part } = el.dataset;
   if (part){                                    // one half of a money range
     const range = current[bind] || (current[bind] = blankRange());
     return range[part] = parseMoney(el.value);
   }
-  const target = p !== undefined ? current.rounds[+r].people[+p]
-               : r !== undefined ? current.rounds[+r]
-               : current;
-  return target[bind] = el.type === "checkbox" ? el.checked : el.value;
+  return editTarget(el)[bind] = el.type === "checkbox" ? el.checked : el.value;
+}
+
+/* The record a control or button belongs to: a person, a round, a posting or
+   the application itself. */
+function editTarget(el){
+  const { r, p, post } = el.dataset;
+  return post !== undefined ? current.postings[+post]
+       : p !== undefined ? current.rounds[+r].people[+p]
+       : r !== undefined ? current.rounds[+r]
+       : current;
+}
+
+/* A posting's link says which board it is on, when the board is one the app
+   knows, so the board follows the link rather than being picked twice. And only
+   one board can be where the role was found: marking one clears the rest. */
+function postingEdited(el, val){
+  const gi = +el.dataset.post, posting = current.postings[gi];
+  if (el.dataset.bind === "link"){
+    const board = boardOf(val);
+    if (board && posting.board !== board){
+      posting.board = board;
+      const sel = $('#dPostings select[data-bind="board"][data-post="' + gi + '"]');
+      if (sel) sel.value = board;
+    }
+  }
+  if (el.dataset.bind === "found" && val){
+    current.postings.forEach((x, i) => { if (i !== gi) x.found = false; });
+    for (const box of document.querySelectorAll('#dPostings input[data-bind="found"]')) box.checked = box === el;
+  }
 }
 
 /* A link's open and copy buttons follow what is typed. */
@@ -2944,11 +3093,21 @@ overlay.addEventListener("click", e => {
     case "del-person":
       current.rounds[ri].people.splice(pi, 1);
       break;
+    case "add-posting":
+      current.postings.push(postingFor(current));
+      touch(current);
+      renderPostings();
+      return;                       // the rounds are untouched
+    case "del-posting":
+      current.postings.splice(+btn.dataset.post, 1);
+      touch(current);
+      renderPostings();
+      return;
     case "copy-link":
-      copyLink(btn, current[btn.dataset.link], btn.dataset.label || "Link");
+      copyLink(btn, editTarget(btn)[btn.dataset.link], btn.dataset.label || "Link");
       return;                       // no data change
     case "open-link": {
-      const href = linkHref(current[btn.dataset.link]);
+      const href = linkHref(editTarget(btn)[btn.dataset.link]);
       if (href) window.open(href, "_blank", "noopener");
       return;                       // no data change
     }
