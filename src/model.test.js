@@ -149,6 +149,71 @@ describe("a new application", () => {
 
     expect(app.blankApp().roleId).not.toBe(app.blankApp().roleId);
   });
+
+  it("starts tracked on no job board", () => {
+    expect(app.blankApp().postings).toEqual([]);
+  });
+});
+
+/* Where a role was seen is a list of postings, one per board, kept apart from
+   the Job Link you apply through. A row from before the list existed - or
+   from the importer, which knows nothing of it - is given the posting its Job
+   Link already is, and nothing more. */
+describe("a row's postings", () => {
+  const LINKEDIN = "https://www.linkedin.com/jobs/view/4012345678/";
+  const CAREERS = "https://careers.acme.com/jobs/123";
+
+  it("are given the posting a row's LinkedIn Job Link already is, as where the role was found", () => {
+    const [posting] = loaded({ id: "a1", jobLink: LINKEDIN }).postings;
+
+    expect([posting.board, posting.link, posting.found]).toEqual(["LinkedIn", LINKEDIN, true]);
+  });
+
+  it("recognise a TheLadders Job Link as that board's posting", () => {
+    const row = loaded({ jobLink: "https://www.theladders.com/job/staff-engineer-acme_12345" });
+
+    expect(row.postings.map(p => p.board)).toEqual(["TheLadders"]);
+  });
+
+  it("leave when a posting taken from the Job Link was first seen blank, rather than guess it", () => {
+    expect(loaded({ jobLink: LINKEDIN }).postings[0].seenOn).toBe("");
+  });
+
+  it("are the same posting each time the row is loaded, not a new one", () => {
+    const first = loaded({ id: "a1", jobLink: LINKEDIN }).postings[0].id;
+
+    expect(loaded({ id: "a1", jobLink: LINKEDIN }).postings[0].id).toBe(first);
+  });
+
+  it("are none for a row whose Job Link is the company's own careers page", () => {
+    expect(loaded({ jobLink: CAREERS }).postings).toEqual([]);
+  });
+
+  it("are never added to a row that already has the list, even an empty one", () => {
+    expect(loaded({ jobLink: LINKEDIN, postings: [] }).postings).toEqual([]);
+  });
+
+  it("keep only the first of several marked found, since one board turned the role up", () => {
+    const row = loaded({ postings: [{ board: "LinkedIn", found: true }, { board: "TheLadders", found: true }] });
+
+    expect(row.postings.map(p => p.found)).toEqual([true, false]);
+  });
+
+  it("read a board the app does not know off the posting's link", () => {
+    expect(loaded({ postings: [{ board: "Linked In", link: LINKEDIN }] }).postings[0].board).toBe("LinkedIn");
+  });
+
+  it("fall back to Other for a board neither named nor in the link", () => {
+    expect(loaded({ postings: [{ board: "Dice", link: "https://dice.com/job/1" }] }).postings[0].board).toBe("Other");
+  });
+
+  it("keep a posting's fields the app does not know about, for the tool that wrote them", () => {
+    expect(loaded({ postings: [{ board: "LinkedIn", trackerStage: "saved" }] }).postings[0].trackerStage).toBe("saved");
+  });
+
+  it("drop an entry that is not an object, keeping the rest", () => {
+    expect(loaded({ postings: [null, "x", { board: "TheLadders" }] }).postings.map(p => p.board)).toEqual(["TheLadders"]);
+  });
 });
 
 describe("sorting a column", () => {

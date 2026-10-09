@@ -433,6 +433,15 @@ is recognisable against the browser's own chrome.
 - **Application Details** — Posted, Applied, Await, Status, **Interest**, Applied Via, **Job Link** and
   **System of Record** (where the application lives — Workday, Greenhouse, the company
   portal, …). *Status* is where **your application** stands: a decision about you.
+  **Job Link** is where you apply — the hiring company's own page, once you have found it there.
+
+  Under them, **Postings** lists the job boards the role was seen on — LinkedIn,
+  TheLadders or Other — each with its **Posting Link**, when it was **Seen** first and
+  last **Checked**, and **Found Here** on the one board that turned the role up (marking
+  one clears the rest). Pasting a LinkedIn or TheLadders link sets the board. **Add
+  posting** starts from the Job Link when that is still a board's posting nothing lists
+  yet. Kept apart from the Job Link, the postings are what lets boards be compared over
+  time: which turns up more roles, and which turns up the ones worth applying to.
 - **Role Status** — where **the opening itself** stands, which is a different thing:
   *Unknown*, *Live*, *Reposted*, *Filled*, *Closed* or *Removed*. It is a reading of
   the posting rather than of you, so a role can be *Filled* while your application is
@@ -492,7 +501,13 @@ Edits save automatically. `Esc` closes any open card.
       "postedRange": { "min": null, "max": null },   // all three ranges are
       "localRange":  { "min": null, "max": null },   // a low and a high number
       "myRange":     { "min": null, "max": null },
-      "jobLink": "", "companyWebsite": "", "systemOfRecord": "",
+      "jobLink": "",                   // where you apply - the company's own page, ideally
+      "companyWebsite": "", "systemOfRecord": "",
+      "postings": [                    // the job boards the role was seen on
+        { "id": "…", "board": "LinkedIn",            // LinkedIn | TheLadders | Other
+          "link": "", "seenOn": "", "checkedOn": "", // first seen, last confirmed up
+          "found": true }                            // the one board that turned it up
+      ],
       "rounds": [
         { "id": "…", "type": "Screen",
           "date": "", "time": "",                    // YYYY-MM-DD and HH:MM
@@ -514,6 +529,12 @@ A row saved when *Closed* was still an application status is read as *Ghosted* w
 `roleStatus` set to *Closed*: the posting coming down was never a decision about the
 application, so the two parts of that row are moved to the fields that mean them.
 Nothing is lost and old files keep loading.
+
+A row loaded without a `postings` list — written before there was one, or by
+`/job-from-url` — whose **Job Link** is a LinkedIn or TheLadders posting is given that
+posting, marked found. When it was first seen is not known, so `seenOn` is left blank
+rather than guessed. A row that has the list, even an empty one, is never given one, so
+a posting you remove stays removed.
 
 ## AI use
 

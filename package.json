@@ -4,7 +4,7 @@
   "private": true,
   "description": "Single-page job application tracker. The app itself has no dependencies and no build step - these are test-only devDependencies.",
   "scripts": {
-    "start": "node src/server.js",
+    "server": "node src/server.js",
     "demo": "node scripts/demo.js",
     "demo:fellowship": "node scripts/demo.js fellowship",
     "demo:homestar": "node scripts/demo.js homestar",

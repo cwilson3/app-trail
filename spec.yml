@@ -627,3 +627,44 @@ components:
                 type: string
                 description: What roleStatus was read from, so a reading can be weighed.
                 example: jobLink
+              jobLink:
+                type: string
+                description: >
+                  Where the application is made - the hiring company's own page,
+                  ideally. Where the role was seen is kept in postings instead.
+              postings:
+                type: array
+                description: >
+                  The job boards the role was seen on, one entry per posting,
+                  kept apart from jobLink. A row loaded without this list whose
+                  jobLink is a board's posting is given that posting, marked
+                  found, with seenOn left blank; a row that has the list, even
+                  empty, is never given one. Extra keys on an entry are kept.
+                items:
+                  type: object
+                  required: [id, board]
+                  properties:
+                    id:
+                      type: string
+                    board:
+                      type: string
+                      enum: [LinkedIn, TheLadders, Other]
+                      description: >
+                        Read off link when the stored name is not one of these,
+                        and Other when the link names no board either.
+                    link:
+                      type: string
+                      description: The posting on that board.
+                      example: https://www.linkedin.com/jobs/view/4012345678/
+                    found:
+                      type: boolean
+                      description: >
+                        This board is where the role was found. At most one
+                        entry per row is true; a file claiming more keeps the
+                        first.
+                    seenOn:
+                      type: string
+                      description: When the role was first seen on the board - a date, or blank when not known.
+                    checkedOn:
+                      type: string
+                      description: When something last confirmed the posting was still up - a date, or blank.
