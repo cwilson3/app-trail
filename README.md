@@ -447,10 +447,9 @@ is recognisable against the browser's own chrome.
   the posting rather than of you, so a role can be *Filled* while your application is
   still *Interview* — and seeing that disagreement is the point of keeping the two
   apart. **Checked** and **Checked Against** say when the reading was taken and from
-  where, so a stale *Live* can be told from a fresh one. The
-  [backpack](https://github.com/cwilson3/app-trail-backpack)'s Role Reconciler fills
-  these in by reading each **Job Link**; nothing else writes them, and nothing that
-  reads a posting may touch your application's own status.
+  where, so a stale *Live* can be told from a fresh one. Changing the role's status
+  never changes your application's: the posting can say the opening is gone, but only
+  you say what happened to your application.
 - **Company Details** — Company Name, Role Title, Company Type, Industry, Role Type,
   **Work Setting** (Remote, Hybrid or On-Site) and **Company Website**. Under them,
   **Other Roles** lists every other application at the same company — role title, status
