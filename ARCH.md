@@ -115,12 +115,10 @@ no longer a status an application can hold. `STATUS_RENAMES` carries an old row
 to `Ghosted` and `roleStatus`'s `from` lifts the posting's state across, so a
 file written before the split loads with both halves in the right place.
 
-What makes this worth enforcing rather than documenting is the backpack's Role
-Reconciler, which reads postings. A tool that scrapes the outside world can
-only ever speak about the role, so the three fields it may write —
-`roleStatus`, `roleCheckedOn`, `roleStatusSource` — are an allow-list on its
-side, and `status` is not in it. The reading says the opening is gone; only you
-say what happened to your application.
+A reading of a posting can only ever speak about the role, so it lands in
+`roleStatus`, with `roleCheckedOn` and `roleStatusSource` saying when it was
+taken and from where, and never in `status`. The posting says the opening is
+gone; only you say what happened to your application.
 
 ## Two agreements the code enforces rather than documents
 

@@ -1829,8 +1829,8 @@ function normPostings(list){
     return p;
   });
 }
-/* A posting keeps any extra keys it came with, as a person does, so a tool
-   that records more about a board loses nothing to a save from here. */
+/* A posting keeps any extra keys it came with, as a person does, so a field
+   added to data.json by hand loses nothing to a save from here. */
 function normPosting(p){
   return Object.assign({}, p, cleanOf(POSTING_FIELDS, p), { id: safeId(p.id) || uid() });
 }
