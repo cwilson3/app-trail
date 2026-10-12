@@ -258,7 +258,7 @@ describe("the outcomes the flow view ends in", () => {
   it("lists the open ones, then the closed statuses good news first, then bad, then the ones nobody decided", () => {
     expect(app.OUTCOMES.map(o => o.label)).toEqual([
       "In progress", "Awaiting response", "Ready to apply",
-      "Accepted", "Rejected", "Ghosted", "Withdrawn"
+      "Accepted", "Rejected", "Ghosted", "Withdrawn", "Missed"
     ]);
   });
 
@@ -268,10 +268,10 @@ describe("the outcomes the flow view ends in", () => {
     expect(waiting.tone).toBe("cool");
   });
 
-  it("dresses the one nobody decided in the warm tone rather than the one bad news wears", () => {
-    const undecided = app.OUTCOMES.filter(o => o.label === "Withdrawn");
+  it("dresses the ones nobody decided in the warm tone rather than the one bad news wears", () => {
+    const undecided = app.OUTCOMES.filter(o => o.label === "Withdrawn" || o.label === "Missed");
 
-    expect(undecided.map(o => o.tone)).toEqual(["warm"]);
+    expect(undecided.map(o => o.tone)).toEqual(["warm", "warm"]);
   });
 });
 

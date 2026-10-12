@@ -643,6 +643,10 @@
   input[type=date].inp,
   input[type=time].inp{font-variant-numeric:tabular-nums}
   textarea.inp{height:auto;min-height:74px;padding:9px 11px;line-height:1.5;resize:vertical}
+  /* opens at twice a one-line field (.inp is 38px) and grows with the text as
+     it is typed, up to three rows (3lh plus the 18px padding and 2px border);
+     past that it scrolls. A browser without field-sizing keeps the 76px box. */
+  #dAppNotes textarea.inp{field-sizing:content;min-height:76px;max-height:calc(3lh + 20px)}
 
   /* other roles - a sub-section of Company Details. The list is a single grid
      so the three columns line up between the header row and the rows under
@@ -787,7 +791,7 @@
 
   .filter-panel{
     position:absolute;top:calc(100% + 8px);right:0;z-index:30;
-    width:min(600px,86vw);
+    width:min(740px,86vw);
     background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-modal);
     transform-origin:top right;
   }
@@ -797,10 +801,11 @@
 
   .filter-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 12px;border-bottom:1px solid var(--line)}
   .filter-head .settings-title{padding:0}
-  .filter-groups{display:grid;grid-template-columns:1.25fr 1fr .85fr}
+  .filter-groups{display:grid;grid-template-columns:1.25fr .85fr .85fr 1fr}
   .fgroup{padding:11px 12px 12px;min-width:0}
   .fgroup + .fgroup{border-left:1px solid var(--line)}
   .fgroup-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:7px}
+  .fgroup-head .fbtns{display:flex;gap:10px}
   .linkbtn{border:0;background:none;padding:0;font:inherit;font-size:11.5px;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
   .linkbtn:hover{color:var(--ink)}
   .linkbtn:disabled{opacity:.4;cursor:default;text-decoration:none}
@@ -1322,7 +1327,11 @@ const STATUS_TABLE = [
   { name:"Accepted",                    tone:"good", stage:4, outcome:"good" },
   { name:"Rejected",                    tone:"bad",  outcome:"bad" },
   { name:"Withdrawn",                   tone:"bad",  outcome:"undecided" },
-  { name:"Ghosted",                     tone:"warm", outcome:"bad" }
+  { name:"Ghosted",                     tone:"warm", outcome:"bad" },
+  /* The role went - removed or closed - before you got an application in.
+     Nobody decided anything about you, so it sits with Withdrawn; and since
+     it was never applied to, it has no stage. */
+  { name:"Missed",                      tone:"warm", outcome:"undecided" }
 ];
 const STATUSES = STATUS_TABLE.map(s => s.name);
 const statusInfo = name => STATUS_TABLE.find(s => s.name === name) || {};
@@ -1426,6 +1435,7 @@ const APP_FIELDS = [
   { key:"appliedVia",     label:"Applied Via",               type:"text",   section:"application" },
   { key:"jobLink",        label:"Job Link",                  type:"link",   section:"application", wide:true, copy:"Job link" },
   { key:"systemOfRecord", label:"System of Record",          type:"text",   section:"application" },
+  { key:"notes",          label:"Notes",                     type:"area" },   // its own sub-section, see renderAppNotes()
   /* The role's own state, kept apart from `status` above. `roleStatus` is a
      reading of the posting, `roleCheckedOn` when it was taken and
      `roleStatusSource` what it was taken from - without the last two a stale
@@ -1453,7 +1463,7 @@ const APP_FIELDS = [
 /* The card's sections, in order, and the fields each holds. `sub` is markup
    placed under the section's grid - a host a render function fills. */
 const CARD_SECTIONS = [
-  { id:"application", title:"Application Details", sub:'<div id="dPostings"></div>' },
+  { id:"application", title:"Application Details", sub:'<div id="dAppNotes"></div><div id="dPostings"></div>' },
   { id:"role",        title:"Role Status" },
   { id:"company",     title:"Company Details", sub:'<div id="dOtherRoles"></div>' },
   { id:"salary",      title:"Salary" }
@@ -1523,7 +1533,8 @@ const COLUMNS = [
   { key:"_row",        label:"#",            cls:"rownum", fixed:true, render: (app, i) => String(i + 1) },
   { key:"company",     label:"Company",      cls:"company" },
   { key:"roleTitle",   label:"Role Title" },
-  { key:"postedOn",    label:"Posted",       cls:"date" },
+  { key:"roleStatus",  label:"Role Status",  render: app => pill(app.roleStatus, roleStatusInfo(app.roleStatus).tone),
+                                             compare: (a, b, dir) => byRank(ROLE_STATUSES, a.roleStatus, b.roleStatus, dir) },
   { key:"appliedOn",   label:"Applied",      cls:"date" },
   { key:"status",      label:"Status",       render: app => pill(app.status, statusInfo(app.status).tone) },
   { key:"interest",    label:"Interest",     render: app => app.interest ? pill(app.interest, INTEREST_TONE[app.interest]) : null,
@@ -2193,24 +2204,31 @@ async function boot(){
 /* ================= filters =================
 
    A field's selection is a set of values; an empty set means "no restriction",
-   so a row has to match every field that has one. Closed-out applications are
-   hidden by default - the table is a list of things still in play. */
+   so a row has to match every field that has one. ALL_VALUES on its own is
+   the field's All button: every box ticked, and still no restriction - so a
+   value that turns up later is ticked too, not silently filtered out.
+   ALL_VALUES never reaches storage: an All field is saved as an empty array
+   (which any reader takes as "no restriction") and named in `all`.
+   Closed-out applications are hidden by default - the table is a list of
+   things still in play. */
 
 const CLOSED_STATUSES = STATUS_TABLE.filter(s => s.outcome).map(s => s.name);
 const OPEN_STATUSES = STATUSES.filter(s => !CLOSED_STATUSES.includes(s));
 const FILTER_KEY = "at-filter";
 const NO_INTEREST = "__none__";        // stands in for a blank interest
+const ALL_VALUES = "__all__";          // a field with every value ticked
 
 const FILTER_FIELDS = [
-  { key:"company",  label:"Company",  search:true },
-  { key:"status",   label:"Status" },
-  { key:"interest", label:"Interest" }
+  { key:"company",    label:"Company",  search:true },
+  { key:"roleStatus", label:"Role Status" },
+  { key:"interest",   label:"Interest" },
+  { key:"status",     label:"Status" }
 ];
 
-const filters = { company:new Set(), status:new Set(OPEN_STATUSES), interest:new Set() };
+const filters = { company:new Set(), status:new Set(OPEN_STATUSES), interest:new Set(), roleStatus:new Set() };
 const filterQuery = { company:"" };
 
-function defaultFilters(){ return { company:[], status:OPEN_STATUSES.slice(), interest:[] }; }
+function defaultFilters(){ return { company:[], status:OPEN_STATUSES.slice(), interest:[], roleStatus:[] }; }
 
 function loadFilters(){
   let saved = null;
@@ -2218,15 +2236,18 @@ function loadFilters(){
   const src = saved && typeof saved === "object" ? saved : defaultFilters();
   for (const f of FILTER_FIELDS){
     const vals = Array.isArray(src[f.key]) ? src[f.key] : [];
-    const named = vals.filter(v => typeof v === "string");
-    filters[f.key] = new Set(f.key === "status"
-      ? named.map(v => STATUS_RENAMES[v] || v)
-      : named);
+    const named = vals.filter(v => typeof v === "string" && v !== ALL_VALUES);
+    filters[f.key] = Array.isArray(src.all) && src.all.includes(f.key)
+      ? new Set([ALL_VALUES])
+      : new Set(f.key === "status" ? named.map(v => STATUS_RENAMES[v] || v) : named);
   }
 }
 function saveFilters(){
-  const out = {};
-  for (const f of FILTER_FIELDS) out[f.key] = Array.from(filters[f.key]);
+  const out = { all:[] };
+  for (const f of FILTER_FIELDS){
+    if (filters[f.key].has(ALL_VALUES)){ out[f.key] = []; out.all.push(f.key); }
+    else out[f.key] = Array.from(filters[f.key]);
+  }
   try { localStorage.setItem(FILTER_KEY, JSON.stringify(out)); } catch(e){}
 }
 
@@ -2235,17 +2256,17 @@ function filterValue(app, key){
   return app[key] == null ? "" : String(app[key]);
 }
 
+const narrows = key => filters[key].size > 0 && !filters[key].has(ALL_VALUES);
+const allows = (key, value) => !narrows(key) || filters[key].has(value);
+
 function passesFilter(app){
-  for (const f of FILTER_FIELDS){
-    const sel = filters[f.key];
-    if (sel.size && !sel.has(filterValue(app, f.key))) return false;
-  }
+  for (const f of FILTER_FIELDS) if (!allows(f.key, filterValue(app, f.key))) return false;
   return true;
 }
 
 function activeFilterCount(){
   let n = 0;
-  for (const f of FILTER_FIELDS) if (filters[f.key].size) n++;
+  for (const f of FILTER_FIELDS) if (narrows(f.key)) n++;
   return n;
 }
 
@@ -2261,9 +2282,10 @@ function filterOptions(key){
   let vals;
   if (key === "status") vals = STATUSES.slice();
   else if (key === "interest") vals = INTEREST_LEVELS.concat([NO_INTEREST]);
+  else if (key === "roleStatus") vals = ROLE_STATUSES.slice();
   else vals = Array.from(counts.keys()).sort((a,b) =>
     a.localeCompare(b, undefined, { sensitivity:"base" }));
-  for (const v of filters[key]) if (vals.indexOf(v) === -1) vals.push(v);
+  for (const v of filters[key]) if (v !== ALL_VALUES && vals.indexOf(v) === -1) vals.push(v);
   return vals.map(v => ({
     value: v,
     label: (v === NO_INTEREST || v === "") ? "—" : v,
@@ -2279,7 +2301,7 @@ function optionsHtml(f){
   if (!opts.length) return '<div class="fnone">No matches</div>';
   return opts.map(o =>
     '<label class="fopt"><input type="checkbox" data-field="' + f.key + '" value="' + esc(o.value) + '"' +
-    (sel.has(o.value) ? " checked" : "") + ">" +
+    (sel.has(o.value) || sel.has(ALL_VALUES) ? " checked" : "") + ">" +
     '<span class="txt">' + esc(o.label) + "</span>" +
     '<span class="n">' + o.n + "</span></label>"
   ).join("");
@@ -2290,8 +2312,12 @@ function renderFilterPanel(){
     '<section class="fgroup" data-field="' + f.key + '">' +
       '<div class="fgroup-head">' +
         '<span class="name">' + esc(f.label) + "</span>" +
-        '<button class="linkbtn" type="button" data-clear="' + f.key + '"' +
-          (filters[f.key].size ? "" : " disabled") + ">Any</button>" +
+        '<span class="fbtns">' +
+          '<button class="linkbtn" type="button" data-all="' + f.key + '"' +
+            (filters[f.key].has(ALL_VALUES) ? " disabled" : "") + ">All</button>" +
+          '<button class="linkbtn" type="button" data-clear="' + f.key + '"' +
+            (filters[f.key].size ? "" : " disabled") + ">None</button>" +
+        "</span>" +
       "</div>" +
       (f.search
         ? '<input class="fsearch" type="search" data-search="' + f.key + '" placeholder="Search ' +
@@ -2311,16 +2337,16 @@ function syncFilterUi(){
   const shown = state.applications.filter(passesFilter).length;
   const total = state.applications.length;
   $("#filterNote").textContent = n === 0 ? "Showing all " + plural(total, "application") : "Showing " + shown + " of " + total;
-  $("#btnFilterClear").disabled = n === 0;
+  $("#btnFilterClear").disabled = FILTER_FIELDS.every(f => !filters[f.key].size);
 }
 
-/* Tick boxes and "Any" buttons follow the model, without rebuilding the panel -
+/* Tick boxes and All/None buttons follow the model, without rebuilding the panel -
    a rebuild would drop the caret out of the search box and lose the scroll. */
 function syncFilterChecks(){
   const boxes = filterPanel.querySelectorAll("input[type=checkbox][data-field]");
-  for (const b of boxes) b.checked = filters[b.dataset.field].has(b.value);
-  const anys = filterPanel.querySelectorAll("button[data-clear]");
-  for (const b of anys) b.disabled = !filters[b.dataset.clear].size;
+  for (const b of boxes) b.checked = filters[b.dataset.field].has(b.value) || filters[b.dataset.field].has(ALL_VALUES);
+  for (const b of filterPanel.querySelectorAll("button[data-all]")) b.disabled = filters[b.dataset.all].has(ALL_VALUES);
+  for (const b of filterPanel.querySelectorAll("button[data-clear]")) b.disabled = !filters[b.dataset.clear].size;
 }
 
 function applyFilters(){
@@ -2338,11 +2364,13 @@ function setFilter(key, values){
 $("#filterPanel").addEventListener("change", e => {
   const box = e.target.closest("input[type=checkbox][data-field]");
   if (!box) return;
-  const key = box.dataset.field, sel = filters[key];
+  const key = box.dataset.field, values = filterOptions(key).map(o => o.value);
+  /* unticking one box out of All leaves every other value ticked */
+  const sel = filters[key].has(ALL_VALUES) ? new Set(values) : filters[key];
   if (box.checked) sel.add(box.value); else sel.delete(box.value);
-  /* everything ticked is the same as nothing ticked - keep the simpler one, so
-     a company added later isn't silently filtered out */
-  if (sel.size && sel.size === filterOptions(key).length) sel.clear();
+  /* ticking the last box is the same as pressing All, so a company added later
+     isn't silently filtered out */
+  filters[key] = values.every(v => sel.has(v)) ? new Set([ALL_VALUES]) : sel;
   applyFilters();
 });
 
@@ -2356,6 +2384,8 @@ $("#filterPanel").addEventListener("input", e => {
 });
 
 $("#filterPanel").addEventListener("click", e => {
+  const all = e.target.closest("button[data-all]");
+  if (all) setFilter(all.dataset.all, [ALL_VALUES]);
   const clear = e.target.closest("button[data-clear]");
   if (clear) setFilter(clear.dataset.clear, []);
 });
@@ -2588,6 +2618,7 @@ function openDetail(app){
     "</div>");
 
   renderHeader();
+  renderAppNotes();
   renderPostings();
   renderOtherRoles();
   renderRounds();
@@ -2651,6 +2682,17 @@ function renderOtherRoles(){
       : '<p class="none">' + (name
           ? "No other roles at " + esc(name) + "."
           : "Name the company to see its other roles.") + "</p>");
+}
+
+/* ---- Notes: free text about the application ----
+
+   A sub-section of Application Details. The box's height is all CSS (see
+   #dAppNotes textarea.inp): it grows with the text up to three rows, and
+   anything longer scrolls. */
+function renderAppNotes(){
+  $("#dAppNotes").innerHTML =
+    '<div class="subsec"><h4>Notes</h4></div>' +
+    area("notes", current.notes, ' aria-label="Notes"');
 }
 
 /* ---- Postings: the boards the role was seen on ----
@@ -3154,7 +3196,7 @@ function addApplication(){
   dirty.add(app.id);
   if (passesFilter(app)) renderTable();
   else {                            // a blank row matches no company you picked
-    for (const f of FILTER_FIELDS) if (!filters[f.key].has(filterValue(app, f.key))) filters[f.key].clear();
+    for (const f of FILTER_FIELDS) if (!allows(f.key, filterValue(app, f.key))) filters[f.key].clear();
     applyFilters();
     toast("Filters cleared to show the new application");
   }
@@ -3373,7 +3415,7 @@ $("#btnDocs").onclick = () => {
         "<h3>The table</h3>" +
         "<p>One row per application, sorted by company. Click any column heading to re-sort; click any row to open its detail card.</p>" +
         "<table>" +
-          "<tr><td>Status</td><td>Where <em>your application</em> stands &mdash; a decision about you, by you (<i>Withdrawn</i>) or by them (<i>Rejected</i>, <i>Offer</i>). <i>Ghosted</i> is for an application no answer ever reached.</td></tr>" +
+          "<tr><td>Status</td><td>Where <em>your application</em> stands &mdash; a decision about you, by you (<i>Withdrawn</i>) or by them (<i>Rejected</i>, <i>Offer</i>). <i>Ghosted</i> is for an application no answer ever reached, and <i>Missed</i> for a role that was removed or closed before you applied.</td></tr>" +
           "<tr><td>Role Status</td><td>Where <em>the opening</em> stands, which is a different thing: <i>Live</i>, <i>Reposted</i>, <i>Filled</i>, <i>Closed</i> or <i>Removed</i>. It is a reading of the posting, not of you, so a role can be <i>Filled</i> while your application is still <i>Interview</i>. <i>Checked</i> and <i>Checked Against</i> say when the reading was taken and from where.</td></tr>" +
           "<tr><td>Round</td><td>The round you&rsquo;re currently on &mdash; the latest round whose end state is still <i>Pending</i>.</td></tr>" +
           "<tr><td>#</td><td>Row number in the current sort order &mdash; it renumbers when you re-sort.</td></tr>" +

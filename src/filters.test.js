@@ -22,7 +22,7 @@ const STORAGE_KEY = "at-filter";
 const EXPORTS = `
 window.__app = {
   get state(){ return state; }, set state(v){ state = v; },
-  filters, FILTER_FIELDS, CLOSED_STATUSES, OPEN_STATUSES, STATUSES, INTEREST_LEVELS, NO_INTEREST,
+  filters, FILTER_FIELDS, CLOSED_STATUSES, OPEN_STATUSES, STATUSES, INTEREST_LEVELS, NO_INTEREST, ROLE_STATUSES,
   defaultFilters, loadFilters, saveFilters, setFilter,
   filterValue, passesFilter, filterOptions, activeFilterCount,
   normalize, renderTable, sorted, addApplication
@@ -58,13 +58,14 @@ describe("the default filter", () => {
       { company:"Pulled",   status:"Ghosted", roleStatus:"Closed" },
       { company:"Quit",     status:"Withdrawn" },
       { company:"Silent",   status:"Ghosted" },
+      { company:"Late",     status:"Missed" },
       { company:"Waiting",  status:"Applied - Awaiting Response" }
     ]);
     expect(shown().sort()).toEqual(["Live", "Waiting"]);
   });
 
-  it("counts exactly the four closed-out statuses", () => {
-    expect(app.CLOSED_STATUSES).toEqual(["Accepted","Rejected","Withdrawn","Ghosted"]);
+  it("counts exactly the five closed-out statuses", () => {
+    expect(app.CLOSED_STATUSES).toEqual(["Accepted","Rejected","Withdrawn","Ghosted","Missed"]);
     expect(app.OPEN_STATUSES).toEqual(
       ["Ready","Applied - Awaiting Response","Recruiter Screen","Phone Screen","Interview","Final","Offer","Negotiating"]);
     expect([...app.OPEN_STATUSES, ...app.CLOSED_STATUSES].sort()).toEqual([...app.STATUSES].sort());
@@ -199,53 +200,226 @@ describe("the option lists", () => {
   });
 });
 
+/* Panel helpers - each opens the panel first, so the boxes exist to read. */
+const openPanel = () => { if (document.querySelector("#filterPanel").hidden) document.querySelector("#btnFilter").click(); };
+const boxes = field => [...document.querySelectorAll(`input[data-field="${field}"]`)];
+const ticked = field => boxes(field).filter(b => b.checked).map(b => b.value);
+const groupButton = (attr, field) => document.querySelector(`#filterPanel button[data-${attr}="${field}"]`);
+
+function tick(field, value, checked){
+  const box = boxes(field).find(b => b.value === value);
+  box.checked = checked;
+  box.dispatchEvent(new Event("change", { bubbles:true }));
+}
+
 describe("ticking every value", () => {
-  beforeEach(() => seed(app, [
-    { company:"Globex", status:"Applied - Awaiting Response", interest:"High" },
-    { company:"Initech", status:"Offer",   interest:"Low" }
-  ]));
+  beforeEach(() => {
+    seed(app, [
+      { company:"Globex", status:"Applied - Awaiting Response", interest:"High" },
+      { company:"Initech", status:"Offer",   interest:"Low" }
+    ]);
+    openPanel();
+  });
 
-  function tick(field, value, checked){
-    const box = [...document.querySelectorAll(`input[data-field="${field}"]`)]
-      .find(b => b.value === value);
-    box.checked = checked;
-    box.dispatchEvent(new Event("change", { bubbles:true }));
-    return box;
-  }
-
-  it("collapses a fully ticked field back to 'any', but only once every value is on", () => {
-    document.querySelector("#btnFilter").click();
+  it("keeps every box ticked once the last one is ticked", () => {
     for (const level of app.INTEREST_LEVELS) tick("interest", level, true);
-    expect([...app.filters.interest]).toEqual([...app.INTEREST_LEVELS]);   // three of the four
-    tick("interest", app.NO_INTEREST, true);                               // the last one
-    expect(app.filters.interest.size).toBe(0);
-    expect(app.activeFilterCount()).toBe(1);                               // the default status filter, alone again
+    tick("interest", app.NO_INTEREST, true);
+
+    expect(ticked("interest")).toEqual([...app.INTEREST_LEVELS, app.NO_INTEREST]);
+    expect(app.activeFilterCount()).toBe(1);                               // the default status filter, alone
   });
 
   it("so a value that appears later is not silently excluded", () => {
-    document.querySelector("#btnFilter").click();
     for (const value of app.STATUSES) tick("status", value, true);
-    expect(app.filters.status.size).toBe(0);
+
     seed(app, [{ company:"New", status:"Ghosted" }]);
+
     expect(shown()).toEqual(["New"]);
   });
 
   it("unticking one value leaves the rest as an ordinary selection", () => {
-    document.querySelector("#btnFilter").click();
     tick("status", "Ready", false);
+
     expect(app.filters.status.size).toBe(app.OPEN_STATUSES.length - 1);
     expect(app.filters.status.has("Ready")).toBe(false);
   });
 });
 
+describe("a field's All and None buttons", () => {
+  beforeEach(() => {
+    seed(app, [
+      { company:"Globex",  status:"Interview", interest:"High" },
+      { company:"Initech", status:"Rejected",  interest:"Low" }
+    ]);
+    openPanel();
+  });
+
+  it("offers All and None in place of Any", () => {
+    const labels = [...document.querySelectorAll('#filterGroups section[data-field="status"] .fgroup-head button')]
+      .map(b => b.textContent);
+
+    expect(labels).toEqual(["All", "None"]);
+  });
+
+  it("ticks every box in the field when All is clicked", () => {
+    groupButton("all", "status").click();
+
+    expect(ticked("status")).toEqual(app.STATUSES);
+  });
+
+  it("shows every row and stops counting the field once All is clicked", () => {
+    groupButton("all", "status").click();
+
+    expect(shown().sort()).toEqual(["Globex", "Initech"]);
+    expect(app.activeFilterCount()).toBe(0);
+  });
+
+  it("leaves the other fields alone when All is clicked", () => {
+    app.setFilter("interest", ["High"]);
+
+    groupButton("all", "status").click();
+
+    expect(ticked("interest")).toEqual(["High"]);
+    expect(shown()).toEqual(["Globex"]);
+  });
+
+  it("unticks every box in the field when None is clicked", () => {
+    groupButton("all", "company").click();
+
+    groupButton("clear", "company").click();
+
+    expect(ticked("company")).toEqual([]);
+  });
+
+  it("unticking one box after All ticks off only that value", () => {
+    groupButton("all", "status").click();
+
+    tick("status", "Rejected", false);
+
+    expect(ticked("status")).toEqual(app.STATUSES.filter(s => s !== "Rejected"));
+    expect(shown()).toEqual(["Globex"]);
+  });
+
+  it("disables All when every box is ticked and None when none is", () => {
+    groupButton("all", "interest").click();
+    expect([groupButton("all", "interest").disabled, groupButton("clear", "interest").disabled]).toEqual([true, false]);
+
+    groupButton("clear", "interest").click();
+
+    expect([groupButton("all", "interest").disabled, groupButton("clear", "interest").disabled]).toEqual([false, true]);
+  });
+
+  it("remembers All between visits", async () => {
+    groupButton("all", "company").click();
+    const stored = localStorage.getItem(STORAGE_KEY);
+
+    app = await loadApp(stored);
+    seed(app, [{ company:"Later", status:"Interview" }]);
+    openPanel();
+
+    expect(ticked("company")).toEqual(["Later"]);
+  });
+});
+
+describe("the Role Status filter", () => {
+  beforeEach(() => {
+    seed(app, [
+      { company:"Globex",  status:"Interview", roleStatus:"Live" },
+      { company:"Initech", status:"Interview", roleStatus:"Filled" },
+      { company:"Acme",    status:"Interview" }
+    ]);
+    openPanel();
+  });
+
+  it("lists every role status in the app's order, with row counts", () => {
+    expect(app.filterOptions("roleStatus").map(o => [o.value, o.n]))
+      .toEqual([["Unknown", 1], ["Live", 1], ["Reposted", 0], ["Filled", 1], ["Closed", 0], ["Removed", 0]]);
+  });
+
+  it("shows only the rows whose role status is ticked", () => {
+    tick("roleStatus", "Live", true);
+    tick("roleStatus", "Unknown", true);
+
+    expect(shown().sort()).toEqual(["Acme", "Globex"]);
+  });
+
+  it("restricts nothing by default", () => {
+    expect(ticked("roleStatus")).toEqual([]);
+    expect(shown().sort()).toEqual(["Acme", "Globex", "Initech"]);
+  });
+
+  it("ticks every role status when All is clicked", () => {
+    groupButton("all", "roleStatus").click();
+
+    expect(ticked("roleStatus")).toEqual(app.ROLE_STATUSES);
+  });
+
+  it("unticks every role status when None is clicked", () => {
+    tick("roleStatus", "Live", true);
+
+    groupButton("clear", "roleStatus").click();
+
+    expect(ticked("roleStatus")).toEqual([]);
+    expect(shown().sort()).toEqual(["Acme", "Globex", "Initech"]);
+  });
+});
+
+describe("Clear all", () => {
+  beforeEach(() => {
+    seed(app, [
+      { company:"Globex",  status:"Interview", interest:"High" },
+      { company:"Initech", status:"Rejected",  interest:"Low" }
+    ]);
+    openPanel();
+  });
+
+  it("unticks every box in every field, including a field set to All", () => {
+    groupButton("all", "company").click();
+    app.setFilter("interest", ["High"]);
+
+    document.querySelector("#btnFilterClear").click();
+
+    expect(app.FILTER_FIELDS.map(f => ticked(f.key))).toEqual([[], [], [], []]);
+    expect(shown().sort()).toEqual(["Globex", "Initech"]);
+  });
+
+  it("stays available while only All boxes are ticked", () => {
+    for (const f of app.FILTER_FIELDS) groupButton("all", f.key).click();
+
+    expect(document.querySelector("#btnFilterClear").disabled).toBe(false);
+  });
+});
+
 describe("what is remembered between visits", () => {
-  it("writes the three fields as plain arrays", async () => {
+  it("writes the four fields as plain arrays", async () => {
     app.setFilter("company", ["Globex"]);
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY))).toEqual({
       company: ["Globex"],
       status: app.OPEN_STATUSES,
-      interest: []
+      interest: [],
+      roleStatus: [],
+      all: []
     });
+  });
+
+  /* An older build knows nothing of All; an empty array is what it reads as
+     "no restriction", which is what All means. */
+  it("writes a field set to All as an empty array named in `all`", async () => {
+    seed(app, [{ company:"Globex", status:"Interview" }]);
+    openPanel();
+
+    document.querySelector('button[data-all="status"]').click();
+
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    expect([stored.status, stored.all]).toEqual([[], ["status"]]);
+  });
+
+  it("restores a filter stored before Role Status existed as no role-status restriction", async () => {
+    app = await loadApp(JSON.stringify({ company:[], status:["Offer"], interest:[] }));
+
+    seed(app, [{ company:"Filled", status:"Offer", roleStatus:"Filled" }]);
+
+    expect(shown()).toEqual(["Filled"]);
   });
 
   it("starts from the default when nothing is stored", async () => {
