@@ -646,6 +646,7 @@
   /* opens at twice a one-line field (.inp is 38px) and grows with the text as
      it is typed, up to three rows (3lh plus the 18px padding and 2px border);
      past that it scrolls. A browser without field-sizing keeps the 76px box. */
+  #dAppNotes textarea.inp{field-sizing:content;min-height:76px;max-height:calc(3lh + 20px)}
 
   /* other roles - a sub-section of Company Details. The list is a single grid
      so the three columns line up between the header row and the rows under
@@ -1430,6 +1431,7 @@ const APP_FIELDS = [
   { key:"appliedVia",     label:"Applied Via",               type:"text",   section:"application" },
   { key:"jobLink",        label:"Job Link",                  type:"link",   section:"application", wide:true, copy:"Job link" },
   { key:"systemOfRecord", label:"System of Record",          type:"text",   section:"application" },
+  { key:"notes",          label:"Notes",                     type:"area" },   // its own sub-section, see renderAppNotes()
   /* The role's own state, kept apart from `status` above. `roleStatus` is a
      reading of the posting, `roleCheckedOn` when it was taken and
      `roleStatusSource` what it was taken from - without the last two a stale
@@ -1457,7 +1459,7 @@ const APP_FIELDS = [
 /* The card's sections, in order, and the fields each holds. `sub` is markup
    placed under the section's grid - a host a render function fills. */
 const CARD_SECTIONS = [
-  { id:"application", title:"Application Details", sub:'<div id="dPostings"></div>' },
+  { id:"application", title:"Application Details", sub:'<div id="dAppNotes"></div><div id="dPostings"></div>' },
   { id:"role",        title:"Role Status" },
   { id:"company",     title:"Company Details", sub:'<div id="dOtherRoles"></div>' },
   { id:"salary",      title:"Salary" }
@@ -2612,6 +2614,7 @@ function openDetail(app){
     "</div>");
 
   renderHeader();
+  renderAppNotes();
   renderPostings();
   renderOtherRoles();
   renderRounds();
@@ -2675,6 +2678,17 @@ function renderOtherRoles(){
       : '<p class="none">' + (name
           ? "No other roles at " + esc(name) + "."
           : "Name the company to see its other roles.") + "</p>");
+}
+
+/* ---- Notes: free text about the application ----
+
+   A sub-section of Application Details. The box's height is all CSS (see
+   #dAppNotes textarea.inp): it grows with the text up to three rows, and
+   anything longer scrolls. */
+function renderAppNotes(){
+  $("#dAppNotes").innerHTML =
+    '<div class="subsec"><h4>Notes</h4></div>' +
+    area("notes", current.notes, ' aria-label="Notes"');
 }
 
 /* ---- Postings: the boards the role was seen on ----

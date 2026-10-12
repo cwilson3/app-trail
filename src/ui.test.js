@@ -258,6 +258,60 @@ describe("the Other Roles list on the detail card", () => {
   });
 });
 
+/* Notes sit in a sub-section of Application Details. How tall the box draws is
+   pure CSS layout, which jsdom does not do, so it is not checked here. */
+describe("the Notes box on the detail card", () => {
+  const NOTES_EXPORTS = `
+window.__app = {
+  get state(){ return state; }, set state(v){ state = v; },
+  normalize, renderTable, openDetail
+};
+`;
+
+  async function openCard(row){
+    const app = await loadApp(null, { exports: NOTES_EXPORTS });
+    app.state = app.normalize({ applications: [Object.assign({ id:"a1", company:"Acme" }, row)] });
+    app.renderTable();
+    app.openDetail(app.state.applications[0]);
+    return app;
+  }
+
+  const box = () => $('#dAppNotes textarea[data-bind="notes"]');
+  const sectionTitles = () => [...document.querySelectorAll(".card-body .sec h3")];
+
+  it("shows the saved notes", async () => {
+    await openCard({ notes: "Spoke to Dana.\nFollow up Friday." });
+
+    expect(box().value).toBe("Spoke to Dana.\nFollow up Friday.");
+  });
+
+  it("sits under Application Details, before the next section", async () => {
+    await openCard({});
+    const [details, next] = sectionTitles();          // 4: box follows, 2: box precedes
+
+    const after = details.compareDocumentPosition(box()) & 4;
+    const before = next.compareDocumentPosition(box()) & 2;
+
+    expect([details.textContent, $("#dAppNotes h4").textContent, !!after, !!before])
+      .toEqual(["Application Details", "Notes", true, true]);
+  });
+
+  it("saves what is typed onto the row", async () => {
+    const app = await openCard({});
+
+    box().value = "Referred by Sam";
+    box().dispatchEvent(new Event("input", { bubbles: true }));
+
+    expect(app.state.applications[0].notes).toBe("Referred by Sam");
+  });
+
+  it("loads a row saved before notes existed with empty notes", async () => {
+    await openCard({});
+
+    expect(box().value).toBe("");
+  });
+});
+
 /* The boards a role was seen on sit under Application Details, apart from the
    Job Link. These drive the card the way a person does - a press, a keystroke
    - and read the result off the open row, which is what gets saved. */
