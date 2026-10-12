@@ -310,7 +310,7 @@ to open its detail card).
 | Company | Company name |
 | Role Status | Where **the opening** stands — Live, Reposted, Filled, Closed, Removed, or Unknown until checked |
 | Applied | Date you applied |
-| Status | Where **your application** stands — Ready, Applied - Awaiting Response, Interview, Offer, Rejected, Ghosted, … A decision about you, by you or by them. Where *the role* stands is a separate column, **Role Status** |
+| Status | Where **your application** stands — Ready, Applied - Awaiting Response, Interview, Offer, Rejected, Ghosted, Missed, … A decision about you, by you or by them. Where *the role* stands is a separate column, **Role Status** |
 | Interest | How much you want the role — High, Moderate or Low (blank until you set it) |
 | Last Update | Date of the most recent change (set automatically) |
 | Round | Number of the current active round — the latest round whose end state is still *Pending* |
@@ -331,7 +331,8 @@ beside each value is how many applications carry it. A row has to match every
 column that has only some of its boxes ticked.
 
 The table opens filtered to work still in play: every status except *Accepted*,
-*Rejected*, *Withdrawn* and *Ghosted*. **Reset to default** puts that
+*Rejected*, *Withdrawn*, *Ghosted* and *Missed* (the role was removed or closed
+before you applied). **Reset to default** puts that
 back, **Clear all** unticks every box and shows everything, and the badge on the button counts the
 columns currently narrowing the table. The subtitle reads "12 of 13
 applications" whenever something is hidden.

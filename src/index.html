@@ -1327,7 +1327,11 @@ const STATUS_TABLE = [
   { name:"Accepted",                    tone:"good", stage:4, outcome:"good" },
   { name:"Rejected",                    tone:"bad",  outcome:"bad" },
   { name:"Withdrawn",                   tone:"bad",  outcome:"undecided" },
-  { name:"Ghosted",                     tone:"warm", outcome:"bad" }
+  { name:"Ghosted",                     tone:"warm", outcome:"bad" },
+  /* The role went - removed or closed - before you got an application in.
+     Nobody decided anything about you, so it sits with Withdrawn; and since
+     it was never applied to, it has no stage. */
+  { name:"Missed",                      tone:"warm", outcome:"undecided" }
 ];
 const STATUSES = STATUS_TABLE.map(s => s.name);
 const statusInfo = name => STATUS_TABLE.find(s => s.name === name) || {};
@@ -3411,7 +3415,7 @@ $("#btnDocs").onclick = () => {
         "<h3>The table</h3>" +
         "<p>One row per application, sorted by company. Click any column heading to re-sort; click any row to open its detail card.</p>" +
         "<table>" +
-          "<tr><td>Status</td><td>Where <em>your application</em> stands &mdash; a decision about you, by you (<i>Withdrawn</i>) or by them (<i>Rejected</i>, <i>Offer</i>). <i>Ghosted</i> is for an application no answer ever reached.</td></tr>" +
+          "<tr><td>Status</td><td>Where <em>your application</em> stands &mdash; a decision about you, by you (<i>Withdrawn</i>) or by them (<i>Rejected</i>, <i>Offer</i>). <i>Ghosted</i> is for an application no answer ever reached, and <i>Missed</i> for a role that was removed or closed before you applied.</td></tr>" +
           "<tr><td>Role Status</td><td>Where <em>the opening</em> stands, which is a different thing: <i>Live</i>, <i>Reposted</i>, <i>Filled</i>, <i>Closed</i> or <i>Removed</i>. It is a reading of the posting, not of you, so a role can be <i>Filled</i> while your application is still <i>Interview</i>. <i>Checked</i> and <i>Checked Against</i> say when the reading was taken and from where.</td></tr>" +
           "<tr><td>Round</td><td>The round you&rsquo;re currently on &mdash; the latest round whose end state is still <i>Pending</i>.</td></tr>" +
           "<tr><td>#</td><td>Row number in the current sort order &mdash; it renumbers when you re-sort.</td></tr>" +

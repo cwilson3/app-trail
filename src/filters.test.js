@@ -58,13 +58,14 @@ describe("the default filter", () => {
       { company:"Pulled",   status:"Ghosted", roleStatus:"Closed" },
       { company:"Quit",     status:"Withdrawn" },
       { company:"Silent",   status:"Ghosted" },
+      { company:"Late",     status:"Missed" },
       { company:"Waiting",  status:"Applied - Awaiting Response" }
     ]);
     expect(shown().sort()).toEqual(["Live", "Waiting"]);
   });
 
-  it("counts exactly the four closed-out statuses", () => {
-    expect(app.CLOSED_STATUSES).toEqual(["Accepted","Rejected","Withdrawn","Ghosted"]);
+  it("counts exactly the five closed-out statuses", () => {
+    expect(app.CLOSED_STATUSES).toEqual(["Accepted","Rejected","Withdrawn","Ghosted","Missed"]);
     expect(app.OPEN_STATUSES).toEqual(
       ["Ready","Applied - Awaiting Response","Recruiter Screen","Phone Screen","Interview","Final","Offer","Negotiating"]);
     expect([...app.OPEN_STATUSES, ...app.CLOSED_STATUSES].sort()).toEqual([...app.STATUSES].sort());

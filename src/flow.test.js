@@ -45,6 +45,12 @@ describe("the depth layout", () => {
     expect(named(g, "Withdrawn").map(n => n.value)).toEqual([1, 1]);
   });
 
+  it("branches a missed role off Not applied, since it was never applied to", () => {
+    const g = app.pipelineGraph([row("Missed", [], "")], "depth");
+
+    expect(named(g, "Missed").map(n => n.parent.label)).toEqual(["Not applied"]);
+  });
+
   it("puts an ending in the column after the stage it was reached from", () => {
     const g = app.pipelineGraph([row("Rejected"), row("Rejected", [round("Interview 1")])], "depth");
 

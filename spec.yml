@@ -608,7 +608,8 @@ components:
                   something that happened to the application, and is carried by
                   roleStatus instead. A row saved while "Closed" was still an
                   application status is read as "Ghosted", with the posting's
-                  state lifted into roleStatus.
+                  state lifted into roleStatus. "Missed" is for a role removed
+                  or closed before it was applied to.
                 example: Interview
               roleStatus:
                 type: string
