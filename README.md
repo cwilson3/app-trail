@@ -308,9 +308,9 @@ to open its detail card).
 | --- | --- |
 | # | Row number in the current sort order |
 | Company | Company name |
-| Posted | Date the role was posted, when the listing shows one |
+| Role Status | Where **the opening** stands — Live, Reposted, Filled, Closed, Removed, or Unknown until checked |
 | Applied | Date you applied |
-| Status | Where **your application** stands — Ready, Applied - Awaiting Response, Interview, Offer, Rejected, Ghosted, … A decision about you, by you or by them. Where *the role* stands is a separate field, **Role Status**, on the detail card |
+| Status | Where **your application** stands — Ready, Applied - Awaiting Response, Interview, Offer, Rejected, Ghosted, … A decision about you, by you or by them. Where *the role* stands is a separate column, **Role Status** |
 | Interest | How much you want the role — High, Moderate or Low (blank until you set it) |
 | Last Update | Date of the most recent change (set automatically) |
 | Round | Number of the current active round — the latest round whose end state is still *Pending* |
@@ -325,13 +325,14 @@ to open its detail card).
 ### Filtering
 
 **Filter** in the toolbar opens a panel with one column per field you can filter
-on — Company, Status and Interest. Ticking nothing in a column means "any"; the
-count beside each value is how many applications carry it. A row has to match
-every column that has something ticked.
+on — Company, Role Status, Interest and Status. **All** ticks every box in a column and
+**None** unticks them; either way the column lets every row through. The count
+beside each value is how many applications carry it. A row has to match every
+column that has only some of its boxes ticked.
 
 The table opens filtered to work still in play: every status except *Accepted*,
 *Rejected*, *Withdrawn* and *Ghosted*. **Reset to default** puts that
-back, **Clear all** shows everything, and the badge on the button counts the
+back, **Clear all** unticks every box and shows everything, and the badge on the button counts the
 columns currently narrowing the table. The subtitle reads "12 of 13
 applications" whenever something is hidden.
 
