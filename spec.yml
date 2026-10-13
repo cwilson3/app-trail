@@ -678,4 +678,8 @@ components:
                       description: When the role was first seen on the board - a date, or blank when not known.
                     checkedOn:
                       type: string
-                      description: When status was last read - a date, or blank. Without it a stale Live cannot be told from a fresh one.
+                      description: >
+                        When status was last read - a local date and time,
+                        YYYY-MM-DDTHH:MM, or blank. Without it a stale Live
+                        cannot be told from a fresh one.
+                      example: "2026-10-12T09:30"

@@ -1488,8 +1488,10 @@ const CONTACT_TYPES = ["Email","Phone","Video","In-person","LinkedIn","Referral"
 
    One list each. blankApp() and its kin, normalize() and the detail card are
    all built from them, so a new field is one line here.
-     type      how the card edits it - text, date, time, area, select, link,
-               range or check - and how a loaded value is cleaned up
+     type      how the card edits it - text, date, time, datetime, area, select,
+               link, range or check - and how a loaded value is cleaned up.
+               A datetime is local, YYYY-MM-DDTHH:MM, as the browser's picker
+               gives it
      hint      the words beside a check box
      options   a select's values; a loaded value outside them becomes `initial`
      initial   what a new record starts with ("" unless given; a function is
@@ -1555,8 +1557,8 @@ const PERSON_FIELDS = [
 ];
 
 /* One board a role was seen on. `status` is the posting's own state there,
-   `seenOn` when it was first seen and `checkedOn` when the status was last
-   read - without it a stale Live is indistinguishable from a fresh one, and
+   `seenOn` the day it was first seen and `checkedOn` the date and time the
+   status was last read - without it a stale Live is indistinguishable from a fresh one, and
    with `seenOn` it says how long a board carried the role. `found` marks the
    board that turned the role up, `applied` the one you applied through; at
    most one posting holds each. A loaded board it does not know is read off
@@ -1569,7 +1571,7 @@ const POSTING_FIELDS = [
   { key:"found",     label:"Found Here",   type:"check",  initial:false, hint:"Found the role here", clean: v => v === true },
   { key:"applied",   label:"Applied For Here", type:"check", initial:false, hint:"Applied for the role here", clean: v => v === true },
   { key:"seenOn",    label:"Seen",         type:"date",   initial: () => todayISO() },
-  { key:"checkedOn", label:"Checked",      type:"date" }
+  { key:"checkedOn", label:"Checked",      type:"datetime" }
 ];
 
 /* ---- the table's columns ----
@@ -2693,6 +2695,7 @@ function select(bind, options, value, attrs){
 function control(f, value, attrs){
   switch (f.type){
     case "text": case "date": case "time": return input(f.type)(f.key, value, attrs);
+    case "datetime": return input("datetime-local")(f.key, value, attrs);
     case "area":   return area(f.key, value, attrs);
     case "select": return select(f.key, f.options, value, attrs);
     case "link":   return linkInput(f.key, value, "https://…", f.copy, attrs);
@@ -2864,7 +2867,7 @@ function postingCard(p, gi){
       '<span class="spacer"></span>' +
       '<span class="posting-sum">' +
         pill(p.status, roleStatusInfo(p.status).tone) +
-        '<span class="checked">' + (p.checkedOn ? "Checked " + esc(p.checkedOn) : "Not checked") + "</span>" +
+        '<span class="checked">' + (p.checkedOn ? "Checked " + esc(p.checkedOn.replace("T", " ")) : "Not checked") + "</span>" +
         '<button class="openbtn" type="button" data-act="copy-link" data-link="link"' + a +
           ' data-label="Posting link" title="Copy to the clipboard" aria-label="Copy the posting link to the clipboard"' +
           (link ? "" : " disabled") + ">" + ICONS.copy + "</button>" +
@@ -3219,10 +3222,10 @@ function reopenDetail(app){
 }
 
 /* edits — delegated so typing never rebuilds the DOM under the cursor. Each
-   control reports through one event: a select, checkbox, date or time on
+   control reports through one event: a select, checkbox, date, time or date-time on
    change, anything typed on input. Listening to both ran a select's edit
    twice. */
-const editEvent = el => el.tagName === "SELECT" || ["checkbox", "date", "time"].includes(el.type) ? "change" : "input";
+const editEvent = el => el.tagName === "SELECT" || ["checkbox", "date", "time", "datetime-local"].includes(el.type) ? "change" : "input";
 overlay.addEventListener("input", onEdit);
 overlay.addEventListener("change", onEdit);
 

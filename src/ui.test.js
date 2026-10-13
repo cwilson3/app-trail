@@ -336,7 +336,8 @@ describe("the Postings list on the detail card", () => {
   const press = sel => $("#dPostings " + sel).click();
   function edit(el, value){
     if (el.type === "checkbox") el.checked = value; else el.value = value;
-    el.dispatchEvent(new Event(el.type === "checkbox" || el.tagName === "SELECT" ? "change" : "input", { bubbles: true }));
+    const onChange = el.tagName === "SELECT" || ["checkbox", "date", "time", "datetime-local"].includes(el.type);
+    el.dispatchEvent(new Event(onChange ? "change" : "input", { bubbles: true }));
   }
 
   it("shows each board the role is posted on", async () => {
@@ -546,6 +547,20 @@ describe("the Postings list on the detail card", () => {
     expect($("#dPostings .posting-sum .pill").textContent).toBe("Filled");
   });
 
+  it("edits when a posting was checked as a date and a time", async () => {
+    await openCard({ postings: [{ board:"LinkedIn", checkedOn:"2026-09-28T14:05" }] });
+
+    expect([control("checkedOn", 0).type, control("checkedOn", 0).value]).toEqual(["datetime-local", "2026-09-28T14:05"]);
+  });
+
+  it("keeps the date and time picked for when a posting was checked", async () => {
+    const app = await openCard({ postings: [{ board:"LinkedIn" }] });
+
+    edit(control("checkedOn", 0), "2026-10-12T09:30");
+
+    expect(postings(app)[0].checkedOn).toBe("2026-10-12T09:30");
+  });
+
   it("removes a posting", async () => {
     const app = await openCard({ postings: [{ board:"LinkedIn" }, { board:"TheLadders" }] });
 
@@ -629,10 +644,10 @@ describe("the Postings list on the detail card", () => {
       expect(new Set([...document.querySelectorAll("#dPostings .boardlogo")].map(l => l.innerHTML)).size).toBe(3);
     });
 
-    it("shows when the posting was last checked", async () => {
-      await openCard({ postings: [{ board:"LinkedIn", checkedOn:"2026-09-28" }] });
+    it("shows the date and time the posting was last checked", async () => {
+      await openCard({ postings: [{ board:"LinkedIn", checkedOn:"2026-09-28T14:05" }] });
 
-      expect(summary(0).querySelector(".checked").textContent).toBe("Checked 2026-09-28");
+      expect(summary(0).querySelector(".checked").textContent).toBe("Checked 2026-09-28 14:05");
     });
 
     it("says so when the posting has never been checked", async () => {

@@ -450,7 +450,7 @@ is recognisable against the browser's own chrome.
 
   Under them, **Postings** lists the job boards the role was seen on — LinkedIn,
   TheLadders, Company Board or Other — each with its **Posting Link**, its own **Posting
-  Status**, when it was **Seen** first and when its status was last **Checked**, **Found
+  Status**, the day it was **Seen** first and the date and time its status was last **Checked**, **Found
   Here** on the one board that turned the role up, and **Applied For Here** on the one you
   applied through (marking either clears it on the rest). **Company Board** is the opening as the company itself posts it —
   its careers page or applicant system (Greenhouse, Workday, …) — not the **Company
@@ -475,7 +475,7 @@ is recognisable against the browser's own chrome.
   than of you, so a role can be *Filled* while your application is still *Interview* —
   and seeing that disagreement is the point of keeping the two apart. Each posting
   has its own because one role can be up on one board and gone from another; the
-  posting's **Checked** date says when its status was read, so a stale *Live* can be
+  posting's **Checked** date and time says when its status was read, so a stale *Live* can be
   told from a fresh one. The table's **Posting Status** column is the status of the
   posting marked **Applied For Here**. Changing a posting's status never changes your
   application's: the posting can say the opening is gone, but only you say what
@@ -533,7 +533,8 @@ Edits save automatically. `Esc` closes any open card.
           "link": "",
           "status": "Unknown",                       // where THE ROLE stands on this board: Live
                                                      //   | Reposted | Filled | Closed | Removed
-          "seenOn": "", "checkedOn": "",             // first seen, status last read
+          "seenOn": "",                              // day first seen, YYYY-MM-DD
+          "checkedOn": "",                           // status last read, local YYYY-MM-DDTHH:MM
           "found": true,                             // the one board that turned it up
           "applied": true }                          // the one you applied through - the
                                                      //   table's Posting Status reads it
