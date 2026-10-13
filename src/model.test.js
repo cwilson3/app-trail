@@ -76,54 +76,42 @@ describe("normalize", () => {
 });
 
 /* The role's status and the application's are two readings of two different
-   things - the opening, and you - so the pair of them is what these cover:
-   that each survives on its own, and that a row saved when the posting's state
-   was kept in the application's field has it moved to the right one. */
-describe("the role's status, apart from the application's", () => {
-  it("starts a row nothing has checked yet at Unknown", () => {
-    expect(loaded({ company: "Acme" }).roleStatus).toBe("Unknown");
+   things - the opening, and you. The opening's is kept on each posting, since
+   one role can be up on one board and gone from another; the row's own is
+   left as it was. */
+describe("a posting's status, apart from the application's", () => {
+  const posting = p => loaded({ postings: [p] }).postings[0];
+
+  it("starts a posting nothing has checked yet at Unknown", () => {
+    expect(posting({ board: "LinkedIn" }).status).toBe("Unknown");
   });
 
-  it("keeps a posting status a row already carries", () => {
-    expect(loaded({ roleStatus: "Filled" }).roleStatus).toBe("Filled");
+  it("keeps a status a posting already carries", () => {
+    expect(posting({ board: "LinkedIn", status: "Filled" }).status).toBe("Filled");
   });
 
-  it("falls back to Unknown for a posting status it does not know", () => {
-    expect(loaded({ roleStatus: "Vanished" }).roleStatus).toBe("Unknown");
+  it("falls back to Unknown for a status it does not know", () => {
+    expect(posting({ board: "LinkedIn", status: "Vanished" }).status).toBe("Unknown");
   });
 
-  it("keeps when the role was last checked, and what it was checked against", () => {
-    const row = loaded({ roleCheckedOn: "2026-10-08", roleStatusSource: "jobLink" });
+  it("lets a filled posting hold an application that is still interviewing", () => {
+    const row = loaded({ status: "Interview", postings: [{ board: "LinkedIn", status: "Filled", applied: true }] });
 
-    expect([row.roleCheckedOn, row.roleStatusSource]).toEqual(["2026-10-08", "jobLink"]);
-  });
-
-  it("lets a filled role hold an application that is still interviewing", () => {
-    const row = loaded({ status: "Interview", roleStatus: "Filled" });
-
-    expect([row.status, row.roleStatus]).toEqual(["Interview", "Filled"]);
+    expect([row.status, row.postings[0].status]).toEqual(["Interview", "Filled"]);
   });
 
   it("no longer offers Closed as something an application can be", () => {
     expect(app.STATUSES).not.toContain("Closed");
   });
 
-  it("offers it as something the role can be", () => {
+  it("offers it as something a posting can be", () => {
     expect(app.ROLE_STATUSES).toContain("Closed");
   });
 });
 
 describe("a row saved when Closed was an application status", () => {
-  it("has the posting's state lifted into the role's field", () => {
-    expect(loaded({ status: "Closed" }).roleStatus).toBe("Closed");
-  });
-
   it("has its own status sent to Ghosted, since no answer ever reached it", () => {
     expect(loaded({ status: "Closed" }).status).toBe("Ghosted");
-  });
-
-  it("does not overwrite a posting status the row already carries", () => {
-    expect(loaded({ status: "Closed", roleStatus: "Filled" }).roleStatus).toBe("Filled");
   });
 });
 
@@ -136,12 +124,6 @@ describe("a new application", () => {
 
   it("is born with a role id", () => {
     expect(app.blankApp().roleId).toMatch(/^[0-9a-z]+$/);
-  });
-
-  it("is born with a role nothing has checked yet", () => {
-    const row = app.blankApp();
-
-    expect([row.roleStatus, row.roleCheckedOn, row.roleStatusSource]).toEqual(["Unknown", "", ""]);
   });
 
   it("gets a role id of its own, not the one the row before it got", async () => {
@@ -201,6 +183,16 @@ describe("a row's postings", () => {
 
   it("are never added to a row that already has the list, even an empty one", () => {
     expect(loaded({ jobLink: LINKEDIN, postings: [] }).postings).toEqual([]);
+  });
+
+  it("keep only the first of several marked applied for, since the role was applied for once", () => {
+    const row = loaded({ postings: [{ board: "LinkedIn", applied: true }, { board: "Company Board", applied: true }] });
+
+    expect(row.postings.map(p => p.applied)).toEqual([true, false]);
+  });
+
+  it("mark the posting a row's Job Link is given as the one applied for", () => {
+    expect(loaded({ jobLink: CAREERS }).postings[0].applied).toBe(true);
   });
 
   it("keep only the first of several marked found, since one board turned the role up", () => {

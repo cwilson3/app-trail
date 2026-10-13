@@ -93,11 +93,9 @@ window.__app = {
 };
 `;
 
-/* The role's status is on the card in a section of its own, apart from the
-   application's. The split is the point: these check it is drawn as two
-   separate controls holding two separate values, because a single Status
-   field is exactly the confusion the second one was added to end. */
-describe("the Posting Status section on the detail card", () => {
+/* The role's status is no longer a section of the card: each posting holds
+   its own, and the table's Posting Status column reads the one applied for. */
+describe("Posting Status on the detail card and in the table", () => {
   async function openCard(row){
     const app = await loadApp(null, { exports: CARD_EXPORTS });
     app.state = app.normalize({ applications: [row] });
@@ -107,52 +105,50 @@ describe("the Posting Status section on the detail card", () => {
   }
 
   const sections = () => [...document.querySelectorAll(".card-body .sec h3")].map(h => h.textContent.trim());
-  const field = key => document.querySelector('.card-body [data-bind="' + key + '"]');
+  const postingField = (key, gi) => document.querySelector('#dPostings [data-bind="' + key + '"][data-post="' + gi + '"]');
+  const tableCell = () => {
+    const col = [...document.querySelectorAll("#headRow th")].findIndex(th => th.dataset.key === "roleStatus");
+    return document.querySelectorAll("#tbody tr")[0].children[col];
+  };
 
   const ROW = { id:"a1", company:"Acme", roleTitle:"Staff Engineer", status:"Interview",
-                roleStatus:"Filled", roleCheckedOn:"2026-10-08", roleStatusSource:"jobLink" };
+                postings:[{ board:"LinkedIn", status:"Live" }, { board:"Company Board", status:"Filled", applied:true }] };
 
-  it("gives the role a section of its own, between the application and the company", async () => {
+  it("no longer gives the role a section of its own", async () => {
     await openCard(ROW);
 
-    expect(sections().slice(0, 3)).toEqual(["Application Details", "Posting Status", "Company Details"]);
+    expect(sections()).not.toContain("Posting Status");
   });
 
-  it("shows the role's status", async () => {
+  it("shows each posting's own status", async () => {
     await openCard(ROW);
 
-    expect(field("roleStatus").value).toBe("Filled");
-  });
-
-  it("shows the application's own status apart from it, unchanged", async () => {
-    await openCard(ROW);
-
-    expect(field("status").value).toBe("Interview");
-  });
-
-  it("shows when the role was last checked", async () => {
-    await openCard(ROW);
-
-    expect(field("roleCheckedOn").value).toBe("2026-10-08");
-  });
-
-  it("shows what it was checked against", async () => {
-    await openCard(ROW);
-
-    expect(field("roleStatusSource").value).toBe("jobLink");
+    expect([postingField("status", 0).value, postingField("status", 1).value]).toEqual(["Live", "Filled"]);
   });
 
   it("offers every posting status the app knows, and no application status", async () => {
     await openCard(ROW);
 
-    expect([...field("roleStatus").options].map(o => o.value))
+    expect([...postingField("status", 0).options].map(o => o.value))
       .toEqual(["Unknown", "Live", "Reposted", "Filled", "Closed", "Removed"]);
   });
 
-  it("no longer offers Closed as something the application can be", async () => {
+  it("shows the application's own status apart from it, unchanged", async () => {
     await openCard(ROW);
 
-    expect([...field("status").options].map(o => o.value)).not.toContain("Closed");
+    expect(document.querySelector('.card-body [data-bind="status"]:not([data-post])').value).toBe("Interview");
+  });
+
+  it("shows the posting applied for's status in the table", async () => {
+    await openCard(ROW);
+
+    expect(tableCell().textContent).toBe("Filled");
+  });
+
+  it("shows Unknown in the table when no posting is marked applied for", async () => {
+    await openCard({ id:"a1", company:"Acme", postings:[{ board:"LinkedIn", status:"Live" }] });
+
+    expect(tableCell().textContent).toBe("Unknown");
   });
 });
 
@@ -186,22 +182,29 @@ describe("the Other Roles list on the detail card", () => {
   const ACME_AND_GLOBEX = [
     { id:"a1", company:"Acme",   roleTitle:"Staff Engineer",     status:"Interview", lastUpdate:"2026-09-01" },
     { id:"a2", company:"Acme",   roleTitle:"Developer Advocate", status:"Ready",     lastUpdate:"2026-08-15" },
-    { id:"a3", company:"Acme",   roleTitle:"Platform Lead",      status:"Offer",     lastUpdate:"2026-10-02" },
+    { id:"a3", company:"Acme",   roleTitle:"Platform Lead",      status:"Offer",     lastUpdate:"2026-10-02",
+      postings:[{ board:"LinkedIn", status:"Live" }, { board:"Company Board", status:"Filled", applied:true }] },
     { id:"a4", company:"Globex", roleTitle:"Designer",           status:"Phone Screen", lastUpdate:"2026-08-11" }
   ];
 
-  it("heads its columns with the role title, the status and the last update", async () => {
+  it("heads its columns with the role title, the posting status, the status and the last update", async () => {
     await openCard(ACME_AND_GLOBEX, "Staff Engineer");
 
-    expect(headings()).toEqual(["Role Title", "Status", "Last Update"]);
+    expect(headings()).toEqual(["Role Title", "Posting Status", "Status", "Last Update"]);
+  });
+
+  it("shows each role's posting status as the table does - the posting applied for, else Unknown", async () => {
+    await openCard(ACME_AND_GLOBEX, "Staff Engineer");
+
+    expect(listed().map(r => [r[0], r[1]])).toEqual([["Platform Lead", "Filled"], ["Developer Advocate", "Unknown"]]);
   });
 
   it("lists only the company's other roles, newest update first", async () => {
     await openCard(ACME_AND_GLOBEX, "Staff Engineer");
 
     expect(listed()).toEqual([
-      ["Platform Lead", "Offer", "2026-10-02"],
-      ["Developer Advocate", "Ready", "2026-08-15"]
+      ["Platform Lead", "Filled", "Offer", "2026-10-02"],
+      ["Developer Advocate", "Unknown", "Ready", "2026-08-15"]
     ]);
   });
 
@@ -222,7 +225,7 @@ describe("the Other Roles list on the detail card", () => {
     ], "Staff Engineer");
 
     expect([listed(), [...document.querySelectorAll("#tbody tr")].length])
-      .toEqual([[["Platform Lead", "Rejected", "2026-10-02"]], 1]);
+      .toEqual([[["Platform Lead", "Unknown", "Rejected", "2026-10-02"]], 1]);
   });
 
   it("shows a dash where a listed role has no title and no last update", async () => {
@@ -231,7 +234,7 @@ describe("the Other Roles list on the detail card", () => {
       { id:"a2", company:"Acme", roleTitle:"",               status:"Ready",     lastUpdate:"" }
     ], "Staff Engineer");
 
-    expect(listed()).toEqual([["\u2014", "Ready", "\u2014"]]);
+    expect(listed()).toEqual([["\u2014", "Unknown", "Ready", "\u2014"]]);
   });
 
   it("says there are none when the company holds only this role", async () => {
@@ -254,7 +257,7 @@ describe("the Other Roles list on the detail card", () => {
     input.value = "Globex";
     input.dispatchEvent(new Event("input", { bubbles: true }));
 
-    expect(listed()).toEqual([["Designer", "Phone Screen", "2026-08-11"]]);
+    expect(listed()).toEqual([["Designer", "Unknown", "Phone Screen", "2026-08-11"]]);
   });
 });
 
@@ -333,7 +336,7 @@ describe("the Postings list on the detail card", () => {
   const press = sel => $("#dPostings " + sel).click();
   function edit(el, value){
     if (el.type === "checkbox") el.checked = value; else el.value = value;
-    el.dispatchEvent(new Event(el.type === "checkbox" ? "change" : "input", { bubbles: true }));
+    el.dispatchEvent(new Event(el.type === "checkbox" || el.tagName === "SELECT" ? "change" : "input", { bubbles: true }));
   }
 
   it("shows each board the role is posted on", async () => {
@@ -517,6 +520,30 @@ describe("the Postings list on the detail card", () => {
     edit(control("found", 1), true);
 
     expect([postings(app).map(p => p.found), control("found", 0).checked]).toEqual([[false, true], false]);
+  });
+
+  it("clears Applied For Here on the other postings when one is marked", async () => {
+    const app = await openCard({ postings: [{ board:"LinkedIn", applied: true }, { board:"Company Board" }] });
+
+    edit(control("applied", 1), true);
+
+    expect([postings(app).map(p => p.applied), control("applied", 0).checked]).toEqual([[false, true], false]);
+  });
+
+  it("marks a posting added from the Job Link as the one applied for, when none is", async () => {
+    const app = await openCard({ jobLink: CAREERS, postings: [{ board:"LinkedIn", link: LINKEDIN }] });
+
+    press('[data-act="add-posting"]');
+
+    expect(postings(app).map(p => p.applied)).toEqual([false, true]);
+  });
+
+  it("shows a posting's new status on its collapsed line as it is picked", async () => {
+    await openCard({ postings: [{ board:"LinkedIn" }] });
+
+    edit(control("status", 0), "Filled");
+
+    expect($("#dPostings .posting-sum .pill").textContent).toBe("Filled");
   });
 
   it("removes a posting", async () => {

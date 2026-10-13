@@ -55,7 +55,7 @@ describe("the default filter", () => {
       { company:"Live",     status:"Interview" },
       { company:"Gone",     status:"Rejected" },
       { company:"Won",      status:"Accepted" },
-      { company:"Pulled",   status:"Ghosted", roleStatus:"Closed" },
+      { company:"Pulled",   status:"Ghosted", postings:[{ board:"LinkedIn", status:"Closed", applied:true }] },
       { company:"Quit",     status:"Withdrawn" },
       { company:"Silent",   status:"Ghosted" },
       { company:"Late",     status:"Missed" },
@@ -324,16 +324,20 @@ describe("a field's All and None buttons", () => {
 describe("the Posting Status filter", () => {
   beforeEach(() => {
     seed(app, [
-      { company:"Globex",  status:"Interview", roleStatus:"Live" },
-      { company:"Initech", status:"Interview", roleStatus:"Filled" },
-      { company:"Acme",    status:"Interview" }
+      { company:"Globex",  status:"Interview", postings:[{ board:"LinkedIn", status:"Live", applied:true }] },
+      { company:"Initech", status:"Interview", postings:[{ board:"LinkedIn", status:"Filled", applied:true }] },
+      { company:"Acme",    status:"Interview" },
+      /* only the posting applied for counts: Hooli is Live on LinkedIn but
+         applied for on its own board, where it is Removed */
+      { company:"Hooli",   status:"Interview", postings:[{ board:"LinkedIn", status:"Live" },
+                                                         { board:"Company Board", status:"Removed", applied:true }] }
     ]);
     openPanel();
   });
 
   it("lists every posting status in the app's order, with row counts", () => {
     expect(app.filterOptions("roleStatus").map(o => [o.value, o.n]))
-      .toEqual([["Unknown", 1], ["Live", 1], ["Reposted", 0], ["Filled", 1], ["Closed", 0], ["Removed", 0]]);
+      .toEqual([["Unknown", 1], ["Live", 1], ["Reposted", 0], ["Filled", 1], ["Closed", 0], ["Removed", 1]]);
   });
 
   it("shows only the rows whose posting status is ticked", () => {
@@ -343,9 +347,15 @@ describe("the Posting Status filter", () => {
     expect(shown().sort()).toEqual(["Acme", "Globex"]);
   });
 
+  it("goes by the posting applied for, not a more hopeful one elsewhere", () => {
+    tick("roleStatus", "Removed", true);
+
+    expect(shown()).toEqual(["Hooli"]);
+  });
+
   it("restricts nothing by default", () => {
     expect(ticked("roleStatus")).toEqual([]);
-    expect(shown().sort()).toEqual(["Acme", "Globex", "Initech"]);
+    expect(shown().sort()).toEqual(["Acme", "Globex", "Hooli", "Initech"]);
   });
 
   it("ticks every posting status when All is clicked", () => {
@@ -360,7 +370,7 @@ describe("the Posting Status filter", () => {
     groupButton("clear", "roleStatus").click();
 
     expect(ticked("roleStatus")).toEqual([]);
-    expect(shown().sort()).toEqual(["Acme", "Globex", "Initech"]);
+    expect(shown().sort()).toEqual(["Acme", "Globex", "Hooli", "Initech"]);
   });
 });
 
@@ -635,7 +645,7 @@ describe("what is remembered between visits", () => {
   it("restores a filter stored before Posting Status existed as no posting-status restriction", async () => {
     app = await loadApp(JSON.stringify({ company:[], status:["Offer"], interest:[] }));
 
-    seed(app, [{ company:"Filled", status:"Offer", roleStatus:"Filled" }]);
+    seed(app, [{ company:"Filled", status:"Offer", postings:[{ board:"LinkedIn", status:"Filled", applied:true }] }]);
 
     expect(shown()).toEqual(["Filled"]);
   });
