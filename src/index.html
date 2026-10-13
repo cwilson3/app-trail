@@ -791,7 +791,7 @@
 
   .filter-panel{
     position:absolute;top:calc(100% + 8px);right:0;z-index:30;
-    width:min(740px,86vw);
+    width:min(880px,92vw);
     background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-modal);
     transform-origin:top right;
   }
@@ -801,7 +801,7 @@
 
   .filter-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 12px;border-bottom:1px solid var(--line)}
   .filter-head .settings-title{padding:0}
-  .filter-groups{display:grid;grid-template-columns:1.25fr .85fr .85fr 1fr}
+  .filter-groups{display:grid;grid-template-columns:1.25fr .85fr .85fr .85fr 1fr}
   .fgroup{padding:11px 12px 12px;min-width:0}
   .fgroup + .fgroup{border-left:1px solid var(--line)}
   .fgroup-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:7px}
@@ -2221,14 +2221,15 @@ const ALL_VALUES = "__all__";          // a field with every value ticked
 const FILTER_FIELDS = [
   { key:"company",    label:"Company",  search:true },
   { key:"roleStatus", label:"Role Status" },
-  { key:"interest",   label:"Interest" },
-  { key:"status",     label:"Status" }
+  { key:"interest",    label:"Interest" },
+  { key:"workSetting", label:"Work Setting" },
+  { key:"status",      label:"Status" }
 ];
 
-const filters = { company:new Set(), status:new Set(OPEN_STATUSES), interest:new Set(), roleStatus:new Set() };
+const filters = { company:new Set(), status:new Set(OPEN_STATUSES), interest:new Set(), roleStatus:new Set(), workSetting:new Set() };
 const filterQuery = { company:"" };
 
-function defaultFilters(){ return { company:[], status:OPEN_STATUSES.slice(), interest:[], roleStatus:[] }; }
+function defaultFilters(){ return { company:[], status:OPEN_STATUSES.slice(), interest:[], roleStatus:[], workSetting:[] }; }
 
 function loadFilters(){
   let saved = null;
@@ -2283,6 +2284,7 @@ function filterOptions(key){
   if (key === "status") vals = STATUSES.slice();
   else if (key === "interest") vals = INTEREST_LEVELS.concat([NO_INTEREST]);
   else if (key === "roleStatus") vals = ROLE_STATUSES.slice();
+  else if (key === "workSetting") vals = WORK_SETTINGS.concat([""]);
   else vals = Array.from(counts.keys()).sort((a,b) =>
     a.localeCompare(b, undefined, { sensitivity:"base" }));
   for (const v of filters[key]) if (v !== ALL_VALUES && vals.indexOf(v) === -1) vals.push(v);

@@ -52,7 +52,7 @@ describe("the filter panel", () => {
   it("draws a group for each field it filters on as it opens", () => {
     $("#btnFilter").click();
 
-    expect([...document.querySelectorAll("#filterGroups .fgroup")].map(g => g.dataset.field)).toEqual(["company", "roleStatus", "interest", "status"]);
+    expect([...document.querySelectorAll("#filterGroups .fgroup")].map(g => g.dataset.field)).toEqual(["company", "roleStatus", "interest", "workSetting", "status"]);
   });
 
   it("closes on a press outside it", () => {

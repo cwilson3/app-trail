@@ -325,7 +325,7 @@ to open its detail card).
 ### Filtering
 
 **Filter** in the toolbar opens a panel with one column per field you can filter
-on — Company, Role Status, Interest and Status. **All** ticks every box in a column and
+on — Company, Role Status, Interest, Work Setting and Status. **All** ticks every box in a column and
 **None** unticks them; either way the column lets every row through. The count
 beside each value is how many applications carry it. A row has to match every
 column that has only some of its boxes ticked.

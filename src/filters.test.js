@@ -22,7 +22,7 @@ const STORAGE_KEY = "at-filter";
 const EXPORTS = `
 window.__app = {
   get state(){ return state; }, set state(v){ state = v; },
-  filters, FILTER_FIELDS, CLOSED_STATUSES, OPEN_STATUSES, STATUSES, INTEREST_LEVELS, NO_INTEREST, ROLE_STATUSES,
+  filters, FILTER_FIELDS, CLOSED_STATUSES, OPEN_STATUSES, STATUSES, INTEREST_LEVELS, NO_INTEREST, ROLE_STATUSES, WORK_SETTINGS,
   defaultFilters, loadFilters, saveFilters, setFilter,
   filterValue, passesFilter, filterOptions, activeFilterCount,
   normalize, renderTable, sorted, addApplication
@@ -364,6 +364,51 @@ describe("the Role Status filter", () => {
   });
 });
 
+describe("the Work Setting filter", () => {
+  beforeEach(() => {
+    seed(app, [
+      { company:"Globex",  status:"Interview", workSetting:"Remote" },
+      { company:"Initech", status:"Interview", workSetting:"On-Site" },
+      { company:"Acme",    status:"Interview" }
+    ]);
+    openPanel();
+  });
+
+  it("lists every work setting in the app's order plus a blank, with row counts", () => {
+    expect(app.filterOptions("workSetting").map(o => [o.value, o.n]))
+      .toEqual([["Remote", 1], ["Hybrid", 0], ["On-Site", 1], ["", 1]]);
+  });
+
+  it("labels the blank work setting with an em dash", () => {
+    expect(app.filterOptions("workSetting").find(o => o.value === "").label).toBe("—");
+  });
+
+  it("shows only the rows whose work setting is ticked", () => {
+    tick("workSetting", "Remote", true);
+    tick("workSetting", "", true);
+
+    expect(shown().sort()).toEqual(["Acme", "Globex"]);
+  });
+
+  it("restricts nothing by default", () => {
+    expect(shown().sort()).toEqual(["Acme", "Globex", "Initech"]);
+  });
+
+  it("ticks every work setting, blank included, when All is clicked", () => {
+    groupButton("all", "workSetting").click();
+
+    expect(ticked("workSetting")).toEqual([...app.WORK_SETTINGS, ""]);
+  });
+
+  it("lets every row through again when None is clicked", () => {
+    tick("workSetting", "Remote", true);
+
+    groupButton("clear", "workSetting").click();
+
+    expect(shown().sort()).toEqual(["Acme", "Globex", "Initech"]);
+  });
+});
+
 describe("Clear all", () => {
   beforeEach(() => {
     seed(app, [
@@ -379,7 +424,7 @@ describe("Clear all", () => {
 
     document.querySelector("#btnFilterClear").click();
 
-    expect(app.FILTER_FIELDS.map(f => ticked(f.key))).toEqual([[], [], [], []]);
+    expect(app.FILTER_FIELDS.map(f => ticked(f.key))).toEqual([[], [], [], [], []]);
     expect(shown().sort()).toEqual(["Globex", "Initech"]);
   });
 
@@ -391,13 +436,14 @@ describe("Clear all", () => {
 });
 
 describe("what is remembered between visits", () => {
-  it("writes the four fields as plain arrays", async () => {
+  it("writes the five fields as plain arrays", async () => {
     app.setFilter("company", ["Globex"]);
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY))).toEqual({
       company: ["Globex"],
       status: app.OPEN_STATUSES,
       interest: [],
       roleStatus: [],
+      workSetting: [],
       all: []
     });
   });
@@ -420,6 +466,14 @@ describe("what is remembered between visits", () => {
     seed(app, [{ company:"Filled", status:"Offer", roleStatus:"Filled" }]);
 
     expect(shown()).toEqual(["Filled"]);
+  });
+
+  it("restores a filter stored before Work Setting existed as no work-setting restriction", async () => {
+    app = await loadApp(JSON.stringify({ company:[], status:["Offer"], interest:[], roleStatus:[] }));
+
+    seed(app, [{ company:"Onsite", status:"Offer", workSetting:"On-Site" }]);
+
+    expect(shown()).toEqual(["Onsite"]);
   });
 
   it("starts from the default when nothing is stored", async () => {
