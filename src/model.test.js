@@ -283,7 +283,7 @@ describe("the themes", () => {
   const block = id => (HTML.match(new RegExp("[\\s,]\\.theme-" + id + "\\{([^}]*)\\}")) || [])[1] || "";
 
   it("are listed in THEMES", () => {
-    expect(ids).toHaveLength(13);
+    expect(ids).toHaveLength(14);
   });
 
   for (const id of ids) {

@@ -521,6 +521,46 @@
     --cool-ink:#8094e8;
     color-scheme:dark;
   }
+
+  /* ---------- trail (opt-in via .theme-trail) ---------- */
+  /* the Trailhead and Backpack palette: slate panels and a teal #1abba9, so
+     AppTrail can wear the same coat as the two apps that sit beside it */
+  .theme-trail{
+    --bg:#15171a;
+    --ink:#e8eaed;
+    --ink-2:#c3c9cf;
+    --muted:#9aa3ad;
+    --faint:#717b86;
+    --line:#2e333a;
+    --line-2:#262a30;
+    --field:#3a4048;
+    --head:#1c1f23;
+    --hover:#24282d;
+    --chip:#2a2f35;
+    --accent:#1abba9;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 1px 1px rgba(0,0,0,.4);
+    --shadow-modal:0 24px 60px rgba(0,0,0,.64);
+    --shadow-pop:0 8px 24px rgba(0,0,0,.55);
+    --surface:#1c1f23;
+    --surface-2:#22262b;
+    --accent-ink:#06231f;
+    --accent-hover:#3fd0bf;
+    --btn-hover:#262a30;
+    --btn-active:#2e333a;
+    --ghost-hover:#2a2f35;
+    --border-strong:#56606b;
+    --dashed-hover:#48515b;
+    --placeholder:#5d6670;
+    --overlay-bg:rgba(10,12,14,.66);
+    --focus-ring:rgba(26,187,169,.18);
+    --danger:#ec7e75;   --danger-bg:rgba(224,104,95,.16);
+    --good-bg:rgba(62,194,143,.14);  --good-ink:#3ec28f;
+    --warm-bg:rgba(224,163,62,.14);  --warm-ink:#e0a33e;
+    --bad-bg:rgba(224,104,95,.14);   --bad-ink:#ec8a82;
+    --live-bg:rgba(130,155,240,.16); --live-ink:#a9b8f2;
+    --cool-ink:#3b9fe6;
+    color-scheme:dark;
+  }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
   body{
@@ -910,7 +950,7 @@
   .widthctl button:focus-visible{outline:2px solid var(--border-strong);outline-offset:1px}
   .widthctl svg{width:20px;height:14px;display:block}
 
-  /* thirteen themes do not fit a single row of icons, so the theme row stacks
+  /* fourteen themes do not fit a single row of icons, so the theme row stacks
      its label over a two-column grid of named swatches */
   .settings-row.row-theme{flex-direction:column;align-items:stretch;gap:7px}
   .themectl{display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:3px;border-radius:10px;background:var(--btn-hover)}
@@ -1065,7 +1105,8 @@ var THEMES = [
   { id:"j",        label:"J" },
   { id:"j2",       label:"J2" },
   { id:"sea",      label:"Sea" },
-  { id:"urban",    label:"Urban" }
+  { id:"urban",    label:"Urban" },
+  { id:"trail",    label:"Trail" }
 ], DEFAULT_THEME = "light";
 function isTheme(id){
   for (var i = 0; i < THEMES.length; i++) if (THEMES[i].id === id) return true;
