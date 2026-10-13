@@ -314,9 +314,9 @@ to open its detail card).
 | Interest | How much you want the role — High, Moderate or Low (blank until you set it) |
 | Last Update | Date of the most recent change (set automatically) |
 | Round | Number of the current active round — the latest round whose end state is still *Pending* |
-| Await | Date you're expecting a response by |
 | Applied Via | Portal, referral, email, … |
 | Role Title | The job title |
+| Work Setting | Remote, Hybrid or On-Site (blank until you set it) |
 | Company Type | Startup, enterprise, nonprofit, … |
 | Industry | The company's industry |
 | Posted Range | Salary range posted with the role |
@@ -491,8 +491,8 @@ is recognisable against the browser's own chrome.
   restated for where you live) and My Range Given. Each is two dollar fields; type `125k` or `125000` and
   they reformat to `$125,000`, and the table shows a pair as `$125,000-$145,000`.
 
-  Between them these hold everything the table leaves out — the application **ID**, Role Type,
-  Work Setting, System of Record, the local-market range, and both links, each with a button that
+  Between them these hold everything the table leaves out — the application **ID**, Await,
+  Role Type, System of Record, the local-market range, and both links, each with a button that
   opens the address in a new tab. **Applied Job Link** also has a copy button, so the URL goes to the
   clipboard without selecting it by hand.
 - **Local Job Description** — collapsed until you ask for it. **Load JD** pulls in
