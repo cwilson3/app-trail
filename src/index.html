@@ -1479,7 +1479,7 @@ const APP_FIELDS = [
   { key:"status",         label:"Status",                    type:"select", section:"application", options:STATUSES, initial:"Ready", clean:normStatus },
   { key:"interest",       label:"Interest",                  type:"select", section:"application", options:INTEREST_OPTIONS },
   { key:"appliedVia",     label:"Applied Via",               type:"text",   section:"application" },
-  { key:"jobLink",        label:"Job Link",                  type:"link",   section:"application", wide:true, copy:"Job link" },
+  { key:"jobLink",        label:"Applied Job Link",          type:"link",   section:"application", wide:true, copy:"Applied job link" },
   { key:"systemOfRecord", label:"System of Record",          type:"text",   section:"application" },
   { key:"notes",          label:"Notes",                     type:"area" },   // its own sub-section, see renderAppNotes()
   /* The role's own state, kept apart from `status` above. `roleStatus` is a
@@ -2688,10 +2688,7 @@ function openDetail(app){
           '<p class="eyebrow" id="dEyebrow"></p>' +
           '<h2 id="dTitle"></h2>' +
         "</div>" +
-        '<div style="display:flex;gap:6px;align-items:center">' +
-          '<button class="btn ghost danger" id="dDelete">' + ICONS.trash + " Delete</button>" +
-          '<button class="btn ghost" id="dClose" aria-label="Close">' + ICONS.x + "</button>" +
-        "</div>" +
+        '<button class="btn ghost" id="dClose" aria-label="Close">' + ICONS.x + "</button>" +
       "</div>" +
       '<div class="card-body">' +
         CARD_SECTIONS.map(sec =>
@@ -2718,7 +2715,8 @@ function openDetail(app){
         "</div>" +
         '<div class="rounds" id="dRounds"></div>' +
       "</div>" +
-      '<div class="card-foot">' +
+      '<div class="card-foot">' +           /* Delete sits across the footer from Done, away from both exits */
+        '<button class="btn ghost danger" id="dDelete">' + ICONS.trash + " Delete</button>" +
         '<span class="note" id="dNote"></span>' +
         '<button class="btn primary" id="dDone">Done</button>' +
       "</div>" +
@@ -3574,7 +3572,7 @@ $("#btnDocs").onclick = () => {
           "<li><b>Application Details</b> &mdash; dates, status, how you applied, the job link and the system of record.</li>" +
           "<li><b>Company Details</b> &mdash; the company, the role, and the company website. <b>Other Roles</b> under them lists every other application at the same company &mdash; role title, status and last update &mdash; newest update first, whatever the table&rsquo;s filter is hiding.</li>" +
           "<li><b>Salary</b> &mdash; the posted range, that range adjusted for your local market, and the range you gave.</li>" +
-          "<li>Between them these hold the fields the table leaves out: the application ID, role type, work setting, system of record, the local-market range, and both links &mdash; each with a button that opens it in a new tab, and <b>Job Link</b> with a copy button beside it.</li>" +
+          "<li>Between them these hold the fields the table leaves out: the application ID, role type, work setting, system of record, the local-market range, and both links &mdash; each with a button that opens it in a new tab, and <b>Applied Job Link</b> with a copy button beside it.</li>" +
           "<li><b>Local Job Description</b> &mdash; starts collapsed. <b>Load JD</b> shows the posting saved under <code>jds/</code> in your data folder by the <code>/job-from-url</code> skill, matched to this row by its company and role title. Press it again to hide it. The button beside it appears whenever a file exists for the row, open or not, and opens that file in a new tab. Needs <code>server.js</code> running.</li>" +
           "<li><b>Interview Rounds</b> &mdash; each round is collapsible and has a type, a date and time, a status, an end state and a notes box. Each person inside a round collapses the same way, showing their name and role while closed.</li>" +
           "<li><b>Contacts</b> &mdash; each round holds any number of people, with their details, result and notes.</li>" +

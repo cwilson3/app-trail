@@ -236,7 +236,7 @@ instructions:
 - **Everything is validated on the way in**, against an allow-list of the
   eight fields a posting is allowed to touch. Dates must be real and recent,
   salaries must be plausible annual USD, links must be `http(s)`, and anything
-  over-long is dropped rather than trimmed. `Job Link` is the URL you supplied
+  over-long is dropped rather than trimmed. `Applied Job Link` is the URL you supplied
   and `System of Record` comes from its hostname, so neither can be redirected
   by the page.
 - **Nothing is written twice.** A URL already in the table is reported instead
@@ -443,17 +443,17 @@ is recognisable against the browser's own chrome.
 
 ## The detail card
 
-- **Application Details** — Posted, Applied, Await, Status, **Interest**, Applied Via, **Job Link** and
+- **Application Details** — Posted, Applied, Await, Status, **Interest**, Applied Via, **Applied Job Link** and
   **System of Record** (where the application lives — Workday, Greenhouse, the company
   portal, …). *Status* is where **your application** stands: a decision about you.
-  **Job Link** is where you apply — the hiring company's own page, once you have found it there.
+  **Applied Job Link** is where you apply — the hiring company's own page, once you have found it there.
 
   Under them, **Postings** lists the job boards the role was seen on — LinkedIn,
   TheLadders or Other — each with its **Posting Link**, when it was **Seen** first and
   last **Checked**, and **Found Here** on the one board that turned the role up (marking
   one clears the rest). Pasting a LinkedIn or TheLadders link sets the board. **Add
-  posting** starts from the Job Link when that is still a board's posting nothing lists
-  yet. Kept apart from the Job Link, the postings are what lets boards be compared over
+  posting** starts from the Applied Job Link when that is still a board's posting nothing lists
+  yet. Kept apart from the Applied Job Link, the postings are what lets boards be compared over
   time: which turns up more roles, and which turns up the ones worth applying to.
   Each posting opens collapsed to one line — the board's logo (a question mark for
   Other), when it was last **Checked**, and buttons to copy the Posting Link or open it
@@ -477,7 +477,7 @@ is recognisable against the browser's own chrome.
 
   Between them these hold everything the table leaves out — the application **ID**, Role Type,
   Work Setting, System of Record, the local-market range, and both links, each with a button that
-  opens the address in a new tab. **Job Link** also has a copy button, so the URL goes to the
+  opens the address in a new tab. **Applied Job Link** also has a copy button, so the URL goes to the
   clipboard without selecting it by hand.
 - **Local Job Description** — collapsed until you ask for it. **Load JD** pulls in
   `jds/<company>-<role>.md` from your data folder, the posting as saved by `/job-from-url`, and renders it in
@@ -546,7 +546,7 @@ application, so the two parts of that row are moved to the fields that mean them
 Nothing is lost and old files keep loading.
 
 A row loaded without a `postings` list — written before there was one, or by
-`/job-from-url` — whose **Job Link** is a LinkedIn or TheLadders posting is given that
+`/job-from-url` — whose **Applied Job Link** is a LinkedIn or TheLadders posting is given that
 posting, marked found. When it was first seen is not known, so `seenOn` is left blank
 rather than guessed. A row that has the list, even an empty one, is never given one, so
 a posting you remove stays removed.

@@ -632,7 +632,8 @@ components:
                 type: string
                 description: >
                   Where the application is made - the hiring company's own page,
-                  ideally. Where the role was seen is kept in postings instead.
+                  ideally. Shown as Applied Job Link. Where the role was seen is
+                  kept in postings instead.
               notes:
                 type: string
                 description: Free-text notes about the application, shown under Application Details.
