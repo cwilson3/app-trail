@@ -5,7 +5,8 @@
 # cannot be added, removed, or given a new method without updating this file.
 #
 # The page itself (GET / and /index.html) is served outside this table and is
-# deliberately not described here. Any other path answers 404.
+# deliberately not described here. Any other path answers 404 to a GET, and
+# 405 with no Allow header to any other method.
 openapi: 3.1.0
 info:
   title: AppTrail local server
