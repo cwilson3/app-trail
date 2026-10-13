@@ -2825,7 +2825,8 @@ function renderHeader(){
   const app = current;
   $("#dEyebrow").textContent = "#" + pad3(app.num) + "  ·  Role " + (app.roleId || "—") +
     "  ·  Updated " + (app.lastUpdate || "—");
-  $("#dTitle").textContent = app.company || "New Application";
+  $("#dTitle").textContent = [app.company, app.roleTitle].map(s => String(s || "").trim()).filter(Boolean).join(" - ") ||
+    "New Application";
   const rounds = (app.rounds || []).length;
   const people = (app.rounds || []).reduce((n,r) => n + (r.people || []).length, 0);
   $("#dNote").textContent = plural(rounds, "round") + " · " + plural(people, "contact");
