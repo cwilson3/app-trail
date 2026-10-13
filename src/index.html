@@ -828,6 +828,23 @@
   .filter-foot .fbtns{display:flex;align-items:center;gap:6px}
   .filter-foot .btn{height:30px;padding:0 10px;font-size:12.5px}
 
+  /* ---------- views and filter chips, over the table ---------- */
+  .viewbar{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;margin:-10px 0 14px}
+  .fchips{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+  .fchip{
+    display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 3px 0 10px;max-width:100%;
+    border-radius:999px;background:var(--chip);font-size:12px;color:var(--ink-2);
+  }
+  .fchip .k{color:var(--muted)}
+  .fchip .v{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .fchip button{
+    width:20px;height:20px;padding:0;border:0;border-radius:999px;background:transparent;flex:none;
+    color:var(--muted);display:grid;place-items:center;cursor:pointer;
+  }
+  .fchip button:hover{background:var(--btn-hover);color:var(--ink)}
+  .fchip button:focus-visible{outline:2px solid var(--border-strong);outline-offset:1px}
+  .fchip svg{width:12px;height:12px}
+
   /* ---------- view controls: a gear in the lower-right corner ---------- */
   .viewctl{
     position:fixed;right:18px;bottom:18px;z-index:40;
@@ -953,15 +970,15 @@
   /* the layout toggle rides on the right of the panel head, with the line that
      says what the diagram is showing */
   .flowhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-left:auto}
-  .flowctl{display:inline-flex;gap:2px;padding:3px;border-radius:10px;background:var(--btn-hover)}
-  .flowctl button{
+  .flowctl, .viewtabs{display:inline-flex;gap:2px;padding:3px;border-radius:10px;background:var(--btn-hover)}
+  .flowctl button, .viewtabs button{
     height:26px;padding:0 10px;border:0;border-radius:7px;background:transparent;
     color:var(--faint);font:inherit;font-size:12px;font-weight:600;cursor:pointer;
     transition:background .12s,color .12s;
   }
-  .flowctl button:hover{background:var(--surface);color:var(--ink-2)}
-  .flowctl button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
-  .flowctl button:focus-visible{outline:2px solid var(--border-strong);outline-offset:1px}
+  .flowctl button:hover, .viewtabs button:hover{background:var(--surface);color:var(--ink-2)}
+  .flowctl button[aria-pressed="true"], .viewtabs button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+  .flowctl button:focus-visible, .viewtabs button:focus-visible{outline:2px solid var(--border-strong);outline-offset:1px}
   /* drawn at the width it has, never narrower than 760px - a phone scrolls it sideways rather than shrinking the labels */
   .sankey{position:relative;overflow-x:auto}
   .sankey svg{display:block;overflow:visible}
@@ -1226,6 +1243,11 @@ document.body.dataset.route = routeFromHash();</script>
       </button>
     </div>
   </header>
+
+  <div class="viewbar" id="viewBar">
+    <div class="viewtabs" id="viewTabs" role="group" aria-label="Views"></div>
+    <div class="fchips" id="filterChips" aria-label="Active filters"></div>
+  </div>
 
   <div class="tablewrap" id="tablewrap">
     <table>
@@ -2340,6 +2362,7 @@ function syncFilterUi(){
   const total = state.applications.length;
   $("#filterNote").textContent = n === 0 ? "Showing all " + plural(total, "application") : "Showing " + shown + " of " + total;
   $("#btnFilterClear").disabled = FILTER_FIELDS.every(f => !filters[f.key].size);
+  syncViewBar();
 }
 
 /* Tick boxes and All/None buttons follow the model, without rebuilding the panel -
@@ -2403,6 +2426,62 @@ $("#btnFilterDefault").onclick = () => {
   applyFilters();
 };
 $("#btnEmptyFilter").onclick = clearAllFilters;
+
+/* ---- views: one tab per stretch of the pipeline ----
+
+   A view is a Status selection and nothing more. The other fields narrow
+   within it, so Remote stays Remote as you move from Interviewing to Closed.
+   Which tab is pressed is read off the Status selection rather than stored,
+   so a view picked by hand in the panel lights its tab too, and a selection
+   no view matches leaves every tab up and shows Status as a chip instead. */
+const VIEWS = [
+  { id:"inPlay",       label:"In play",      status: OPEN_STATUSES },
+  { id:"toApply",      label:"To apply",     status: ["Ready"] },
+  { id:"interviewing", label:"Interviewing",
+    status: STATUS_TABLE.filter(s => !s.outcome && s.stage >= 1 && s.stage <= 3).map(s => s.name) },
+  { id:"closed",       label:"Closed",       status: CLOSED_STATUSES },
+  { id:"all",          label:"All",          status: [] }
+];
+
+function activeView(){
+  const sel = narrows("status") ? Array.from(filters.status) : [];
+  return VIEWS.find(v => v.status.length === sel.length && v.status.every(s => sel.includes(s))) || null;
+}
+
+$("#viewTabs").innerHTML = VIEWS.map(v =>
+  '<button type="button" data-view="' + v.id + '" aria-pressed="false">' + esc(v.label) + "</button>").join("");
+$("#viewTabs").addEventListener("click", e => {
+  const b = e.target.closest("button[data-view]");
+  if (b) setFilter("status", VIEWS.find(v => v.id === b.dataset.view).status);
+});
+
+/* One chip per field that narrows the table, bar a Status the pressed tab
+   already says. Two values are named; past that the rest are counted, and
+   the whole list is in the chip's title. */
+const CHIP_NAMES = 2;
+function chipsHtml(view){
+  return FILTER_FIELDS.filter(f => narrows(f.key) && !(f.key === "status" && view)).map(f => {
+    const labels = Array.from(filters[f.key]).map(v => (v === NO_INTEREST || v === "") ? "—" : v);
+    const more = labels.length - CHIP_NAMES;
+    const text = labels.slice(0, CHIP_NAMES).join(", ") + (more > 0 ? " +" + more : "");
+    return '<span class="fchip" data-chip="' + f.key + '" title="' + esc(f.label + ": " + labels.join(", ")) + '">' +
+      '<span class="k">' + esc(f.label) + ":</span>" +
+      '<span class="v">' + esc(text) + "</span>" +
+      '<button type="button" data-unfilter="' + f.key + '" aria-label="Remove ' + esc(f.label) + ' filter">' + ICONS.x + "</button>" +
+    "</span>";
+  }).join("");
+}
+$("#filterChips").addEventListener("click", e => {
+  const b = e.target.closest("button[data-unfilter]");
+  if (b) setFilter(b.dataset.unfilter, []);
+});
+
+function syncViewBar(){
+  const view = activeView();
+  for (const b of $("#viewTabs").querySelectorAll("button[data-view]"))
+    b.setAttribute("aria-pressed", String(!!view && b.dataset.view === view.id));
+  $("#filterChips").innerHTML = chipsHtml(view);
+}
 
 const filterPanel = $("#filterPanel");
 const filterPopover = makePopover($("#btnFilter"), filterPanel, $("#filterCtl"), { onOpen: renderFilterPanel });

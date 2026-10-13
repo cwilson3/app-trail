@@ -337,6 +337,17 @@ back, **Clear all** unticks every box and shows everything, and the badge on the
 columns currently narrowing the table. The subtitle reads "12 of 13
 applications" whenever something is hidden.
 
+**Views** — the tabs over the table — pick which part of the pipeline you are
+looking at: *In play* (the default), *To apply* (*Ready*, not sent yet),
+*Interviewing* (recruiter screen through final), *Closed* and *All*. A view sets only the Status column, so anything
+else you have filtered on stays put as you move between tabs. Tick statuses in
+the panel that match no view and no tab is pressed; tick ones that do, and that
+tab lights up.
+
+**Chips** beside the tabs show every other filter that is narrowing the table —
+"Work Setting: Remote", "Company: Acme, Globex +1" — and the **×** on a chip
+lifts that filter. Status gets a chip only when no view describes it.
+
 Your filter is remembered in the browser, like the theme and width settings.
 Adding an application clears any filter that would have hidden the new blank
 row, so it never disappears the moment you create it.
