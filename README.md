@@ -455,6 +455,9 @@ is recognisable against the browser's own chrome.
   posting** starts from the Job Link when that is still a board's posting nothing lists
   yet. Kept apart from the Job Link, the postings are what lets boards be compared over
   time: which turns up more roles, and which turns up the ones worth applying to.
+  Each posting opens collapsed to one line — the board's logo (a question mark for
+  Other), when it was last **Checked**, and buttons to copy the Posting Link or open it
+  in a new tab. The chevron expands it to edit; a posting you add opens expanded.
 - **Posting Status** — where **the opening itself** stands, which is a different thing:
   *Unknown*, *Live*, *Reposted*, *Filled*, *Closed* or *Removed*. It is a reading of
   the posting rather than of you, so a role can be *Filled* while your application is

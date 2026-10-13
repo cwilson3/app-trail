@@ -667,6 +667,21 @@
   .posting{border:1px solid var(--line);border-radius:9px;background:var(--surface-2);padding:12px 14px 14px}
   .posting-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
   .posting-head .minilabel{color:var(--ink-2)}
+  .posting-head .chev{margin-left:-4px}
+  .posting.closed{padding-bottom:12px}
+  .posting.closed .posting-head{margin-bottom:0}
+  .posting.closed .chev svg{transform:rotate(-90deg)}
+  .posting.closed .grid{display:none}
+  .posting:not(.closed) .posting-sum{display:none}
+  .posting-sum{display:flex;align-items:center;gap:6px;min-width:0}
+  .posting-sum .checked{font-size:12px;color:var(--muted);white-space:nowrap;margin-right:4px}
+  .posting-sum .openbtn{width:30px;height:30px}
+  .posting-sum .openbtn svg{width:14px;height:14px}
+  .boardlogo{display:inline-grid;width:22px;height:22px;flex:none}
+  .boardlogo svg{width:22px;height:22px;display:block}
+  .boardlogo .bl-bg{fill:var(--chip)}
+  .boardlogo .bl-fg{fill:none;stroke:var(--ink-2);stroke-width:1.9;stroke-linecap:round}
+  .boardlogo .bl-dot{fill:var(--ink-2)}
   /* a box and its words, which are not a field's label though they sit in one */
   .f .checkrow{display:flex;align-items:center;gap:8px;height:38px;font-size:13px;font-weight:400;
     letter-spacing:normal;text-transform:none;color:var(--ink-2);cursor:pointer}
@@ -1387,11 +1402,20 @@ const normRoleStatus = s => ROLE_STATUSES.includes(s) ? s : "Unknown";
    one per board it was seen on, and at most one of them is marked `found`, the
    board that actually turned the role up. Comparing boards over time needs
    their names to be one spelling each, which is why this is a list and not
-   free text. `host` recognises a board from a link; Other has none. */
+   free text. `host` recognises a board from a link; Other has none. `logo`
+   is the mark a collapsed posting shows - TheLadders' is a stand-in ladder
+   until the real mark is dropped in, and Other is a question mark. */
 const BOARD_TABLE = [
-  { name:"LinkedIn",   host:/(^|\.)linkedin\.com$/i },
-  { name:"TheLadders", host:/(^|\.)theladders\.com$/i },
-  { name:"Other" }
+  { name:"LinkedIn",   host:/(^|\.)linkedin\.com$/i,
+    logo:'<svg viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="#0A66C2"/>' +
+         '<g fill="none" stroke="#fff" stroke-width="2.6"><path d="M7.3 10.4V18M11.6 18v-7.6M11.6 13.4a2.9 2.9 0 0 1 5.8 0V18"/></g>' +
+         '<circle cx="7.3" cy="6.8" r="1.6" fill="#fff"/></svg>' },
+  { name:"TheLadders", host:/(^|\.)theladders\.com$/i,
+    logo:'<svg viewBox="0 0 24 24"><rect class="bl-bg" width="24" height="24" rx="5"/>' +
+         '<path class="bl-fg" d="M8.5 4.5v15M15.5 4.5v15M8.5 8.5h7M8.5 12h7M8.5 15.5h7"/></svg>' },
+  { name:"Other",
+    logo:'<svg viewBox="0 0 24 24"><rect class="bl-bg" width="24" height="24" rx="5"/>' +
+         '<path class="bl-fg" d="M9.3 9.3a2.8 2.8 0 1 1 3.9 2.6c-.8.3-1.2.9-1.2 1.7v.5"/><circle class="bl-dot" cx="12" cy="17.2" r="1.2"/></svg>' }
 ];
 const BOARDS = BOARD_TABLE.map(b => b.name);
 
@@ -1649,6 +1673,7 @@ let dataset = null;
 let current = null;          // application open in the modal
 let openRounds = new Set();  // round ids that are expanded
 let openPeople = new Set();  // person ids that are expanded
+let openPostings = new Set();  // posting ids that are expanded
 let cardEdited = false;      // anything changed since the modal opened - only then does closing it save
 let sortKey = "company", sortDir = 1;
 let saveTimer = null, toastTimer = null, renderTimer = null;
@@ -2654,6 +2679,7 @@ function openDetail(app){
   jdShowing = null;
   openRounds = new Set((app.rounds || []).map(r => r.id));   // start expanded
   openPeople = new Set((app.rounds || []).flatMap(r => (r.people || []).map(p => p.id)));
+  openPostings = new Set();                                    // start collapsed
 
   showOverlay(
     '<div class="card" role="dialog" aria-modal="true">' +
@@ -2790,12 +2816,30 @@ function renderPostings(){
     '<button class="add-dashed" data-act="add-posting">' + ICONS.plus + " Add posting</button>";
 }
 
+/* Collapsed, a posting is one line: the board's logo, when it was last
+   checked, and the link's copy and open buttons - enough to get back to it
+   without opening the box. */
 function postingCard(p, gi){
   const a = ' data-post="' + gi + '"';
-  return '<div class="posting">' +
+  const open = openPostings.has(p.id);
+  const board = BOARD_TABLE.find(b => b.name === p.board) || BOARD_TABLE.find(b => b.name === "Other");
+  const link = String(p.link || "").trim();
+  return '<div class="posting' + (open ? "" : " closed") + '">' +
     '<div class="posting-head">' +
+      '<button class="chev" data-act="toggle-posting"' + a + ' aria-expanded="' + open + '"' +
+        ' aria-label="Toggle posting ' + (gi + 1) + '">' + ICONS.chevron + "</button>" +
+      '<span class="boardlogo" role="img" aria-label="' + esc(board.name) + '" title="' + esc(board.name) + '">' + board.logo + "</span>" +
       '<span class="minilabel">Posting ' + (gi + 1) + "</span>" +
       '<span class="spacer"></span>' +
+      '<span class="posting-sum">' +
+        '<span class="checked">' + (p.checkedOn ? "Checked " + esc(p.checkedOn) : "Not checked") + "</span>" +
+        '<button class="openbtn" type="button" data-act="copy-link" data-link="link"' + a +
+          ' data-label="Posting link" title="Copy to the clipboard" aria-label="Copy the posting link to the clipboard"' +
+          (link ? "" : " disabled") + ">" + ICONS.copy + "</button>" +
+        '<button class="openbtn" type="button" data-act="open-link" data-link="link"' + a +
+          ' title="Open in a new tab" aria-label="Open in a new tab"' +
+          (linkHref(p.link) ? "" : " disabled") + ">" + ICONS.external + "</button>" +
+      "</span>" +
       '<button class="iconbtn" data-act="del-posting"' + a + ' aria-label="Remove posting ' + (gi + 1) + '">' + ICONS.trash + "</button>" +
     "</div>" +
     '<div class="grid">' + POSTING_FIELDS.map(f => gridField(f, p[f.key], a)).join("") + "</div>" +
@@ -3094,15 +3138,17 @@ function closeDetail(){
 
 /* Builds the card again for a row that is now a different object - a merge
    brought in the copy from disk - so every field, index and handler points at
-   what is actually stored. Expanded rounds and people stay as they were. */
+   what is actually stored. Expanded rounds, people and postings stay as they were. */
 function reopenDetail(app){
-  const rounds = openRounds, people = openPeople, edited = cardEdited;
+  const rounds = openRounds, people = openPeople, posts = openPostings, edited = cardEdited;
   const scroll = $(".card-body").scrollTop;
   openDetail(app);
   openRounds = rounds;
   openPeople = people;
+  openPostings = posts;
   cardEdited = edited;
   renderRounds();
+  renderPostings();
   $(".card-body").scrollTop = scroll;
 }
 
@@ -3217,11 +3263,20 @@ overlay.addEventListener("click", e => {
     case "del-person":
       current.rounds[ri].people.splice(pi, 1);
       break;
-    case "add-posting":
-      current.postings.push(postingFor(current));
+    case "add-posting": {
+      const p = postingFor(current);
+      current.postings.push(p);
+      openPostings.add(p.id);
       touch(current);
       renderPostings();
       return;                       // the rounds are untouched
+    }
+    case "toggle-posting": {
+      const id = current.postings[+btn.dataset.post].id;
+      openPostings.has(id) ? openPostings.delete(id) : openPostings.add(id);
+      renderPostings();
+      return;                       // no data change
+    }
     case "del-posting":
       current.postings.splice(+btn.dataset.post, 1);
       touch(current);
