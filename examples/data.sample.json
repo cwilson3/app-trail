@@ -6,17 +6,22 @@
       "id": "smp10001",
       "roleId": "smr10001",
       "num": 1,
-      "company": "Aurora Systems",
       "postedOn": "2026-07-28",
       "appliedOn": "2026-08-04",
-      "lastUpdate": "2026-08-29",
-      "status": "Interview",
       "awaiting": "2026-09-08",
+      "status": "Interview",
+      "interest": "High",
       "appliedVia": "Referral",
+      "jobLink": "https://jobs.aurorasystems.example.com/postings/senior-frontend-engineer",
+      "systemOfRecord": "Greenhouse",
+      "notes": "Referred by a former teammate on the platform team.",
+      "company": "Aurora Systems",
       "roleTitle": "Senior Frontend Engineer",
       "companyType": "Startup",
       "industry": "Developer Tools",
       "roleType": "Full-time",
+      "workSetting": "Hybrid",
+      "companyWebsite": "https://aurorasystems.example.com",
       "postedRange": {
         "min": 155000,
         "max": 185000
@@ -29,15 +34,38 @@
         "min": 170000,
         "max": 190000
       },
-      "jobLink": "https://jobs.aurorasystems.example.com/postings/senior-frontend-engineer",
-      "companyWebsite": "https://aurorasystems.example.com",
-      "systemOfRecord": "Greenhouse",
+      "lastUpdate": "2026-08-29",
+      "postings": [
+        {
+          "id": "smp10001b1",
+          "board": "LinkedIn",
+          "link": "https://www.linkedin.com/jobs/view/4011122233/",
+          "status": "Live",
+          "found": true,
+          "applied": false,
+          "seenOn": "2026-07-29",
+          "checkedOn": "2026-08-29T08:15"
+        },
+        {
+          "id": "smp10001b2",
+          "board": "Company Board",
+          "link": "https://jobs.aurorasystems.example.com/postings/senior-frontend-engineer",
+          "status": "Live",
+          "found": false,
+          "applied": true,
+          "seenOn": "2026-08-01",
+          "checkedOn": "2026-08-29T08:20"
+        }
+      ],
       "rounds": [
         {
           "id": "smp10001r1",
           "type": "Screen",
+          "date": "2026-08-12",
+          "time": "10:00",
           "status": "Completed",
           "end": "Moved Forward",
+          "notes": "30 min intro; asked about React Server Components.",
           "people": [
             {
               "id": "smp10001p1",
@@ -58,8 +86,11 @@
         {
           "id": "smp10001r2",
           "type": "Interview 1",
+          "date": "2026-09-08",
+          "time": "14:30",
           "status": "Scheduled",
           "end": "Pending",
+          "notes": "",
           "people": [
             {
               "id": "smp10001p2",
@@ -83,17 +114,22 @@
       "id": "smp10002",
       "roleId": "smr10002",
       "num": 2,
-      "company": "Brightline Health",
       "postedOn": "2026-07-09",
       "appliedOn": "2026-07-21",
-      "lastUpdate": "2026-08-15",
-      "status": "Rejected",
       "awaiting": "",
+      "status": "Rejected",
+      "interest": "Moderate",
       "appliedVia": "Company portal",
+      "jobLink": "https://www.linkedin.com/jobs/view/3987654321/",
+      "systemOfRecord": "Workday",
+      "notes": "",
+      "company": "Brightline Health",
       "roleTitle": "Staff Software Engineer",
       "companyType": "Enterprise",
       "industry": "Healthcare",
       "roleType": "Full-time",
+      "workSetting": "Remote",
+      "companyWebsite": "https://www.brightlinehealth.example.org",
       "postedRange": {
         "min": 180000,
         "max": 210000
@@ -106,15 +142,28 @@
         "min": 195000,
         "max": 205000
       },
-      "jobLink": "https://www.linkedin.com/jobs/view/3987654321/",
-      "companyWebsite": "https://www.brightlinehealth.example.org",
-      "systemOfRecord": "Workday",
+      "lastUpdate": "2026-08-15",
+      "postings": [
+        {
+          "id": "smp10002b1",
+          "board": "LinkedIn",
+          "link": "https://www.linkedin.com/jobs/view/3987654321/",
+          "status": "Removed",
+          "found": true,
+          "applied": true,
+          "seenOn": "2026-07-10",
+          "checkedOn": "2026-08-15T17:40"
+        }
+      ],
       "rounds": [
         {
           "id": "smp10002r1",
           "type": "Screen",
+          "date": "2026-07-29",
+          "time": "09:00",
           "status": "Completed",
           "end": "Rejected",
+          "notes": "Recruiter call; req closed a week later.",
           "people": [
             {
               "id": "smp10002p1",
@@ -138,17 +187,22 @@
       "id": "smp10003",
       "roleId": "smr10003",
       "num": 3,
-      "company": "Cardinal Labs",
       "postedOn": "",
       "appliedOn": "2026-08-26",
-      "lastUpdate": "2026-08-26",
-      "status": "Applied",
       "awaiting": "2026-09-10",
+      "status": "Applied - Awaiting Response",
+      "interest": "Low",
       "appliedVia": "LinkedIn",
+      "jobLink": "https://cardinallabs.example.com/careers/platform-engineer",
+      "systemOfRecord": "Lever",
+      "notes": "",
+      "company": "Cardinal Labs",
       "roleTitle": "Platform Engineer",
       "companyType": "Mid-market",
       "industry": "Logistics",
       "roleType": "Contract-to-hire",
+      "workSetting": "On-Site",
+      "companyWebsite": "https://cardinallabs.example.com",
       "postedRange": {
         "min": 165000,
         "max": 180000
@@ -161,9 +215,39 @@
         "min": 175000,
         "max": 185000
       },
-      "jobLink": "https://cardinallabs.example.com/careers/platform-engineer",
-      "companyWebsite": "https://cardinallabs.example.com",
-      "systemOfRecord": "Lever",
+      "lastUpdate": "2026-08-26",
+      "postings": [
+        {
+          "id": "smp10003b1",
+          "board": "LinkedIn",
+          "link": "https://www.linkedin.com/jobs/view/4022233344/",
+          "status": "Reposted",
+          "found": true,
+          "applied": false,
+          "seenOn": "2026-08-20",
+          "checkedOn": "2026-09-02T12:05"
+        },
+        {
+          "id": "smp10003b2",
+          "board": "TheLadders",
+          "link": "https://www.theladders.com/job/platform-engineer-cardinal-labs_55501",
+          "status": "Unknown",
+          "found": false,
+          "applied": false,
+          "seenOn": "2026-08-22",
+          "checkedOn": ""
+        },
+        {
+          "id": "smp10003b3",
+          "board": "Company Board",
+          "link": "https://cardinallabs.example.com/careers/platform-engineer",
+          "status": "Live",
+          "found": false,
+          "applied": true,
+          "seenOn": "2026-08-26",
+          "checkedOn": "2026-09-02T12:10"
+        }
+      ],
       "rounds": []
     }
   ]

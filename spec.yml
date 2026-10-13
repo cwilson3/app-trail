@@ -5,7 +5,8 @@
 # cannot be added, removed, or given a new method without updating this file.
 #
 # The page itself (GET / and /index.html) is served outside this table and is
-# deliberately not described here. Any other path answers 404.
+# deliberately not described here. Any other path answers 404 to a GET, and
+# 405 with no Allow header to any other method.
 openapi: 3.1.0
 info:
   title: AppTrail local server
@@ -606,33 +607,16 @@ components:
                   Where the application stands - a decision about the candidate.
                   Never the posting's own state: a role being taken down is not
                   something that happened to the application, and is carried by
-                  roleStatus instead. A row saved while "Closed" was still an
-                  application status is read as "Ghosted", with the posting's
-                  state lifted into roleStatus. "Missed" is for a role removed
-                  or closed before it was applied to.
+                  each posting's status instead. A row saved while "Closed" was
+                  still an application status is read as "Ghosted". "Missed" is
+                  for a role removed or closed before it was applied to.
                 example: Interview
-              roleStatus:
-                type: string
-                enum: [Unknown, Live, Reposted, Filled, Closed, Removed]
-                default: Unknown
-                description: >
-                  Where the opening itself stands, read from wherever the role is
-                  advertised. Independent of status - a role can be Filled while
-                  the application is still Interview - so neither reading
-                  overwrites the other. Unknown until something checks.
-              roleCheckedOn:
-                type: string
-                format: date
-                description: When roleStatus was last read. Without it a stale Live cannot be told from a fresh one.
-              roleStatusSource:
-                type: string
-                description: What roleStatus was read from, so a reading can be weighed.
-                example: jobLink
               jobLink:
                 type: string
                 description: >
                   Where the application is made - the hiring company's own page,
-                  ideally. Where the role was seen is kept in postings instead.
+                  ideally. Shown as Applied Job Link. Where the role was seen is
+                  kept in postings instead.
               notes:
                 type: string
                 description: Free-text notes about the application, shown under Application Details.
@@ -641,9 +625,11 @@ components:
                 description: >
                   The job boards the role was seen on, one entry per posting,
                   kept apart from jobLink. A row loaded without this list whose
-                  jobLink is a board's posting is given that posting, marked
-                  found, with seenOn left blank; a row that has the list, even
-                  empty, is never given one. Extra keys on an entry are kept.
+                  jobLink is a link is given that posting, marked found and
+                  applied, with seenOn left blank - on LinkedIn or TheLadders
+                  when the link is theirs, on Company Board otherwise. A row
+                  that has the list, even empty, is never given one. Extra keys
+                  on an entry are kept.
                 items:
                   type: object
                   required: [id, board]
@@ -652,18 +638,40 @@ components:
                       type: string
                     board:
                       type: string
-                      enum: [LinkedIn, TheLadders, Other]
+                      enum: [LinkedIn, TheLadders, Company Board, Other]
                       description: >
-                        Read off link when the stored name is not one of these,
-                        and Other when the link names no board either.
+                        Company Board is the opening as the company itself posts
+                        it - its careers page or applicant system - not
+                        companyWebsite, the company's general site. Read off link
+                        when the stored name is not one of these, and Other when
+                        the link names no board either.
                     link:
                       type: string
-                      description: The posting on that board.
+                      description: >
+                        The posting on that board. For Company Board, the
+                        company's logo is fetched from /favicon.ico on
+                        companyWebsite, or on this link when there is none.
                       example: https://www.linkedin.com/jobs/view/4012345678/
+                    status:
+                      type: string
+                      enum: [Unknown, Live, Reposted, Filled, Closed, Removed]
+                      default: Unknown
+                      description: >
+                        Where the opening stands on this board, read from the
+                        posting. Independent of the application's status - a role
+                        can be Filled while the application is still Interview -
+                        so neither overwrites the other. The table's Posting
+                        Status is that of the entry marked applied, or Unknown.
                     found:
                       type: boolean
                       description: >
                         This board is where the role was found. At most one
+                        entry per row is true; a file claiming more keeps the
+                        first.
+                    applied:
+                      type: boolean
+                      description: >
+                        This posting is the one applied through. At most one
                         entry per row is true; a file claiming more keeps the
                         first.
                     seenOn:
@@ -671,4 +679,8 @@ components:
                       description: When the role was first seen on the board - a date, or blank when not known.
                     checkedOn:
                       type: string
-                      description: When something last confirmed the posting was still up - a date, or blank.
+                      description: >
+                        When status was last read - a local date and time,
+                        YYYY-MM-DDTHH:MM, or blank. Without it a stale Live
+                        cannot be told from a fresh one.
+                      example: "2026-10-12T09:30"

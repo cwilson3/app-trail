@@ -236,7 +236,7 @@ instructions:
 - **Everything is validated on the way in**, against an allow-list of the
   eight fields a posting is allowed to touch. Dates must be real and recent,
   salaries must be plausible annual USD, links must be `http(s)`, and anything
-  over-long is dropped rather than trimmed. `Job Link` is the URL you supplied
+  over-long is dropped rather than trimmed. `Applied Job Link` is the URL you supplied
   and `System of Record` comes from its hostname, so neither can be redirected
   by the page.
 - **Nothing is written twice.** A URL already in the table is reported instead
@@ -308,7 +308,7 @@ to open its detail card).
 | --- | --- |
 | # | Row number in the current sort order |
 | Company | Company name |
-| Posting Status | Where **the opening** stands — Live, Reposted, Filled, Closed, Removed, or Unknown until checked |
+| Posting Status | Where **the opening** stands — Live, Reposted, Filled, Closed, Removed, or Unknown until checked. Read from the posting marked **Applied For Here**; Unknown when none is |
 | Applied | Date you applied |
 | Status | Where **your application** stands — Ready, Applied - Awaiting Response, Interview, Offer, Rejected, Ghosted, Missed, … A decision about you, by you or by them. Where *the role* stands is a separate column, **Posting Status** |
 | Interest | How much you want the role — High, Moderate or Low (blank until you set it) |
@@ -443,32 +443,46 @@ is recognisable against the browser's own chrome.
 
 ## The detail card
 
-- **Application Details** — Posted, Applied, Await, Status, **Interest**, Applied Via, **Job Link** and
+- **Application Details** — Posted, Applied, Await, Status, **Interest**, Applied Via, **Applied Job Link** and
   **System of Record** (where the application lives — Workday, Greenhouse, the company
   portal, …). *Status* is where **your application** stands: a decision about you.
-  **Job Link** is where you apply — the hiring company's own page, once you have found it there.
+  **Applied Job Link** is where you apply — the hiring company's own page, once you have found it there.
 
   Under them, **Postings** lists the job boards the role was seen on — LinkedIn,
-  TheLadders or Other — each with its **Posting Link**, when it was **Seen** first and
-  last **Checked**, and **Found Here** on the one board that turned the role up (marking
-  one clears the rest). Pasting a LinkedIn or TheLadders link sets the board. **Add
-  posting** starts from the Job Link when that is still a board's posting nothing lists
-  yet. Kept apart from the Job Link, the postings are what lets boards be compared over
+  TheLadders, Company Board or Other — each with its **Posting Link**, its own **Posting
+  Status**, the day it was **Seen** first and the date and time its status was last **Checked**, **Found
+  Here** on the one board that turned the role up, and **Applied For Here** on the one you
+  applied through (marking either clears it on the rest). **Company Board** is the opening as the company itself posts it —
+  its careers page or applicant system (Greenhouse, Workday, …) — not the **Company
+  Website**, which is the company's general site. Pasting a LinkedIn or TheLadders link
+  sets the board, and so does a link on the Company Website's own domain or a subdomain
+  of it (`careers.acme.com` for `acme.com`), which sets Company Board. Entering an Applied
+  Job Link that no job board claims adds it as a Company Board posting once you leave the
+  field; correcting that link afterwards moves the posting rather than adding a second.
+  **Add posting** starts from the Applied Job Link when that is a posting nothing lists
+  yet. A posting taken from the Applied Job Link is marked Applied For Here unless another
+  posting already is. Kept apart from the Applied Job Link, the postings are what lets boards be compared over
   time: which turns up more roles, and which turns up the ones worth applying to.
   Each posting opens collapsed to one line — the board's logo (a question mark for
-  Other), when it was last **Checked**, and buttons to copy the Posting Link or open it
+  Other; for Company Board, the company's own icon, fetched from `/favicon.ico` on the
+  Company Website — or on the Posting Link when there is no website — with a building
+  drawn when there is none), its Posting Status and when that was last **Checked**, and buttons to copy the Posting Link or open it
   in a new tab. The chevron expands it to edit; a posting you add opens expanded.
-- **Posting Status** — where **the opening itself** stands, which is a different thing:
-  *Unknown*, *Live*, *Reposted*, *Filled*, *Closed* or *Removed*. It is a reading of
-  the posting rather than of you, so a role can be *Filled* while your application is
-  still *Interview* — and seeing that disagreement is the point of keeping the two
-  apart. **Checked** and **Checked Against** say when the reading was taken and from
-  where, so a stale *Live* can be told from a fresh one. Changing the role's status
-  never changes your application's: the posting can say the opening is gone, but only
-  you say what happened to your application.
+
+  A posting's **Posting Status** is where **the opening itself** stands on that board,
+  which is a different thing from your application's Status: *Unknown*, *Live*,
+  *Reposted*, *Filled*, *Closed* or *Removed*. It is a reading of the posting rather
+  than of you, so a role can be *Filled* while your application is still *Interview* —
+  and seeing that disagreement is the point of keeping the two apart. Each posting
+  has its own because one role can be up on one board and gone from another; the
+  posting's **Checked** date and time says when its status was read, so a stale *Live* can be
+  told from a fresh one. The table's **Posting Status** column is the status of the
+  posting marked **Applied For Here**. Changing a posting's status never changes your
+  application's: the posting can say the opening is gone, but only you say what
+  happened to your application.
 - **Company Details** — Company Name, Role Title, Company Type, Industry, Role Type,
   **Work Setting** (Remote, Hybrid or On-Site) and **Company Website**. Under them,
-  **Other Roles** lists every other application at the same company — role title, status
+  **Other Roles** lists every other application at the same company — role title, posting status, status
   and last update — newest update first. It shows them whatever the table's filter is
   hiding, and names that differ only in case or spacing count as one company.
 - **Salary** — Posted Role Range, **Adjusted for local market** (the posted range
@@ -477,7 +491,7 @@ is recognisable against the browser's own chrome.
 
   Between them these hold everything the table leaves out — the application **ID**, Role Type,
   Work Setting, System of Record, the local-market range, and both links, each with a button that
-  opens the address in a new tab. **Job Link** also has a copy button, so the URL goes to the
+  opens the address in a new tab. **Applied Job Link** also has a copy button, so the URL goes to the
   clipboard without selecting it by hand.
 - **Local Job Description** — collapsed until you ask for it. **Load JD** pulls in
   `jds/<company>-<role>.md` from your data folder, the posting as saved by `/job-from-url`, and renders it in
@@ -505,10 +519,6 @@ Edits save automatically. `Esc` closes any open card.
       "num": 1,
       "company": "", "postedOn": "", "appliedOn": "", "lastUpdate": "",
       "status": "Ready",               // where YOUR APPLICATION stands - a decision about you
-      "roleStatus": "Unknown",         // where THE ROLE stands: Live | Reposted | Filled
-                                       //   | Closed | Removed - a reading of the posting
-      "roleCheckedOn": "",             // when roleStatus was last read
-      "roleStatusSource": "",          // what it was read from, e.g. "jobLink"
       "interest": "",                                // "High" | "Moderate" | "Low" | ""
       "awaiting": "", "appliedVia": "", "roleTitle": "", "companyType": "",
       "industry": "", "roleType": "",
@@ -519,9 +529,15 @@ Edits save automatically. `Esc` closes any open card.
       "jobLink": "",                   // where you apply - the company's own page, ideally
       "companyWebsite": "", "systemOfRecord": "",
       "postings": [                    // the job boards the role was seen on
-        { "id": "…", "board": "LinkedIn",            // LinkedIn | TheLadders | Other
-          "link": "", "seenOn": "", "checkedOn": "", // first seen, last confirmed up
-          "found": true }                            // the one board that turned it up
+        { "id": "…", "board": "LinkedIn",            // LinkedIn | TheLadders | Company Board | Other
+          "link": "",
+          "status": "Unknown",                       // where THE ROLE stands on this board: Live
+                                                     //   | Reposted | Filled | Closed | Removed
+          "seenOn": "",                              // day first seen, YYYY-MM-DD
+          "checkedOn": "",                           // status last read, local YYYY-MM-DDTHH:MM
+          "found": true,                             // the one board that turned it up
+          "applied": true }                          // the one you applied through - the
+                                                     //   table's Posting Status reads it
       ],
       "rounds": [
         { "id": "…", "type": "Screen",
@@ -540,14 +556,12 @@ Edits save automatically. `Esc` closes any open card.
 `data.json` is safe to hand-edit — the page normalises anything it loads, so missing
 fields and unknown values fall back to sane defaults instead of breaking the UI.
 
-A row saved when *Closed* was still an application status is read as *Ghosted* with
-`roleStatus` set to *Closed*: the posting coming down was never a decision about the
-application, so the two parts of that row are moved to the fields that mean them.
-Nothing is lost and old files keep loading.
+A row saved when *Closed* was still an application status is read as *Ghosted*: the
+posting coming down was never a decision about the application. Old files keep loading.
 
 A row loaded without a `postings` list — written before there was one, or by
-`/job-from-url` — whose **Job Link** is a LinkedIn or TheLadders posting is given that
-posting, marked found. When it was first seen is not known, so `seenOn` is left blank
+`/job-from-url` — whose **Applied Job Link** is a link is given that posting, marked found and applied for:
+a LinkedIn or TheLadders posting on that board, anything else on the Company Board. When it was first seen is not known, so `seenOn` is left blank
 rather than guessed. A row that has the list, even an empty one, is never given one, so
 a posting you remove stays removed.
 
