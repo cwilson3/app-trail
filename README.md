@@ -311,7 +311,7 @@ to open its detail card).
 | Posting Status | Where **the opening** stands — Live, Reposted, Filled, Closed, Removed, or Unknown until checked. Read from the posting marked **Applied For Here**; Unknown when none is |
 | Applied | Date you applied |
 | Status | Where **your application** stands — Ready, Applied - Awaiting Response, Interview, Offer, Rejected, Ghosted, Missed, … A decision about you, by you or by them. Where *the role* stands is a separate column, **Posting Status** |
-| Interest | How much you want the role — High, Moderate or Low (blank until you set it) |
+| Interest | How much you want the role — High, Moderate or Low, or Interview XP for a role applied to for the interview practice rather than the job (blank until you set it) |
 | Last Update | Date of the most recent change (set automatically) |
 | Round | Number of the current active round — the latest round whose end state is still *Pending* |
 | Applied Via | Portal, referral, email, … |
@@ -521,7 +521,7 @@ Edits save automatically. `Esc` closes any open card.
       "num": 1,
       "company": "", "postedOn": "", "appliedOn": "", "lastUpdate": "",
       "status": "Ready",               // where YOUR APPLICATION stands - a decision about you
-      "interest": "",                                // "High" | "Moderate" | "Low" | ""
+      "interest": "",                                // "High" | "Moderate" | "Low" | "Interview XP" | ""
       "awaiting": "", "appliedVia": "", "roleTitle": "", "companyType": "",
       "industry": "", "roleType": "",
       "workSetting": "",                             // "Remote" | "Hybrid" | "On-Site" | ""

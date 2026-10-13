@@ -1516,9 +1516,9 @@ function normStatus(s){
 
 const ROUND_STATUSES = ["Scheduled","In Progress","Completed","Cancelled","No Show"];
 const END_TYPES = ["Pending","Moved Forward","Rejected","Withdrawn","Offer","Expired","No Response"];
-const INTEREST_LEVELS = ["High","Moderate","Low"];
+const INTEREST_LEVELS = ["High","Moderate","Low","Interview XP"];   // Interview XP: applied for the interview practice, not the role
 const INTEREST_OPTIONS = [{ value:"", label:"—" }].concat(INTEREST_LEVELS);
-const INTEREST_TONE = { "High":"good", "Moderate":"warm", "Low":"" };
+const INTEREST_TONE = { "High":"good", "Moderate":"warm", "Low":"", "Interview XP":"live" };
 
 const WORK_SETTINGS = ["Remote","Hybrid","On-Site"];
 const WORK_SETTING_OPTIONS = [{ value:"", label:"—" }].concat(WORK_SETTINGS);

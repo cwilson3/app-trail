@@ -243,6 +243,18 @@ describe("sorting a column", () => {
     expect(order()).toEqual(["Low", "Mid", "High", "None"]);
   });
 
+  it("puts Interview XP after Low, and unrated rows still last", () => {
+    app.state = app.normalize({ applications: [
+      { company: "None", interest: "" },
+      { company: "XP",   interest: "Interview XP" },
+      { company: "Low",  interest: "Low" }
+    ] });
+
+    app.sortBy("interest", 1);
+
+    expect(order()).toEqual(["Low", "XP", "None"]);
+  });
+
   it("sorts a salary range by its low end, or its high end when that is all it has", () => {
     app.sortBy("postedRange", 1);
 
