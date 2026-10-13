@@ -422,7 +422,7 @@ from `/job-from-url` while you have the page open.
 ## Themes
 
 The gear in the lower-right corner opens Settings, which holds the content-width
-toggle and the theme picker. Thirteen themes ship, each a full palette rather
+toggle and the theme picker. Fourteen themes ship, each a full palette rather
 than a light/dark pair — picking one is picking a palette, there is no
 OS-following mode:
 
@@ -432,11 +432,13 @@ OS-following mode:
 | **Retro** — arcade cyan on violet | **Retro 2** — Joey's neon on a vaporwave ground | **Ginkgo** — gold on dark olive |
 | **Win98** — grey plastic and teal | **WinXP** — Luna tan, blue and olive | **Phosphor** — a green CRT |
 | **J** — ultramarine under crimson | **J2** — cocoa and purple | **Sea** — deep water, pale surf |
-| **Urban** — warm charcoal and teal | | |
+| **Urban** — warm charcoal and teal | **Trail** — slate and teal, as in Trailhead and Backpack | |
 
-All but Light, Dark and Joey mirror the palettes of the same name in the Ginkgo
-app, so a theme you like there looks the same here. Every palette clears WCAG AA
-(4.5:1) for body text, the muted labels and the status pills.
+All but Light, Dark, Joey and Trail mirror the palettes of the same name in the
+Ginkgo app, so a theme you like there looks the same here. Trail is the palette
+AppTrail Trailhead and AppTrail Backpack wear, so the three apps match. Every
+palette clears WCAG AA (4.5:1) for body text, the muted labels and the status
+pills.
 
 Your choice is remembered in the browser, and the favicon follows it so the tab
 is recognisable against the browser's own chrome.
