@@ -1516,9 +1516,9 @@ function normStatus(s){
 
 const ROUND_STATUSES = ["Scheduled","In Progress","Completed","Cancelled","No Show"];
 const END_TYPES = ["Pending","Moved Forward","Rejected","Withdrawn","Offer","Expired","No Response"];
-const INTEREST_LEVELS = ["High","Moderate","Low"];
+const INTEREST_LEVELS = ["High","Moderate","Low","Interview XP"];   // Interview XP: applied for the interview practice, not the role
 const INTEREST_OPTIONS = [{ value:"", label:"—" }].concat(INTEREST_LEVELS);
-const INTEREST_TONE = { "High":"good", "Moderate":"warm", "Low":"" };
+const INTEREST_TONE = { "High":"good", "Moderate":"warm", "Low":"", "Interview XP":"live" };
 
 const WORK_SETTINGS = ["Remote","Hybrid","On-Site"];
 const WORK_SETTING_OPTIONS = [{ value:"", label:"—" }].concat(WORK_SETTINGS);
@@ -1646,6 +1646,7 @@ const COLUMNS = [
   { key:"_row",        label:"#",            cls:"rownum", fixed:true, render: (app, i) => String(i + 1) },
   { key:"company",     label:"Company",      cls:"company" },
   { key:"roleTitle",   label:"Role Title" },
+  { key:"workSetting", label:"Work Setting" },
   { key:"roleStatus",  label:"Posting Status",  value: postingStatus,
                                              render: app => pill(postingStatus(app), roleStatusInfo(postingStatus(app)).tone),
                                              compare: (a, b, dir) => byRank(ROLE_STATUSES, postingStatus(a), postingStatus(b), dir) },
@@ -1656,7 +1657,6 @@ const COLUMNS = [
   { key:"_round",      label:"Round",        cls:"rnd", value: currentRound,
                                              compare: (a, b, dir) => byNumber(currentRound(a), currentRound(b), dir) },
   { key:"lastUpdate",  label:"Last Update",  cls:"date" },
-  { key:"awaiting",    label:"Await",        cls:"date" },
   { key:"companyType", label:"Company Type" },
   { key:"industry",    label:"Industry" },
   rangeColumn("postedRange", "Posted Range"),
@@ -3701,7 +3701,6 @@ $("#btnDocs").onclick = () => {
           "<tr><td>#</td><td>Row number in the current sort order &mdash; it renumbers when you re-sort.</td></tr>" +
           "<tr><td>Posted</td><td>The date the role was posted, when the listing shows it.</td></tr>" +
           "<tr><td>Last Update</td><td>Set automatically whenever you change anything.</td></tr>" +
-          "<tr><td>Await</td><td>The date you&rsquo;re expecting to hear back by.</td></tr>" +
           "<tr><td>Posted Range / My Range</td><td>Each is a low and a high dollar amount, shown as <code>$125,000-$145,000</code>. Type <code>125k</code> or <code>125000</code> &mdash; it is reformatted for you.</td></tr>" +
           "<tr><td>System of Record</td><td>Where the application itself lives &mdash; Workday, Greenhouse, the company portal, &hellip;</td></tr>" +
         "</table>" +
@@ -3718,7 +3717,7 @@ $("#btnDocs").onclick = () => {
           "<li><b>Application Details</b> &mdash; dates, status, how you applied, the job link and the system of record.</li>" +
           "<li><b>Company Details</b> &mdash; the company, the role, and the company website. <b>Other Roles</b> under them lists every other application at the same company &mdash; role title, posting status, status and last update &mdash; newest update first, whatever the table&rsquo;s filter is hiding.</li>" +
           "<li><b>Salary</b> &mdash; the posted range, that range adjusted for your local market, and the range you gave.</li>" +
-          "<li>Between them these hold the fields the table leaves out: the application ID, role type, work setting, system of record, the local-market range, and both links &mdash; each with a button that opens it in a new tab, and <b>Applied Job Link</b> with a copy button beside it.</li>" +
+          "<li>Between them these hold the fields the table leaves out: the application ID, the date you&rsquo;re awaiting a reply by, role type, system of record, the local-market range, and both links &mdash; each with a button that opens it in a new tab, and <b>Applied Job Link</b> with a copy button beside it.</li>" +
           "<li><b>Local Job Description</b> &mdash; starts collapsed. <b>Load JD</b> shows the posting saved under <code>jds/</code> in your data folder by the <code>/job-from-url</code> skill, matched to this row by its company and role title. Press it again to hide it. The button beside it appears whenever a file exists for the row, open or not, and opens that file in a new tab. Needs <code>server.js</code> running.</li>" +
           "<li><b>Interview Rounds</b> &mdash; each round is collapsible and has a type, a date and time, a status, an end state and a notes box. Each person inside a round collapses the same way, showing their name and role while closed.</li>" +
           "<li><b>Contacts</b> &mdash; each round holds any number of people, with their details, result and notes.</li>" +

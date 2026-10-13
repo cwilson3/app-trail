@@ -311,12 +311,12 @@ to open its detail card).
 | Posting Status | Where **the opening** stands — Live, Reposted, Filled, Closed, Removed, or Unknown until checked. Read from the posting marked **Applied For Here**; Unknown when none is |
 | Applied | Date you applied |
 | Status | Where **your application** stands — Ready, Applied - Awaiting Response, Interview, Offer, Rejected, Ghosted, Missed, … A decision about you, by you or by them. Where *the role* stands is a separate column, **Posting Status** |
-| Interest | How much you want the role — High, Moderate or Low (blank until you set it) |
+| Interest | How much you want the role — High, Moderate or Low, or Interview XP for a role applied to for the interview practice rather than the job (blank until you set it) |
 | Last Update | Date of the most recent change (set automatically) |
 | Round | Number of the current active round — the latest round whose end state is still *Pending* |
-| Await | Date you're expecting a response by |
 | Applied Via | Portal, referral, email, … |
 | Role Title | The job title |
+| Work Setting | Remote, Hybrid or On-Site (blank until you set it) |
 | Company Type | Startup, enterprise, nonprofit, … |
 | Industry | The company's industry |
 | Posted Range | Salary range posted with the role |
@@ -491,8 +491,8 @@ is recognisable against the browser's own chrome.
   restated for where you live) and My Range Given. Each is two dollar fields; type `125k` or `125000` and
   they reformat to `$125,000`, and the table shows a pair as `$125,000-$145,000`.
 
-  Between them these hold everything the table leaves out — the application **ID**, Role Type,
-  Work Setting, System of Record, the local-market range, and both links, each with a button that
+  Between them these hold everything the table leaves out — the application **ID**, Await,
+  Role Type, System of Record, the local-market range, and both links, each with a button that
   opens the address in a new tab. **Applied Job Link** also has a copy button, so the URL goes to the
   clipboard without selecting it by hand.
 - **Local Job Description** — collapsed until you ask for it. **Load JD** pulls in
@@ -521,7 +521,7 @@ Edits save automatically. `Esc` closes any open card.
       "num": 1,
       "company": "", "postedOn": "", "appliedOn": "", "lastUpdate": "",
       "status": "Ready",               // where YOUR APPLICATION stands - a decision about you
-      "interest": "",                                // "High" | "Moderate" | "Low" | ""
+      "interest": "",                                // "High" | "Moderate" | "Low" | "Interview XP" | ""
       "awaiting": "", "appliedVia": "", "roleTitle": "", "companyType": "",
       "industry": "", "roleType": "",
       "workSetting": "",                             // "Remote" | "Hybrid" | "On-Site" | ""
