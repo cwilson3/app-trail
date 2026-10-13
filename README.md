@@ -308,9 +308,9 @@ to open its detail card).
 | --- | --- |
 | # | Row number in the current sort order |
 | Company | Company name |
-| Role Status | Where **the opening** stands — Live, Reposted, Filled, Closed, Removed, or Unknown until checked |
+| Posting Status | Where **the opening** stands — Live, Reposted, Filled, Closed, Removed, or Unknown until checked |
 | Applied | Date you applied |
-| Status | Where **your application** stands — Ready, Applied - Awaiting Response, Interview, Offer, Rejected, Ghosted, Missed, … A decision about you, by you or by them. Where *the role* stands is a separate column, **Role Status** |
+| Status | Where **your application** stands — Ready, Applied - Awaiting Response, Interview, Offer, Rejected, Ghosted, Missed, … A decision about you, by you or by them. Where *the role* stands is a separate column, **Posting Status** |
 | Interest | How much you want the role — High, Moderate or Low (blank until you set it) |
 | Last Update | Date of the most recent change (set automatically) |
 | Round | Number of the current active round — the latest round whose end state is still *Pending* |
@@ -325,7 +325,7 @@ to open its detail card).
 ### Filtering
 
 **Filter** in the toolbar opens a panel with one column per field you can filter
-on — Company, Role Status, Interest and Status. **All** ticks every box in a column and
+on — Company, Posting Status, Interest, Work Setting and Status. **All** ticks every box in a column and
 **None** unticks them; either way the column lets every row through. The count
 beside each value is how many applications carry it. A row has to match every
 column that has only some of its boxes ticked.
@@ -336,6 +336,17 @@ before you applied). **Reset to default** puts that
 back, **Clear all** unticks every box and shows everything, and the badge on the button counts the
 columns currently narrowing the table. The subtitle reads "12 of 13
 applications" whenever something is hidden.
+
+**Views** — the tabs over the table — pick which part of the pipeline you are
+looking at: *In play* (the default), *To apply* (*Ready*, not sent yet),
+*Interviewing* (recruiter screen through final), *Closed* and *All*. A view sets only the Status column, so anything
+else you have filtered on stays put as you move between tabs. Tick statuses in
+the panel that match no view and no tab is pressed; tick ones that do, and that
+tab lights up.
+
+**Chips** beside the tabs show every other filter that is narrowing the table —
+"Work Setting: Remote", "Company: Acme, Globex +1" — and the **×** on a chip
+lifts that filter. Status gets a chip only when no view describes it.
 
 Your filter is remembered in the browser, like the theme and width settings.
 Adding an application clears any filter that would have hidden the new blank
@@ -444,7 +455,10 @@ is recognisable against the browser's own chrome.
   posting** starts from the Job Link when that is still a board's posting nothing lists
   yet. Kept apart from the Job Link, the postings are what lets boards be compared over
   time: which turns up more roles, and which turns up the ones worth applying to.
-- **Role Status** — where **the opening itself** stands, which is a different thing:
+  Each posting opens collapsed to one line — the board's logo (a question mark for
+  Other), when it was last **Checked**, and buttons to copy the Posting Link or open it
+  in a new tab. The chevron expands it to edit; a posting you add opens expanded.
+- **Posting Status** — where **the opening itself** stands, which is a different thing:
   *Unknown*, *Live*, *Reposted*, *Filled*, *Closed* or *Removed*. It is a reading of
   the posting rather than of you, so a role can be *Filled* while your application is
   still *Interview* — and seeing that disagreement is the point of keeping the two

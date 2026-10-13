@@ -52,7 +52,7 @@ describe("the filter panel", () => {
   it("draws a group for each field it filters on as it opens", () => {
     $("#btnFilter").click();
 
-    expect([...document.querySelectorAll("#filterGroups .fgroup")].map(g => g.dataset.field)).toEqual(["company", "roleStatus", "interest", "status"]);
+    expect([...document.querySelectorAll("#filterGroups .fgroup")].map(g => g.dataset.field)).toEqual(["company", "roleStatus", "interest", "workSetting", "status"]);
   });
 
   it("closes on a press outside it", () => {
@@ -97,7 +97,7 @@ window.__app = {
    application's. The split is the point: these check it is drawn as two
    separate controls holding two separate values, because a single Status
    field is exactly the confusion the second one was added to end. */
-describe("the Role Status section on the detail card", () => {
+describe("the Posting Status section on the detail card", () => {
   async function openCard(row){
     const app = await loadApp(null, { exports: CARD_EXPORTS });
     app.state = app.normalize({ applications: [row] });
@@ -115,7 +115,7 @@ describe("the Role Status section on the detail card", () => {
   it("gives the role a section of its own, between the application and the company", async () => {
     await openCard(ROW);
 
-    expect(sections().slice(0, 3)).toEqual(["Application Details", "Role Status", "Company Details"]);
+    expect(sections().slice(0, 3)).toEqual(["Application Details", "Posting Status", "Company Details"]);
   });
 
   it("shows the role's status", async () => {
@@ -142,7 +142,7 @@ describe("the Role Status section on the detail card", () => {
     expect(field("roleStatusSource").value).toBe("jobLink");
   });
 
-  it("offers every role status the app knows, and no application status", async () => {
+  it("offers every posting status the app knows, and no application status", async () => {
     await openCard(ROW);
 
     expect([...field("roleStatus").options].map(o => o.value))
@@ -402,6 +402,121 @@ describe("the Postings list on the detail card", () => {
     press('[data-act="open-link"][data-post="0"]');
 
     expect(open).toHaveBeenCalledWith(LADDERS, "_blank", "noopener");
+  });
+
+  describe("collapsed", () => {
+    const cards = () => [...document.querySelectorAll("#dPostings .posting")];
+    const summary = gi => cards()[gi].querySelector(".posting-sum");
+    const toggle = gi => press('[data-act="toggle-posting"][data-post="' + gi + '"]');
+
+    it("starts every posting collapsed when the card opens", async () => {
+      await openCard({ postings: [{ board:"LinkedIn" }, { board:"TheLadders" }] });
+
+      expect(cards().map(c => c.classList.contains("closed"))).toEqual([true, true]);
+    });
+
+    it("expands a posting when its chevron is pressed", async () => {
+      await openCard({ postings: [{ board:"LinkedIn" }, { board:"TheLadders" }] });
+
+      toggle(1);
+
+      expect(cards().map(c => c.classList.contains("closed"))).toEqual([true, false]);
+    });
+
+    it("collapses it again on a second press", async () => {
+      await openCard({ postings: [{ board:"LinkedIn" }] });
+
+      toggle(0);
+      toggle(0);
+
+      expect(cards()[0].classList.contains("closed")).toBe(true);
+    });
+
+    it("tells a screen reader whether the posting is expanded", async () => {
+      await openCard({ postings: [{ board:"LinkedIn" }] });
+
+      toggle(0);
+
+      expect(control("found", 0).closest(".posting").querySelector(".chev").getAttribute("aria-expanded")).toBe("true");
+    });
+
+    it("opens a newly added posting expanded, ready to fill in", async () => {
+      await openCard({ postings: [{ board:"LinkedIn" }] });
+
+      press('[data-act="add-posting"]');
+
+      expect(cards().map(c => c.classList.contains("closed"))).toEqual([true, false]);
+    });
+
+    it("keeps a posting expanded when another is added", async () => {
+      await openCard({ postings: [{ board:"LinkedIn" }] });
+      toggle(0);
+
+      press('[data-act="add-posting"]');
+
+      expect(cards()[0].classList.contains("closed")).toBe(false);
+    });
+
+    it("shows each board's logo, named for a screen reader", async () => {
+      await openCard({ postings: [{ board:"LinkedIn" }, { board:"TheLadders" }, { board:"Other" }] });
+
+      expect([...document.querySelectorAll("#dPostings .boardlogo")].map(l => l.getAttribute("aria-label")))
+        .toEqual(["LinkedIn", "TheLadders", "Other"]);
+    });
+
+    it("gives each board a logo of its own", async () => {
+      await openCard({ postings: [{ board:"LinkedIn" }, { board:"TheLadders" }, { board:"Other" }] });
+
+      expect(new Set([...document.querySelectorAll("#dPostings .boardlogo")].map(l => l.innerHTML)).size).toBe(3);
+    });
+
+    it("shows when the posting was last checked", async () => {
+      await openCard({ postings: [{ board:"LinkedIn", checkedOn:"2026-09-28" }] });
+
+      expect(summary(0).querySelector(".checked").textContent).toBe("Checked 2026-09-28");
+    });
+
+    it("says so when the posting has never been checked", async () => {
+      await openCard({ postings: [{ board:"LinkedIn" }] });
+
+      expect(summary(0).querySelector(".checked").textContent).toBe("Not checked");
+    });
+
+    it("copies the posting's link without expanding it", async () => {
+      await openCard({ jobLink: "https://careers.acme.com/jobs/123", postings: [{ board:"TheLadders", link: LADDERS }] });
+      const writeText = vi.fn().mockResolvedValue(undefined);         // the page's own window, thrown away after the test
+      Object.defineProperty(window, "isSecureContext", { value: true, configurable: true });
+      Object.defineProperty(window.navigator, "clipboard", { value: { writeText }, configurable: true });
+
+      summary(0).querySelector('[data-act="copy-link"]').click();
+
+      await vi.waitFor(() => expect(writeText).toHaveBeenCalledWith(LADDERS));
+    });
+
+    it("opens the posting's link in a new tab without expanding it", async () => {
+      await openCard({ jobLink: "https://careers.acme.com/jobs/123", postings: [{ board:"TheLadders", link: LADDERS }] });
+      const open = vi.spyOn(window, "open").mockReturnValue(null);
+
+      summary(0).querySelector('[data-act="open-link"]').click();
+
+      expect(open).toHaveBeenCalledWith(LADDERS, "_blank", "noopener");
+    });
+
+    it("disables copy and open while the posting has no link", async () => {
+      await openCard({ postings: [{ board:"Other" }] });
+
+      expect([...summary(0).querySelectorAll(".openbtn")].map(b => b.disabled)).toEqual([true, true]);
+    });
+
+    it("shows a link typed in the expanded posting once it is collapsed", async () => {
+      await openCard({ postings: [{ board:"Other" }] });
+      toggle(0);
+      edit(control("link", 0), LADDERS);
+
+      toggle(0);
+
+      expect([...summary(0).querySelectorAll(".openbtn")].map(b => b.disabled)).toEqual([false, false]);
+    });
   });
 });
 

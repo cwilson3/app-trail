@@ -22,7 +22,7 @@ const STORAGE_KEY = "at-filter";
 const EXPORTS = `
 window.__app = {
   get state(){ return state; }, set state(v){ state = v; },
-  filters, FILTER_FIELDS, CLOSED_STATUSES, OPEN_STATUSES, STATUSES, INTEREST_LEVELS, NO_INTEREST, ROLE_STATUSES,
+  filters, FILTER_FIELDS, CLOSED_STATUSES, OPEN_STATUSES, STATUSES, INTEREST_LEVELS, NO_INTEREST, ROLE_STATUSES, WORK_SETTINGS,
   defaultFilters, loadFilters, saveFilters, setFilter,
   filterValue, passesFilter, filterOptions, activeFilterCount,
   normalize, renderTable, sorted, addApplication
@@ -321,7 +321,7 @@ describe("a field's All and None buttons", () => {
   });
 });
 
-describe("the Role Status filter", () => {
+describe("the Posting Status filter", () => {
   beforeEach(() => {
     seed(app, [
       { company:"Globex",  status:"Interview", roleStatus:"Live" },
@@ -331,12 +331,12 @@ describe("the Role Status filter", () => {
     openPanel();
   });
 
-  it("lists every role status in the app's order, with row counts", () => {
+  it("lists every posting status in the app's order, with row counts", () => {
     expect(app.filterOptions("roleStatus").map(o => [o.value, o.n]))
       .toEqual([["Unknown", 1], ["Live", 1], ["Reposted", 0], ["Filled", 1], ["Closed", 0], ["Removed", 0]]);
   });
 
-  it("shows only the rows whose role status is ticked", () => {
+  it("shows only the rows whose posting status is ticked", () => {
     tick("roleStatus", "Live", true);
     tick("roleStatus", "Unknown", true);
 
@@ -348,19 +348,236 @@ describe("the Role Status filter", () => {
     expect(shown().sort()).toEqual(["Acme", "Globex", "Initech"]);
   });
 
-  it("ticks every role status when All is clicked", () => {
+  it("ticks every posting status when All is clicked", () => {
     groupButton("all", "roleStatus").click();
 
     expect(ticked("roleStatus")).toEqual(app.ROLE_STATUSES);
   });
 
-  it("unticks every role status when None is clicked", () => {
+  it("unticks every posting status when None is clicked", () => {
     tick("roleStatus", "Live", true);
 
     groupButton("clear", "roleStatus").click();
 
     expect(ticked("roleStatus")).toEqual([]);
     expect(shown().sort()).toEqual(["Acme", "Globex", "Initech"]);
+  });
+});
+
+describe("the Work Setting filter", () => {
+  beforeEach(() => {
+    seed(app, [
+      { company:"Globex",  status:"Interview", workSetting:"Remote" },
+      { company:"Initech", status:"Interview", workSetting:"On-Site" },
+      { company:"Acme",    status:"Interview" }
+    ]);
+    openPanel();
+  });
+
+  it("lists every work setting in the app's order plus a blank, with row counts", () => {
+    expect(app.filterOptions("workSetting").map(o => [o.value, o.n]))
+      .toEqual([["Remote", 1], ["Hybrid", 0], ["On-Site", 1], ["", 1]]);
+  });
+
+  it("labels the blank work setting with an em dash", () => {
+    expect(app.filterOptions("workSetting").find(o => o.value === "").label).toBe("—");
+  });
+
+  it("shows only the rows whose work setting is ticked", () => {
+    tick("workSetting", "Remote", true);
+    tick("workSetting", "", true);
+
+    expect(shown().sort()).toEqual(["Acme", "Globex"]);
+  });
+
+  it("restricts nothing by default", () => {
+    expect(shown().sort()).toEqual(["Acme", "Globex", "Initech"]);
+  });
+
+  it("ticks every work setting, blank included, when All is clicked", () => {
+    groupButton("all", "workSetting").click();
+
+    expect(ticked("workSetting")).toEqual([...app.WORK_SETTINGS, ""]);
+  });
+
+  it("lets every row through again when None is clicked", () => {
+    tick("workSetting", "Remote", true);
+
+    groupButton("clear", "workSetting").click();
+
+    expect(shown().sort()).toEqual(["Acme", "Globex", "Initech"]);
+  });
+});
+
+/* View-bar helpers - the bar sits outside the panel, so nothing needs opening. */
+const viewTab = id => document.querySelector(`#viewTabs button[data-view="${id}"]`);
+const pressedViews = () => [...document.querySelectorAll('#viewTabs button[aria-pressed="true"]')].map(b => b.dataset.view);
+const chips = () => [...document.querySelectorAll("#filterChips .fchip")].map(c => c.textContent);
+const removeChip = field => document.querySelector(`#filterChips button[data-unfilter="${field}"]`).click();
+
+describe("the view tabs", () => {
+  beforeEach(() => {
+    seed(app, [
+      { company:"Queued",   status:"Ready" },
+      { company:"Waiting",  status:"Applied - Awaiting Response", workSetting:"Remote" },
+      { company:"Screen",   status:"Phone Screen",                workSetting:"Remote" },
+      { company:"Final",    status:"Final",                       workSetting:"On-Site" },
+      { company:"Offered",  status:"Offer" },
+      { company:"Declined", status:"Rejected",                    workSetting:"Remote" },
+      { company:"Silent",   status:"Ghosted",                     workSetting:"On-Site" }
+    ]);
+  });
+
+  it("opens on In play", () => {
+    expect(pressedViews()).toEqual(["inPlay"]);
+  });
+
+  it("shows only applications not yet sent under To apply", () => {
+    viewTab("toApply").click();
+
+    expect(shown()).toEqual(["Queued"]);
+  });
+
+  it("orders the tabs In play, To apply, Interviewing, Closed, All", () => {
+    expect([...document.querySelectorAll("#viewTabs button")].map(b => b.textContent))
+      .toEqual(["In play", "To apply", "Interviewing", "Closed", "All"]);
+  });
+
+  it("shows only screens through finals under Interviewing", () => {
+    viewTab("interviewing").click();
+
+    expect(shown().sort()).toEqual(["Final", "Screen"]);
+  });
+
+  it("shows only closed-out applications under Closed", () => {
+    viewTab("closed").click();
+
+    expect(shown().sort()).toEqual(["Declined", "Silent"]);
+  });
+
+  it("shows every application under All", () => {
+    viewTab("all").click();
+
+    expect(shown().sort()).toEqual(["Declined", "Final", "Offered", "Queued", "Screen", "Silent", "Waiting"]);
+  });
+
+  it("presses the tab that was clicked", () => {
+    viewTab("closed").click();
+
+    expect(pressedViews()).toEqual(["closed"]);
+  });
+
+  it("keeps the other fields' filters when switching tabs", () => {
+    app.setFilter("workSetting", ["Remote"]);
+
+    viewTab("closed").click();
+
+    expect(shown()).toEqual(["Declined"]);
+  });
+
+  it("presses a view's tab when its statuses are picked in the panel", () => {
+    app.setFilter("status", app.CLOSED_STATUSES);
+
+    expect(pressedViews()).toEqual(["closed"]);
+  });
+
+  it("presses no tab when the statuses match no view", () => {
+    app.setFilter("status", ["Offer"]);
+
+    expect(pressedViews()).toEqual([]);
+  });
+
+  it("presses All once Clear all lifts every filter", () => {
+    document.querySelector("#btnFilterClear").click();
+
+    expect(pressedViews()).toEqual(["all"]);
+  });
+
+  it("comes back on the view chosen last visit", async () => {
+    viewTab("closed").click();
+    const stored = localStorage.getItem(STORAGE_KEY);
+
+    app = await loadApp(stored);
+
+    expect(pressedViews()).toEqual(["closed"]);
+  });
+});
+
+describe("the filter chips", () => {
+  beforeEach(() => {
+    seed(app, [
+      { company:"Acme",    status:"Interview", interest:"High", workSetting:"Remote" },
+      { company:"Globex",  status:"Interview", interest:"Low" },
+      { company:"Initech", status:"Interview" }
+    ]);
+  });
+
+  it("shows none while only a view narrows the table", () => {
+    expect(chips()).toEqual([]);
+  });
+
+  it("shows one chip per field that narrows the table, in the panel's order", () => {
+    app.setFilter("workSetting", ["Remote"]);
+    app.setFilter("interest", ["High"]);
+
+    expect(chips()).toEqual(["Interest:High", "Work Setting:Remote"]);
+  });
+
+  it("names two values and counts the rest", () => {
+    app.setFilter("company", ["Acme", "Globex", "Initech"]);
+
+    expect(chips()).toEqual(["Company:Acme, Globex +1"]);
+  });
+
+  it("lists every value in the chip's title", () => {
+    app.setFilter("company", ["Acme", "Globex", "Initech"]);
+
+    expect(document.querySelector('#filterChips [data-chip="company"]').title).toBe("Company: Acme, Globex, Initech");
+  });
+
+  it("shows a blank value as an em dash", () => {
+    app.setFilter("interest", [app.NO_INTEREST]);
+
+    expect(chips()).toEqual(["Interest:—"]);
+  });
+
+  it("shows no chip for a field set to All", () => {
+    seed(app, [{ company:"Acme", status:"Interview" }]);
+    openPanel();
+
+    groupButton("all", "company").click();
+
+    expect(chips()).toEqual([]);
+  });
+
+  it("shows Status as a chip when no view matches it", () => {
+    app.setFilter("status", ["Interview", "Offer"]);
+
+    expect(chips()).toEqual(["Status:Interview, Offer"]);
+  });
+
+  it("lifts that field's filter when its chip is removed", () => {
+    app.setFilter("interest", ["High"]);
+
+    removeChip("interest");
+
+    expect(shown().sort()).toEqual(["Acme", "Globex", "Initech"]);
+  });
+
+  it("drops the chip once it is removed", () => {
+    app.setFilter("interest", ["High"]);
+    app.setFilter("workSetting", ["Remote"]);
+
+    removeChip("interest");
+
+    expect(chips()).toEqual(["Work Setting:Remote"]);
+  });
+
+  it("names the field it removes, for a screen reader", () => {
+    app.setFilter("workSetting", ["Remote"]);
+
+    expect(document.querySelector('#filterChips button[data-unfilter="workSetting"]').getAttribute("aria-label"))
+      .toBe("Remove Work Setting filter");
   });
 });
 
@@ -379,7 +596,7 @@ describe("Clear all", () => {
 
     document.querySelector("#btnFilterClear").click();
 
-    expect(app.FILTER_FIELDS.map(f => ticked(f.key))).toEqual([[], [], [], []]);
+    expect(app.FILTER_FIELDS.map(f => ticked(f.key))).toEqual([[], [], [], [], []]);
     expect(shown().sort()).toEqual(["Globex", "Initech"]);
   });
 
@@ -391,13 +608,14 @@ describe("Clear all", () => {
 });
 
 describe("what is remembered between visits", () => {
-  it("writes the four fields as plain arrays", async () => {
+  it("writes the five fields as plain arrays", async () => {
     app.setFilter("company", ["Globex"]);
     expect(JSON.parse(localStorage.getItem(STORAGE_KEY))).toEqual({
       company: ["Globex"],
       status: app.OPEN_STATUSES,
       interest: [],
       roleStatus: [],
+      workSetting: [],
       all: []
     });
   });
@@ -414,12 +632,20 @@ describe("what is remembered between visits", () => {
     expect([stored.status, stored.all]).toEqual([[], ["status"]]);
   });
 
-  it("restores a filter stored before Role Status existed as no role-status restriction", async () => {
+  it("restores a filter stored before Posting Status existed as no posting-status restriction", async () => {
     app = await loadApp(JSON.stringify({ company:[], status:["Offer"], interest:[] }));
 
     seed(app, [{ company:"Filled", status:"Offer", roleStatus:"Filled" }]);
 
     expect(shown()).toEqual(["Filled"]);
+  });
+
+  it("restores a filter stored before Work Setting existed as no work-setting restriction", async () => {
+    app = await loadApp(JSON.stringify({ company:[], status:["Offer"], interest:[], roleStatus:[] }));
+
+    seed(app, [{ company:"Onsite", status:"Offer", workSetting:"On-Site" }]);
+
+    expect(shown()).toEqual(["Onsite"]);
   });
 
   it("starts from the default when nothing is stored", async () => {
