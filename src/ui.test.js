@@ -318,6 +318,7 @@ window.__app = {
 describe("the Postings list on the detail card", () => {
   const LINKEDIN = "https://www.linkedin.com/jobs/view/4012345678/";
   const LADDERS = "https://www.theladders.com/job/staff-engineer-acme_12345";
+  const CAREERS = "https://careers.acme.com/jobs/123";
 
   async function openCard(row){
     const app = await loadApp(null, { exports: CARD_EXPORTS });
@@ -355,12 +356,143 @@ describe("the Postings list on the detail card", () => {
     expect(postings(app).map(p => [p.board, p.link, p.found, p.seenOn])).toEqual([["LinkedIn", LINKEDIN, true, ""]]);
   });
 
-  it("adds a blank posting when the Job Link is the company's own page", async () => {
-    const app = await openCard({ jobLink: "https://careers.acme.com/jobs/123", postings: [] });
+  it("adds the Job Link as the company's posting when it is the company's own page", async () => {
+    const app = await openCard({ jobLink: CAREERS, postings: [] });
+
+    press('[data-act="add-posting"]');
+
+    expect(postings(app).map(p => [p.board, p.link, p.found])).toEqual([["Company Board", CAREERS, true]]);
+  });
+
+  it("adds a blank posting when no Job Link is given", async () => {
+    const app = await openCard({ postings: [] });
 
     press('[data-act="add-posting"]');
 
     expect(postings(app).map(p => [p.board, p.link, p.found])).toEqual([["Other", "", false]]);
+  });
+
+  it("sets the board to Company Board from a posting link on the company's site", async () => {
+    const app = await openCard({ companyWebsite: "https://www.acme.com", postings: [{ board:"Other" }] });
+
+    edit(control("link", 0), CAREERS);
+
+    expect([postings(app)[0].board, control("board", 0).value]).toEqual(["Company Board", "Company Board"]);
+  });
+
+  it("leaves the board alone for a posting link on neither a board nor the company's site", async () => {
+    const app = await openCard({ companyWebsite: "https://acme.com", postings: [{ board:"Other" }] });
+
+    edit(control("link", 0), "https://dice.com/job/1");
+
+    expect(postings(app)[0].board).toBe("Other");
+  });
+
+  describe("from the Applied Job Link", () => {
+    const jobLink = () => $('[data-bind="jobLink"]:not([data-post])');
+    function commit(value){
+      const el = jobLink();
+      el.value = value;
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+      el.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+
+    it("adds the company's posting when its own page is entered", async () => {
+      const app = await openCard({ postings: [] });
+
+      commit(CAREERS);
+
+      expect(postings(app).map(p => [p.board, p.link])).toEqual([["Company Board", CAREERS]]);
+    });
+
+    it("does not mark it found when a board already turned the role up", async () => {
+      const app = await openCard({ postings: [{ board:"LinkedIn", link: LINKEDIN, found: true }] });
+
+      commit(CAREERS);
+
+      expect(postings(app).map(p => [p.board, p.found])).toEqual([["LinkedIn", true], ["Company Board", false]]);
+    });
+
+    it("adds nothing while the link is still being typed", async () => {
+      const app = await openCard({ postings: [] });
+      const el = jobLink();
+
+      el.value = CAREERS;
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+
+      expect(postings(app)).toEqual([]);
+    });
+
+    it("adds nothing for a board's link", async () => {
+      const app = await openCard({ postings: [] });
+
+      commit(LINKEDIN);
+
+      expect(postings(app)).toEqual([]);
+    });
+
+    it("adds nothing when a posting already holds the link", async () => {
+      const app = await openCard({ postings: [{ board:"Company Board", link: CAREERS }] });
+
+      commit(CAREERS);
+
+      expect(postings(app).map(p => p.link)).toEqual([CAREERS]);
+    });
+
+    it("moves the company posting it made when the link is corrected, rather than adding another", async () => {
+      const app = await openCard({ postings: [] });
+
+      commit(CAREERS);
+      commit("https://careers.acme.com/jobs/456");
+
+      expect(postings(app).map(p => p.link)).toEqual(["https://careers.acme.com/jobs/456"]);
+    });
+
+    it("keeps a board's posting the link used to be", async () => {
+      const app = await openCard({ jobLink: LINKEDIN, postings: [{ board:"LinkedIn", link: LINKEDIN, found: true }] });
+
+      commit(CAREERS);
+
+      expect(postings(app).map(p => p.board)).toEqual(["LinkedIn", "Company Board"]);
+    });
+  });
+
+  describe("the company's logo", () => {
+    const logo = gi => document.querySelectorAll("#dPostings .boardlogo")[gi];
+
+    it("is the Company Website's icon, not the applicant system's the posting is on", async () => {
+      await openCard({ companyWebsite: "https://www.acme.com/about", postings: [{ board:"Company Board", link: "https://boards.greenhouse.io/acme/jobs/1" }] });
+
+      expect(logo(0).querySelector("img").getAttribute("src")).toBe("https://www.acme.com/favicon.ico");
+    });
+
+    it("is taken from the posting link when the company has no website given", async () => {
+      await openCard({ postings: [{ board:"Company Board", link: CAREERS }] });
+
+      expect(logo(0).querySelector("img").getAttribute("src")).toBe("https://careers.acme.com/favicon.ico");
+    });
+
+    it("appears once a posting link is entered", async () => {
+      await openCard({ postings: [{ board:"Company Board" }] });
+
+      edit(control("link", 0), CAREERS);
+
+      expect(logo(0).querySelector("img").getAttribute("src")).toBe("https://careers.acme.com/favicon.ico");
+    });
+
+    it("falls back to the building when the icon will not load", async () => {
+      await openCard({ postings: [{ board:"Company Board", link: CAREERS }] });
+
+      logo(0).querySelector("img").dispatchEvent(new Event("error"));
+
+      expect(logo(0).classList.contains("favicon")).toBe(false);
+    });
+
+    it("is not fetched for a job board's posting", async () => {
+      await openCard({ postings: [{ board:"LinkedIn", link: LINKEDIN }] });
+
+      expect(logo(0).querySelector("img")).toBeNull();
+    });
   });
 
   it("does not mark a posting from the Job Link found when another board already is", async () => {

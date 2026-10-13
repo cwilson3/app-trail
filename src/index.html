@@ -679,6 +679,8 @@
   .posting-sum .openbtn svg{width:14px;height:14px}
   .boardlogo{display:inline-grid;width:22px;height:22px;flex:none}
   .boardlogo svg{width:22px;height:22px;display:block}
+  .boardlogo img{width:22px;height:22px;border-radius:5px;object-fit:contain}
+  .boardlogo.favicon svg,.boardlogo:not(.favicon) img{display:none}
   .boardlogo .bl-bg{fill:var(--chip)}
   .boardlogo .bl-fg{fill:none;stroke:var(--ink-2);stroke-width:1.9;stroke-linecap:round}
   .boardlogo .bl-dot{fill:var(--ink-2)}
@@ -1402,9 +1404,14 @@ const normRoleStatus = s => ROLE_STATUSES.includes(s) ? s : "Unknown";
    one per board it was seen on, and at most one of them is marked `found`, the
    board that actually turned the role up. Comparing boards over time needs
    their names to be one spelling each, which is why this is a list and not
-   free text. `host` recognises a board from a link; Other has none. `logo`
-   is the mark a collapsed posting shows - TheLadders' is a stand-in ladder
-   until the real mark is dropped in, and Other is a question mark. */
+   free text. Company Board is the opening as the company posts it - its
+   careers page or applicant system - not the Company Website field, which is
+   the company's general site. `host` recognises a board from a link; Company
+   Board and Other have none. `logo` is the mark a collapsed posting shows -
+   TheLadders' is a stand-in ladder until the real mark is dropped in, Other is
+   a question mark, and Company Board's building only shows until the
+   company's own icon loads (see companyLogo()). */
+const COMPANY_BOARD = "Company Board";
 const BOARD_TABLE = [
   { name:"LinkedIn",   host:/(^|\.)linkedin\.com$/i,
     logo:'<svg viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="#0A66C2"/>' +
@@ -1413,21 +1420,39 @@ const BOARD_TABLE = [
   { name:"TheLadders", host:/(^|\.)theladders\.com$/i,
     logo:'<svg viewBox="0 0 24 24"><rect class="bl-bg" width="24" height="24" rx="5"/>' +
          '<path class="bl-fg" d="M8.5 4.5v15M15.5 4.5v15M8.5 8.5h7M8.5 12h7M8.5 15.5h7"/></svg>' },
+  { name:COMPANY_BOARD,
+    logo:'<svg viewBox="0 0 24 24"><rect class="bl-bg" width="24" height="24" rx="5"/>' +
+         '<path class="bl-fg" d="M6.5 19.5v-12l6-3v15M12.5 9.5h5v10M5 19.5h14M9 9h1M9 12h1M9 15h1M15 12.5h0M15 15.5h0"/></svg>' },
   { name:"Other",
     logo:'<svg viewBox="0 0 24 24"><rect class="bl-bg" width="24" height="24" rx="5"/>' +
          '<path class="bl-fg" d="M9.3 9.3a2.8 2.8 0 1 1 3.9 2.6c-.8.3-1.2.9-1.2 1.7v.5"/><circle class="bl-dot" cx="12" cy="17.2" r="1.2"/></svg>' }
 ];
 const BOARDS = BOARD_TABLE.map(b => b.name);
 
-/* The board a link is a posting on, or "" when the link names none. */
-function boardOf(link){
+/* A link's hostname, without a leading www., or "" when it is not a link. */
+function hostOf(link){
   const href = linkHref(link);
   if (!href) return "";
-  let host;
-  try { host = new URL(href).hostname; } catch { return ""; }
-  const board = BOARD_TABLE.find(b => b.host && b.host.test(host));
-  return board ? board.name : "";
+  try { return new URL(href).hostname.replace(/^www\./i, "").toLowerCase(); } catch { return ""; }
 }
+
+/* The board a link is a posting on, or "" when the link names none. A link on
+   the company's own site - the Company Website field's host or a subdomain of
+   it, careers.acme.com for acme.com - is on the Company Board. */
+function boardOf(link, companyWebsite){
+  const host = hostOf(link);
+  if (!host) return "";
+  const board = BOARD_TABLE.find(b => b.host && b.host.test(host));
+  if (board) return board.name;
+  const site = hostOf(companyWebsite);
+  return site && (host === site || host.endsWith("." + site)) ? COMPANY_BOARD : "";
+}
+
+/* The board an Applied Job Link is a posting on. It is where you apply, so a
+   link no job board claims is on the Company Board - its careers page or the
+   applicant system it runs, Greenhouse or Workday, which is still the
+   company's own posting and not a job board's. */
+const jobLinkBoard = link => boardOf(link) || (hostOf(link) ? COMPANY_BOARD : "");
 
 const ROUND_TYPES = ["Screen","Interview 1","Interview 2","Interview 3","Interview 4","Interview 5","Final","Take-home","Offer Call","Other"];
 /* Statuses that have been renamed. Rows saved before a rename - and filters
@@ -1674,6 +1699,7 @@ let current = null;          // application open in the modal
 let openRounds = new Set();  // round ids that are expanded
 let openPeople = new Set();  // person ids that are expanded
 let openPostings = new Set();  // posting ids that are expanded
+let jobLinkWas = "";           // the open row's Applied Job Link as last committed
 let cardEdited = false;      // anything changed since the modal opened - only then does closing it save
 let sortKey = "company", sortDir = 1;
 let saveTimer = null, toastTimer = null, renderTimer = null;
@@ -1827,13 +1853,14 @@ function blankRound(){ return Object.assign({ id: uid() }, blankOf(ROUND_FIELDS)
 function blankPerson(){ return Object.assign({ id: uid() }, blankOf(PERSON_FIELDS)); }
 function blankPosting(){ return Object.assign({ id: uid() }, blankOf(POSTING_FIELDS)); }
 
-/* A new posting for the open row. While the Job Link is still a board's
-   posting that no entry holds, that is the posting meant: it is where the row
-   came from, so it is marked found unless another board already is. When it
-   was first seen is not known, so it is left for you rather than guessed. */
+/* A new posting for the open row. While the Applied Job Link is a posting no
+   entry holds - a board's, or the company's own - that is the posting meant:
+   it is where the row came from, so it is marked found unless another board
+   already is. When it was first seen is not known, so it is left for you
+   rather than guessed. */
 function postingFor(app){
   const p = blankPosting();
-  const board = boardOf(app.jobLink), link = String(app.jobLink || "").trim();
+  const board = jobLinkBoard(app.jobLink), link = String(app.jobLink || "").trim();
   if (board && !app.postings.some(x => String(x.link).trim() === link)){
     Object.assign(p, { board, link, seenOn:"", found: !app.postings.some(x => x.found) });
   }
@@ -1893,14 +1920,14 @@ function normPosting(p){
   return Object.assign({}, p, cleanOf(POSTING_FIELDS, p), { id: safeId(p.id) || uid() });
 }
 /* A row written before postings existed - or by the importer, which knows
-   nothing of them - and whose Job Link is a board's posting came from that
-   board, so it is given that posting, marked found. When it was first seen is
+   nothing of them - came from its Applied Job Link, a board's posting or the
+   company's own, so it is given that posting, marked found. When it was first seen is
    not known and is left blank rather than guessed. The id is derived from the
    row's, so loading the row again gives the same posting rather than a new
    one each time. A row that has a `postings` list, even an empty one, is never
    given one: an empty list is a posting someone removed. */
 function seedPostings(rowId, jobLink){
-  const board = boardOf(jobLink);
+  const board = jobLinkBoard(jobLink);
   if (!board) return [];
   return [normPosting({ id: rowId + "-p1", board, link: String(jobLink).trim(), seenOn:"", found:true })];
 }
@@ -2680,6 +2707,7 @@ function openDetail(app){
   openRounds = new Set((app.rounds || []).map(r => r.id));   // start expanded
   openPeople = new Set((app.rounds || []).flatMap(r => (r.people || []).map(p => p.id)));
   openPostings = new Set();                                    // start collapsed
+  jobLinkWas = app.jobLink;
 
   showOverlay(
     '<div class="card" role="dialog" aria-modal="true">' +
@@ -2820,13 +2848,12 @@ function renderPostings(){
 function postingCard(p, gi){
   const a = ' data-post="' + gi + '"';
   const open = openPostings.has(p.id);
-  const board = BOARD_TABLE.find(b => b.name === p.board) || BOARD_TABLE.find(b => b.name === "Other");
   const link = String(p.link || "").trim();
   return '<div class="posting' + (open ? "" : " closed") + '">' +
     '<div class="posting-head">' +
       '<button class="chev" data-act="toggle-posting"' + a + ' aria-expanded="' + open + '"' +
         ' aria-label="Toggle posting ' + (gi + 1) + '">' + ICONS.chevron + "</button>" +
-      '<span class="boardlogo" role="img" aria-label="' + esc(board.name) + '" title="' + esc(board.name) + '">' + board.logo + "</span>" +
+      boardLogo(p) +
       '<span class="minilabel">Posting ' + (gi + 1) + "</span>" +
       '<span class="spacer"></span>' +
       '<span class="posting-sum">' +
@@ -2843,6 +2870,40 @@ function postingCard(p, gi){
     '<div class="grid">' + POSTING_FIELDS.map(f => gridField(f, p[f.key], a)).join("") + "</div>" +
   "</div>";
 }
+
+/* The mark beside a posting. A Company Board posting shows the company's own
+   icon, taken from its general site - the Company Website when there is one,
+   since a posting on Greenhouse or Workday would otherwise show theirs, else
+   the posting link - with the board's building drawn until it loads, and kept
+   if it never does. */
+function boardLogo(p){
+  const board = BOARD_TABLE.find(b => b.name === p.board) || BOARD_TABLE.find(b => b.name === "Other");
+  const icon = board.name === COMPANY_BOARD ? companyLogo(current.companyWebsite, p.link) : "";
+  return '<span class="boardlogo' + (icon ? " favicon" : "") + '" role="img" aria-label="' + esc(board.name) + '" title="' + esc(board.name) + '">' +
+    (icon ? '<img alt="" src="' + esc(icon) + '">' : "") + board.logo + "</span>";
+}
+/* Redraws each posting's logo in place, leaving the fields - and whatever the
+   cursor is in - alone. */
+function refreshLogos(){
+  document.querySelectorAll("#dPostings .boardlogo").forEach((logo, gi) => {
+    if (current.postings[gi]) logo.outerHTML = boardLogo(current.postings[gi]);
+  });
+}
+/* Where a company's icon is: /favicon.ico at the root of its site, the one
+   place nearly every site still answers. "" when neither link is a link. */
+function companyLogo(...links){
+  for (const link of links){
+    const href = linkHref(link);
+    if (href) try { return new URL(href).origin + "/favicon.ico"; } catch {}
+  }
+  return "";
+}
+/* A company icon that will not load leaves the building in its place. An
+   image's error does not bubble, so this listens on the way down. */
+document.addEventListener("error", e => {
+  const box = e.target.parentNode;
+  if (e.target.tagName === "IMG" && box && box.classList && box.classList.contains("boardlogo")) box.classList.remove("favicon");
+}, true);
 
 function renderRounds(){
   const app = current;
@@ -3158,6 +3219,27 @@ const editEvent = el => el.tagName === "SELECT" || ["checkbox", "date", "time"].
 overlay.addEventListener("input", onEdit);
 overlay.addEventListener("change", onEdit);
 
+/* An Applied Job Link that is the company's own posting is added to the
+   Postings, as a Company Board posting, when it is committed - on change, not on every keystroke, which
+   would add one per letter. A link corrected afterwards moves the company
+   posting it made rather than adding a second; a board's posting the link
+   used to be stays, since the role was still seen there. */
+overlay.addEventListener("change", e => {
+  const el = e.target;
+  if (!current || !el.dataset || el.dataset.r !== undefined) return;
+  if (el.dataset.bind === "companyWebsite") refreshLogos();     // a company posting's logo comes from here
+  if (el.dataset.bind !== "jobLink") return;
+  const was = String(jobLinkWas || "").trim(), link = String(el.value || "").trim();
+  jobLinkWas = link;
+  if (jobLinkBoard(link) !== COMPANY_BOARD || current.postings.some(x => String(x.link).trim() === link)) return;
+  const old = was && current.postings.find(x => x.board === COMPANY_BOARD && String(x.link).trim() === was);
+  if (old) old.link = link;
+  else current.postings.push(postingFor(current));
+  touch(current);
+  renderPostings();
+  scheduleTableRender();
+});
+
 function onEdit(e){
   const el = e.target;
   if (!current || !el.dataset || !el.dataset.bind || e.type !== editEvent(el)) return;
@@ -3191,18 +3273,20 @@ function editTarget(el){
 }
 
 /* A posting's link says which board it is on, when the board is one the app
-   knows, so the board follows the link rather than being picked twice. And only
-   one board can be where the role was found: marking one clears the rest. */
+   knows or the company's own site, so the board follows the link rather than
+   being picked twice. The logo follows both. And only one board can be where
+   the role was found: marking one clears the rest. */
 function postingEdited(el, val){
   const gi = +el.dataset.post, posting = current.postings[gi];
   if (el.dataset.bind === "link"){
-    const board = boardOf(val);
+    const board = boardOf(val, current.companyWebsite);
     if (board && posting.board !== board){
       posting.board = board;
       const sel = $('#dPostings select[data-bind="board"][data-post="' + gi + '"]');
       if (sel) sel.value = board;
     }
   }
+  if (el.dataset.bind === "link" || el.dataset.bind === "board") refreshLogos();
   if (el.dataset.bind === "found" && val){
     current.postings.forEach((x, i) => { if (i !== gi) x.found = false; });
     for (const box of document.querySelectorAll('#dPostings input[data-bind="found"]')) box.checked = box === el;

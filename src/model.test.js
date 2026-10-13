@@ -185,8 +185,18 @@ describe("a row's postings", () => {
     expect(loaded({ id: "a1", jobLink: LINKEDIN }).postings[0].id).toBe(first);
   });
 
-  it("are none for a row whose Job Link is the company's own careers page", () => {
-    expect(loaded({ jobLink: CAREERS }).postings).toEqual([]);
+  it("are given the company's own posting when the Job Link is its careers page, as where the role was found", () => {
+    const [posting] = loaded({ jobLink: CAREERS }).postings;
+
+    expect([posting.board, posting.link, posting.found]).toEqual(["Company Board", CAREERS, true]);
+  });
+
+  it("are none for a row whose Job Link is not a link", () => {
+    expect(loaded({ jobLink: "applied by email" }).postings).toEqual([]);
+  });
+
+  it("keep a posting named as the company's own, though no link says so", () => {
+    expect(loaded({ postings: [{ board: "Company Board" }] }).postings[0].board).toBe("Company Board");
   });
 
   it("are never added to a row that already has the list, even an empty one", () => {

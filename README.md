@@ -449,14 +449,22 @@ is recognisable against the browser's own chrome.
   **Applied Job Link** is where you apply — the hiring company's own page, once you have found it there.
 
   Under them, **Postings** lists the job boards the role was seen on — LinkedIn,
-  TheLadders or Other — each with its **Posting Link**, when it was **Seen** first and
+  TheLadders, Company Board or Other — each with its **Posting Link**, when it was **Seen** first and
   last **Checked**, and **Found Here** on the one board that turned the role up (marking
-  one clears the rest). Pasting a LinkedIn or TheLadders link sets the board. **Add
-  posting** starts from the Applied Job Link when that is still a board's posting nothing lists
+  one clears the rest). **Company Board** is the opening as the company itself posts it —
+  its careers page or applicant system (Greenhouse, Workday, …) — not the **Company
+  Website**, which is the company's general site. Pasting a LinkedIn or TheLadders link
+  sets the board, and so does a link on the Company Website's own domain or a subdomain
+  of it (`careers.acme.com` for `acme.com`), which sets Company Board. Entering an Applied
+  Job Link that no job board claims adds it as a Company Board posting once you leave the
+  field; correcting that link afterwards moves the posting rather than adding a second.
+  **Add posting** starts from the Applied Job Link when that is a posting nothing lists
   yet. Kept apart from the Applied Job Link, the postings are what lets boards be compared over
   time: which turns up more roles, and which turns up the ones worth applying to.
   Each posting opens collapsed to one line — the board's logo (a question mark for
-  Other), when it was last **Checked**, and buttons to copy the Posting Link or open it
+  Other; for Company Board, the company's own icon, fetched from `/favicon.ico` on the
+  Company Website — or on the Posting Link when there is no website — with a building
+  drawn when there is none), when it was last **Checked**, and buttons to copy the Posting Link or open it
   in a new tab. The chevron expands it to edit; a posting you add opens expanded.
 - **Posting Status** — where **the opening itself** stands, which is a different thing:
   *Unknown*, *Live*, *Reposted*, *Filled*, *Closed* or *Removed*. It is a reading of
@@ -519,7 +527,7 @@ Edits save automatically. `Esc` closes any open card.
       "jobLink": "",                   // where you apply - the company's own page, ideally
       "companyWebsite": "", "systemOfRecord": "",
       "postings": [                    // the job boards the role was seen on
-        { "id": "…", "board": "LinkedIn",            // LinkedIn | TheLadders | Other
+        { "id": "…", "board": "LinkedIn",            // LinkedIn | TheLadders | Company Board | Other
           "link": "", "seenOn": "", "checkedOn": "", // first seen, last confirmed up
           "found": true }                            // the one board that turned it up
       ],
@@ -546,8 +554,8 @@ application, so the two parts of that row are moved to the fields that mean them
 Nothing is lost and old files keep loading.
 
 A row loaded without a `postings` list — written before there was one, or by
-`/job-from-url` — whose **Applied Job Link** is a LinkedIn or TheLadders posting is given that
-posting, marked found. When it was first seen is not known, so `seenOn` is left blank
+`/job-from-url` — whose **Applied Job Link** is a link is given that posting, marked found:
+a LinkedIn or TheLadders posting on that board, anything else on the Company Board. When it was first seen is not known, so `seenOn` is left blank
 rather than guessed. A row that has the list, even an empty one, is never given one, so
 a posting you remove stays removed.
 

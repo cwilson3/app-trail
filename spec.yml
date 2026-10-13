@@ -642,9 +642,10 @@ components:
                 description: >
                   The job boards the role was seen on, one entry per posting,
                   kept apart from jobLink. A row loaded without this list whose
-                  jobLink is a board's posting is given that posting, marked
-                  found, with seenOn left blank; a row that has the list, even
-                  empty, is never given one. Extra keys on an entry are kept.
+                  jobLink is a link is given that posting, marked found, with
+                  seenOn left blank - on LinkedIn or TheLadders when the link is
+                  theirs, on Company Board otherwise. A row that has the list,
+                  even empty, is never given one. Extra keys on an entry are kept.
                 items:
                   type: object
                   required: [id, board]
@@ -653,13 +654,19 @@ components:
                       type: string
                     board:
                       type: string
-                      enum: [LinkedIn, TheLadders, Other]
+                      enum: [LinkedIn, TheLadders, Company Board, Other]
                       description: >
-                        Read off link when the stored name is not one of these,
-                        and Other when the link names no board either.
+                        Company Board is the opening as the company itself posts
+                        it - its careers page or applicant system - not
+                        companyWebsite, the company's general site. Read off link
+                        when the stored name is not one of these, and Other when
+                        the link names no board either.
                     link:
                       type: string
-                      description: The posting on that board.
+                      description: >
+                        The posting on that board. For Company Board, the
+                        company's logo is fetched from /favicon.ico on
+                        companyWebsite, or on this link when there is none.
                       example: https://www.linkedin.com/jobs/view/4012345678/
                     found:
                       type: boolean
