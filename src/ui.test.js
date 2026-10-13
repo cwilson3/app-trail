@@ -261,6 +261,54 @@ describe("the Other Roles list on the detail card", () => {
   });
 });
 
+/* The card's title names the application: the company and the role title,
+   whichever of them it has. */
+describe("the detail card's title", () => {
+  async function openCard(row){
+    const app = await loadApp(null, { exports: CARD_EXPORTS });
+    app.state = app.normalize({ applications: [Object.assign({ id:"a1" }, row)] });
+    app.renderTable();
+    app.openDetail(app.state.applications[0]);
+    return app;
+  }
+
+  const title = () => $("#dTitle").textContent;
+
+  it("shows the company and the role title", async () => {
+    await openCard({ company:"Acme", roleTitle:"Staff Engineer" });
+
+    expect(title()).toBe("Acme - Staff Engineer");
+  });
+
+  it("shows the company alone when the role has no title", async () => {
+    await openCard({ company:"Acme", roleTitle:"  " });
+
+    expect(title()).toBe("Acme");
+  });
+
+  it("shows the role title alone when the company has no name", async () => {
+    await openCard({ company:"", roleTitle:"Staff Engineer" });
+
+    expect(title()).toBe("Staff Engineer");
+  });
+
+  it("says New Application when it has neither", async () => {
+    await openCard({ company:"", roleTitle:"" });
+
+    expect(title()).toBe("New Application");
+  });
+
+  it("follows an edit to Role Title", async () => {
+    await openCard({ company:"Acme", roleTitle:"Staff Engineer" });
+
+    const input = $('#overlay [data-bind="roleTitle"]');
+    input.value = "Platform Lead";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+
+    expect(title()).toBe("Acme - Platform Lead");
+  });
+});
+
 /* Notes sit in a sub-section of Application Details. How tall the box draws is
    pure CSS layout, which jsdom does not do, so it is not checked here. */
 describe("the Notes box on the detail card", () => {

@@ -88,6 +88,37 @@ describe("a change on disk that arrives while the user is typing", () => {
   });
 });
 
+/* server.js announces a save before it answers it, so the page can take the
+   announcement of its own save for someone else's change and merge it - held
+   back, the user being mid-field, until they press Done. */
+describe("the page's own save, come back as a change on disk while the user is typing", () => {
+  const ECHO_EXPORTS = `
+window.__app = {
+  get state(){ return state; },
+  get pendingRemote(){ return pendingRemote; },
+  refresh
+};
+`;
+
+  it("leaves the card's Done button in place for the press that leaves the field", async () => {
+    server = fakeServer({ "data.json": JSON.stringify(MAIN) });
+    app = await loadApp(server, { exports: ECHO_EXPORTS });
+    document.querySelector("#tbody tr").click();                 // Acme: the table sorts by company
+    const input = document.querySelector('#overlay [data-bind="company"]');
+    input.focus();
+    input.value = "Acme (edited)";
+    input.dispatchEvent(new Event("input", { bubbles:true }));
+    await vi.waitFor(() => expect(sub()).toMatch(/saved to/));
+    await app.refresh();                                          // the save's own announcement
+    const done = document.querySelector("#dDone");
+
+    input.blur();                                                 // what pressing Done does first
+    await vi.waitFor(() => expect(app.pendingRemote).toBeNull());
+
+    expect(done.isConnected).toBe(true);
+  });
+});
+
 describe("a change on disk to the row open in the card, while the user is not typing", () => {
   /* Acme with three rounds, of which the disk copy keeps two. */
   const round = id => ({ id, type:"Screen", status:"Scheduled", end:"Pending", notes:"", people:[] });

@@ -2200,7 +2200,10 @@ function isEditing(){
 
 /* Fold the file's version into ours. Rows we have touched stay as they are -
    and keep their object identity, so the open modal goes on writing to the row
-   it was opened on. Everything else comes from disk.
+   it was opened on. So does a row the disk holds just as we do - most often
+   our own save, announced before it was answered and so not known for ours -
+   or the open card would be rebuilt under a press of its Done button.
+   Everything else comes from disk.
 
    etag is the version remote came from. serverEtag only moves to it once the
    merge has happened: a save sent with it says "I have seen this version", so
@@ -2215,7 +2218,8 @@ function mergeRemote(remote, etag){
   const out = [];
   for (const a of remote.applications){
     if (deleted.has(a.id)) continue;                  // deleted here, not saved yet
-    out.push(dirty.has(a.id) && mine.has(a.id) ? mine.get(a.id) : a);
+    const ours = mine.get(a.id);
+    out.push(ours && (dirty.has(a.id) || JSON.stringify(ours) === JSON.stringify(a)) ? ours : a);
   }
   const known = new Set(out.map(a => a.id));
   for (const a of state.applications){                // added here, not on disk yet
@@ -2825,7 +2829,8 @@ function renderHeader(){
   const app = current;
   $("#dEyebrow").textContent = "#" + pad3(app.num) + "  ·  Role " + (app.roleId || "—") +
     "  ·  Updated " + (app.lastUpdate || "—");
-  $("#dTitle").textContent = app.company || "New Application";
+  $("#dTitle").textContent = [app.company, app.roleTitle].map(s => String(s || "").trim()).filter(Boolean).join(" - ") ||
+    "New Application";
   const rounds = (app.rounds || []).length;
   const people = (app.rounds || []).reduce((n,r) => n + (r.people || []).length, 0);
   $("#dNote").textContent = plural(rounds, "round") + " · " + plural(people, "contact");
