@@ -308,9 +308,9 @@ to open its detail card).
 | --- | --- |
 | # | Row number in the current sort order |
 | Company | Company name |
-| Role Status | Where **the opening** stands — Live, Reposted, Filled, Closed, Removed, or Unknown until checked |
+| Posting Status | Where **the opening** stands — Live, Reposted, Filled, Closed, Removed, or Unknown until checked |
 | Applied | Date you applied |
-| Status | Where **your application** stands — Ready, Applied - Awaiting Response, Interview, Offer, Rejected, Ghosted, Missed, … A decision about you, by you or by them. Where *the role* stands is a separate column, **Role Status** |
+| Status | Where **your application** stands — Ready, Applied - Awaiting Response, Interview, Offer, Rejected, Ghosted, Missed, … A decision about you, by you or by them. Where *the role* stands is a separate column, **Posting Status** |
 | Interest | How much you want the role — High, Moderate or Low (blank until you set it) |
 | Last Update | Date of the most recent change (set automatically) |
 | Round | Number of the current active round — the latest round whose end state is still *Pending* |
@@ -325,7 +325,7 @@ to open its detail card).
 ### Filtering
 
 **Filter** in the toolbar opens a panel with one column per field you can filter
-on — Company, Role Status, Interest, Work Setting and Status. **All** ticks every box in a column and
+on — Company, Posting Status, Interest, Work Setting and Status. **All** ticks every box in a column and
 **None** unticks them; either way the column lets every row through. The count
 beside each value is how many applications carry it. A row has to match every
 column that has only some of its boxes ticked.
@@ -455,7 +455,7 @@ is recognisable against the browser's own chrome.
   posting** starts from the Job Link when that is still a board's posting nothing lists
   yet. Kept apart from the Job Link, the postings are what lets boards be compared over
   time: which turns up more roles, and which turns up the ones worth applying to.
-- **Role Status** — where **the opening itself** stands, which is a different thing:
+- **Posting Status** — where **the opening itself** stands, which is a different thing:
   *Unknown*, *Live*, *Reposted*, *Filled*, *Closed* or *Removed*. It is a reading of
   the posting rather than of you, so a role can be *Filled* while your application is
   still *Interview* — and seeing that disagreement is the point of keeping the two

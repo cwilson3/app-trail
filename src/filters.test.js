@@ -321,7 +321,7 @@ describe("a field's All and None buttons", () => {
   });
 });
 
-describe("the Role Status filter", () => {
+describe("the Posting Status filter", () => {
   beforeEach(() => {
     seed(app, [
       { company:"Globex",  status:"Interview", roleStatus:"Live" },
@@ -331,12 +331,12 @@ describe("the Role Status filter", () => {
     openPanel();
   });
 
-  it("lists every role status in the app's order, with row counts", () => {
+  it("lists every posting status in the app's order, with row counts", () => {
     expect(app.filterOptions("roleStatus").map(o => [o.value, o.n]))
       .toEqual([["Unknown", 1], ["Live", 1], ["Reposted", 0], ["Filled", 1], ["Closed", 0], ["Removed", 0]]);
   });
 
-  it("shows only the rows whose role status is ticked", () => {
+  it("shows only the rows whose posting status is ticked", () => {
     tick("roleStatus", "Live", true);
     tick("roleStatus", "Unknown", true);
 
@@ -348,13 +348,13 @@ describe("the Role Status filter", () => {
     expect(shown().sort()).toEqual(["Acme", "Globex", "Initech"]);
   });
 
-  it("ticks every role status when All is clicked", () => {
+  it("ticks every posting status when All is clicked", () => {
     groupButton("all", "roleStatus").click();
 
     expect(ticked("roleStatus")).toEqual(app.ROLE_STATUSES);
   });
 
-  it("unticks every role status when None is clicked", () => {
+  it("unticks every posting status when None is clicked", () => {
     tick("roleStatus", "Live", true);
 
     groupButton("clear", "roleStatus").click();
@@ -632,7 +632,7 @@ describe("what is remembered between visits", () => {
     expect([stored.status, stored.all]).toEqual([[], ["status"]]);
   });
 
-  it("restores a filter stored before Role Status existed as no role-status restriction", async () => {
+  it("restores a filter stored before Posting Status existed as no posting-status restriction", async () => {
     app = await loadApp(JSON.stringify({ company:[], status:["Offer"], interest:[] }));
 
     seed(app, [{ company:"Filled", status:"Offer", roleStatus:"Filled" }]);

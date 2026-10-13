@@ -97,7 +97,7 @@ window.__app = {
    application's. The split is the point: these check it is drawn as two
    separate controls holding two separate values, because a single Status
    field is exactly the confusion the second one was added to end. */
-describe("the Role Status section on the detail card", () => {
+describe("the Posting Status section on the detail card", () => {
   async function openCard(row){
     const app = await loadApp(null, { exports: CARD_EXPORTS });
     app.state = app.normalize({ applications: [row] });
@@ -115,7 +115,7 @@ describe("the Role Status section on the detail card", () => {
   it("gives the role a section of its own, between the application and the company", async () => {
     await openCard(ROW);
 
-    expect(sections().slice(0, 3)).toEqual(["Application Details", "Role Status", "Company Details"]);
+    expect(sections().slice(0, 3)).toEqual(["Application Details", "Posting Status", "Company Details"]);
   });
 
   it("shows the role's status", async () => {
@@ -142,7 +142,7 @@ describe("the Role Status section on the detail card", () => {
     expect(field("roleStatusSource").value).toBe("jobLink");
   });
 
-  it("offers every role status the app knows, and no application status", async () => {
+  it("offers every posting status the app knows, and no application status", async () => {
     await openCard(ROW);
 
     expect([...field("roleStatus").options].map(o => o.value))

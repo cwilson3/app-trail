@@ -1465,7 +1465,7 @@ const APP_FIELDS = [
      still an application status carries the posting's state in the wrong
      field, so it is lifted across here on load; STATUS_RENAMES sends what is
      left of that row to Ghosted. */
-  { key:"roleStatus",     label:"Role Status",               type:"select", section:"role", options:ROLE_STATUSES,
+  { key:"roleStatus",     label:"Posting Status",            type:"select", section:"role", options:ROLE_STATUSES,
                                                              initial:"Unknown", clean:normRoleStatus,
                                                              from: a => a.roleStatus || (a.status === "Closed" ? "Closed" : "") },
   { key:"roleCheckedOn",  label:"Checked",                   type:"date",   section:"role" },
@@ -1486,7 +1486,7 @@ const APP_FIELDS = [
    placed under the section's grid - a host a render function fills. */
 const CARD_SECTIONS = [
   { id:"application", title:"Application Details", sub:'<div id="dAppNotes"></div><div id="dPostings"></div>' },
-  { id:"role",        title:"Role Status" },
+  { id:"role",        title:"Posting Status" },
   { id:"company",     title:"Company Details", sub:'<div id="dOtherRoles"></div>' },
   { id:"salary",      title:"Salary" }
 ];
@@ -1555,7 +1555,7 @@ const COLUMNS = [
   { key:"_row",        label:"#",            cls:"rownum", fixed:true, render: (app, i) => String(i + 1) },
   { key:"company",     label:"Company",      cls:"company" },
   { key:"roleTitle",   label:"Role Title" },
-  { key:"roleStatus",  label:"Role Status",  render: app => pill(app.roleStatus, roleStatusInfo(app.roleStatus).tone),
+  { key:"roleStatus",  label:"Posting Status",  render: app => pill(app.roleStatus, roleStatusInfo(app.roleStatus).tone),
                                              compare: (a, b, dir) => byRank(ROLE_STATUSES, a.roleStatus, b.roleStatus, dir) },
   { key:"appliedOn",   label:"Applied",      cls:"date" },
   { key:"status",      label:"Status",       render: app => pill(app.status, statusInfo(app.status).tone) },
@@ -2242,7 +2242,7 @@ const ALL_VALUES = "__all__";          // a field with every value ticked
 
 const FILTER_FIELDS = [
   { key:"company",    label:"Company",  search:true },
-  { key:"roleStatus", label:"Role Status" },
+  { key:"roleStatus", label:"Posting Status" },
   { key:"interest",    label:"Interest" },
   { key:"workSetting", label:"Work Setting" },
   { key:"status",      label:"Status" }
@@ -3497,7 +3497,7 @@ $("#btnDocs").onclick = () => {
         "<p>One row per application, sorted by company. Click any column heading to re-sort; click any row to open its detail card.</p>" +
         "<table>" +
           "<tr><td>Status</td><td>Where <em>your application</em> stands &mdash; a decision about you, by you (<i>Withdrawn</i>) or by them (<i>Rejected</i>, <i>Offer</i>). <i>Ghosted</i> is for an application no answer ever reached, and <i>Missed</i> for a role that was removed or closed before you applied.</td></tr>" +
-          "<tr><td>Role Status</td><td>Where <em>the opening</em> stands, which is a different thing: <i>Live</i>, <i>Reposted</i>, <i>Filled</i>, <i>Closed</i> or <i>Removed</i>. It is a reading of the posting, not of you, so a role can be <i>Filled</i> while your application is still <i>Interview</i>. <i>Checked</i> and <i>Checked Against</i> say when the reading was taken and from where.</td></tr>" +
+          "<tr><td>Posting Status</td><td>Where <em>the opening</em> stands, which is a different thing: <i>Live</i>, <i>Reposted</i>, <i>Filled</i>, <i>Closed</i> or <i>Removed</i>. It is a reading of the posting, not of you, so a role can be <i>Filled</i> while your application is still <i>Interview</i>. <i>Checked</i> and <i>Checked Against</i> say when the reading was taken and from where.</td></tr>" +
           "<tr><td>Round</td><td>The round you&rsquo;re currently on &mdash; the latest round whose end state is still <i>Pending</i>.</td></tr>" +
           "<tr><td>#</td><td>Row number in the current sort order &mdash; it renumbers when you re-sort.</td></tr>" +
           "<tr><td>Posted</td><td>The date the role was posted, when the listing shows it.</td></tr>" +

@@ -84,11 +84,11 @@ describe("the role's status, apart from the application's", () => {
     expect(loaded({ company: "Acme" }).roleStatus).toBe("Unknown");
   });
 
-  it("keeps a role status a row already carries", () => {
+  it("keeps a posting status a row already carries", () => {
     expect(loaded({ roleStatus: "Filled" }).roleStatus).toBe("Filled");
   });
 
-  it("falls back to Unknown for a role status it does not know", () => {
+  it("falls back to Unknown for a posting status it does not know", () => {
     expect(loaded({ roleStatus: "Vanished" }).roleStatus).toBe("Unknown");
   });
 
@@ -122,7 +122,7 @@ describe("a row saved when Closed was an application status", () => {
     expect(loaded({ status: "Closed" }).status).toBe("Ghosted");
   });
 
-  it("does not overwrite a role status the row already carries", () => {
+  it("does not overwrite a posting status the row already carries", () => {
     expect(loaded({ status: "Closed", roleStatus: "Filled" }).roleStatus).toBe("Filled");
   });
 });
