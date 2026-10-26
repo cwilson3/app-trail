@@ -115,6 +115,17 @@ function stripTags(html){
     .replace(/<[^>]*>/g, " ");
 }
 
+/* A whole page's markup less what never holds words worth keeping - its
+   <head>, scripts, styles and icons - which on a job board is most of the
+   bytes. What is left is still markup, for htmlToMarkdown to read. */
+function pageMarkup(html){
+  return String(html == null ? "" : html)
+    .replace(/<!--[\s\S]*?-->/g, " ")
+    .replace(/<head\b[^>]*>[\s\S]*?<\/head\s*>/gi, " ")
+    .replace(/<(script|style|svg|noscript|template|iframe)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, " ")
+    .replace(/\s{2,}/g, m => (m.includes("\n") ? "\n" : " "));
+}
+
 /* HTML (or entity-escaped HTML, which some boards return) to flat text. The
    second decode catches entities that were hiding inside the first pass. */
 function htmlToText(html){
@@ -299,6 +310,82 @@ function textToMarkdown(text, company){
   }));
 }
 
+/* ------------------------------------------------------------ page framing */
+
+/* Where a board's whole page is all we could read, the posting sits between
+   lines the board always prints around it. Keyed by systemOfRecord, which
+   comes from the URL the user typed, never from the page. Every marker is
+   matched against a whole line, and the end only after the start, so a
+   posting that says "save" mid-sentence moves neither.
+
+     start     the line just above the posting
+     end       any line that can follow it - the first one after start wins,
+               so a posting too short to get its own "Show more" still stops
+               at the job criteria rather than running on into similar jobs
+     preamble  furniture some pages print between start and the posting:
+               `open` is its first line, and it runs through each `close`
+               for as long as the line after one is another `again`. Only
+               a block that begins straight after start is skipped, so the
+               posting's own words are never read as furniture. */
+/** @type {Record<string, { start: RegExp, end: RegExp, preamble?: { open: RegExp, close: RegExp, again: RegExp } }>} */
+const PAGE_FRAMES = {
+  /* LinkedIn's guest view: sign-in forms and the title block above "Report
+     this job"; below the description its "Show more" toggle, then the job
+     criteria, similar jobs and footer. Some postings also get "Use AI to
+     assess how you fit" after "Report this job" - a sign-in form per AI
+     feature, each ending in the consent line, the next starting "Sign in to". */
+  LinkedIn: {
+    start: /^Report this job$/,
+    end: /^(Show more|Show less|Seniority level|Employment type|Job function|Industries|Similar jobs|People also viewed|Referrals increase your chances .*)$/,
+    preamble: {
+      open: /^Use AI to assess how you fit$/,
+      close: /^By clicking Continue to join or sign in, /,
+      again: /^Sign in to /
+    }
+  }
+};
+
+/* A line as it reads, whether it came from flat text or from htmlToMarkdown:
+   no list or heading mark, no emphasis, a link reduced to its words. */
+const plainLine = l => String(l).trim()
+  .replace(/^(?:#+|-)\s+/, "")
+  .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+  .replace(/\*\*|\\(?=[#>])/g, "")
+  .trim();
+
+/* The posting out of a whole page - flat text or markdown, a line at a time -
+   or null when the board has no frame or its markers are not where we expect:
+   a changed layout keeps the whole page rather than losing the posting. */
+function framePosting(page, system){
+  const frame = PAGE_FRAMES[String(system || "")];
+  if (!frame) return null;
+  const lines = String(page == null ? "" : page).replace(/\r\n?/g, "\n").split("\n");
+  const plain = lines.map(plainLine);
+  const start = plain.findIndex(l => frame.start.test(l));
+  if (start < 0) return null;
+  const length = plain.slice(start + 1).findIndex(l => frame.end.test(l));
+  if (length < 0) return null;
+  const end = start + 1 + length;
+  const from = frame.preamble ? afterPreamble(plain, start + 1, end, frame.preamble) : start + 1;
+  const posting = lines.slice(from, end).join("\n").trim();
+  return posting || null;
+}
+
+/* Where the posting begins, given that it would begin at `at` but for a
+   preamble. Without one opening on the first line, `at` it is. */
+function afterPreamble(plain, at, end, { open, close, again }){
+  const next = i => { while (i < end && !plain[i]) i++; return i; };
+  let i = next(at);
+  if (i >= end || !open.test(plain[i])) return at;
+  for (;;) {
+    while (i < end && !close.test(plain[i])) i++;
+    if (i >= end) return at;                        /* never closed: not the furniture we know */
+    const after = next(i + 1);
+    if (after >= end || !again.test(plain[after])) return i + 1;
+    i = after;
+  }
+}
+
 /* ------------------------------------------------------------- both paths */
 
 /* Marker lines become markdown; everything else becomes body text. A body line
@@ -321,20 +408,31 @@ function renderBlocks(lines){
       out.push("");
     }
   }
-  return out.join("\n")
-    .replace(/[ \t]+$/gm, "")
-    .replace(/\n{3,}/g, "\n\n")
-    /* <li> ends in a newline of its own, which would otherwise leave every
-       bullet as its own paragraph-spaced block */
-    .replace(/^(- .*)\n\n(?=- )/gm, "$1\n")
-    .trim();
+  return tidy(out.join("\n").replace(/[ \t]+$/gm, "")).trim();
 }
 
+/* No more than one blank line anywhere, and none between two bullets - <li>
+   ends in a newline of its own, which would otherwise leave every bullet as
+   its own paragraph-spaced block. */
+const tidy = md => md.replace(/\n{3,}/g, "\n\n").replace(/^(- .*)\n\n(?=- )/gm, "$1\n");
+
 /* Rewrites "## Heading" lines to their canonical names and leaves the rest of
-   the document alone. */
+   the document alone - except that two sections in a row which come out with
+   the same name become one. A posting that splits "Required qualifications"
+   from "Basic skills" would otherwise file two "Minimum Qualifications" back
+   to back. Ones with another section between them are left apart: joining
+   them would move text out of the order the posting put it in. */
 function canonicalizeSections(markdown, company){
-  return String(markdown == null ? "" : markdown)
-    .replace(/^## +(.+)$/gm, (m, h) => "## " + canonicalSection(h, company));
+  let last = null;
+  const out = [];
+  for (const line of String(markdown == null ? "" : markdown).split("\n")) {
+    const h = line.match(/^## +(.+)$/);
+    if (!h) { out.push(line); continue; }
+    const name = canonicalSection(h[1], company);
+    if (name !== last) out.push("## " + name);
+    last = name;
+  }
+  return tidy(out.join("\n"));
 }
 
 const money = n => "$" + Number(n).toLocaleString("en-US");
@@ -485,6 +583,6 @@ function resolveFields(marked, read){
 module.exports = {
   ROLE_TYPES, COMPANY_TYPES, FIELDS, resolveFields,
   bareHost, isAtsHost, atsHost, systemOfRecord, normalizeUrl,
-  decodeEntities, htmlToText, cleanText, money,
-  jdSlug, jdName, htmlToMarkdown, textToMarkdown, canonicalizeSections, canonicalSection
+  decodeEntities, htmlToText, pageMarkup, cleanText, money,
+  jdSlug, jdName, htmlToMarkdown, textToMarkdown, framePosting, canonicalizeSections, canonicalSection
 };

@@ -138,7 +138,8 @@ const header = (init, name) => {
  * GET carries the ETag server.js would give it, a write needs If-Match (428
  * without one), and a stale one gets 409 with the current document and its
  * ETag. Set `down` to make every request fail the way fetch does when the
- * server is unreachable.
+ * server is unreachable, and `dataDir` to the data folder /api/health reports -
+ * what a restart with a different APP_TRAIL_DATA_DIR changes.
  *
  * @param {Record<string, string>} files
  */
@@ -176,7 +177,7 @@ export function fakeServer(files){
   /* bindRoutes refuses a table that leaves out any route or method routes.js
      has, so the stand-in cannot fall behind the real server's API. */
   const dispatch = bindRoutes({
-    "/api/health": { GET: () => json(200, { ok: true, file: "/data/data.json" }) },
+    "/api/health": { GET: () => json(200, { ok: true, file: server.dataDir + "/data.json", dir: server.dataDir }) },
     "/api/jds": { GET: () => json(200, { ok: true, dir: "jds", files: [] }) },
     "/api/note": { POST: (params, init) =>
       json(200, { ok: true, action: "updated", rows: JSON.parse(init.body).rows.length, title: "T", folder: "" }) },
@@ -190,7 +191,7 @@ export function fakeServer(files){
     }
   });
 
-  const server = { requests, files, down: false, fetch: null };
+  const server = { requests, files, down: false, dataDir: "/data", fetch: null };
   server.fetch = async (url, init = {}) => {
     const method = init.method || "GET";
     const path = String(url).split("?")[0];

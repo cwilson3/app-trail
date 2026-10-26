@@ -13,7 +13,7 @@
  * app-trail on macOS. The page still asks for data/data.json, jds/ and
  * config.json; those URLs are answered from that folder:
  *
- *   GET  /api/health       ->  {"ok":true, "file": <path of data.json>}
+ *   GET  /api/health       ->  {"ok":true, "file": <path of data.json>, "dir": <the data folder>}
  *   GET  /api/jds          ->  the job descriptions saved under jds/
  *   GET  /jds/<name>.md    ->  one of them
  *   GET  /config.json      ->  settings - which note Note writes to
@@ -239,7 +239,7 @@ function createApp({
   /** @type {Record<string, Record<string, import("./routes.js").Handler>>} */
   const handlers = {
     "/api/health": {
-      GET: (req, res) => sendJson(res, 200, { ok: true, file: paths.data })
+      GET: (req, res) => sendJson(res, 200, { ok: true, file: paths.data, dir: paths.dir })
     },
 
     /* The detail card works out a row's file name from its company and role,

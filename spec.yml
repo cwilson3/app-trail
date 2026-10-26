@@ -50,6 +50,10 @@ paths:
       tags: [system]
       operationId: getHealth
       summary: Whether the server is up, and which data.json it serves
+      description: >
+        Settings shows `dir` with a copy button. It is read again each time the
+        panel opens, so a server restarted with a different APP_TRAIL_DATA_DIR
+        shows the new folder without reloading the page.
       responses:
         "200":
           description: The server is up.
@@ -57,7 +61,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [ok, file]
+                required: [ok, file, dir]
                 additionalProperties: false
                 properties:
                   ok:
@@ -65,6 +69,11 @@ paths:
                   file:
                     type: string
                     description: Absolute path of data.json on this machine.
+                  dir:
+                    type: string
+                    description: >
+                      Absolute path of the data folder - data.json, config.json,
+                      jds/ and the import log. APP_TRAIL_DATA_DIR when it is set.
         "403":
           $ref: "#/components/responses/Forbidden"
         "405":

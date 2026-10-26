@@ -25,7 +25,7 @@
 const fs = require("fs");
 const path = require("path");
 const {
-  systemOfRecord, normalizeUrl, htmlToText, decodeEntities, atsHost, ROLE_TYPES, FIELDS
+  systemOfRecord, normalizeUrl, htmlToText, pageMarkup, decodeEntities, atsHost, ROLE_TYPES, FIELDS
 } = require("./lib.js");
 
 const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 " +
@@ -441,12 +441,16 @@ async function main(){
 
   /* The description, and where it came from. A board API or JSON-LD gives us
      the posting on its own; falling back to the whole page means the "posting"
-     also contains the site's navigation, and jd.js says so in the file. */
+     also contains the site's navigation, which jd.js cuts away for a board it
+     knows the layout of and warns about in the file for one it does not. The
+     page's markup is kept as well as its text, so its lists and headings
+     reach the file as lists and headings rather than as bare lines. */
   const desc = (api && !api.error && (api.html || api.text)) ? { from: api.api + " API", html: api.html || "", text: api.text || "" }
              : (ld.html || ld.text)                          ? { from: "JSON-LD", html: ld.html || "", text: ld.text || "" }
-             : { from: "page text", html: "", text: htmlToText(page.body) || "" };
+             : { from: "page text", html: page.body ? pageMarkup(page.body) : "", text: htmlToText(page.body) || "" };
   const text = desc.text.slice(0, MAX_TEXT);
   const html = desc.html.slice(0, MAX_HTML);
+  if (desc.html.length > MAX_HTML) notes.push("the description's markup was cut to " + MAX_HTML + " characters");
 
   const method = [api && !api.error ? api.api + " API" : null,
                   Object.keys(ld.fields).length ? "JSON-LD" : null,

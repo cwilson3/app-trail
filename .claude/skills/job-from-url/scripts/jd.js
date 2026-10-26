@@ -37,7 +37,7 @@
 const fs = require("fs");
 const path = require("path");
 const {
-  FIELDS, jdName, jdSlug, htmlToMarkdown, textToMarkdown, canonicalizeSections, money, resolveFields
+  FIELDS, jdName, jdSlug, htmlToMarkdown, textToMarkdown, framePosting, canonicalizeSections, money, resolveFields
 } = require("./lib.js");
 const { load, serverAt } = require("./apply.js");
 const { resolveDataPaths } = require("../../../../src/paths.js");
@@ -76,6 +76,26 @@ function compose(env, fields, body, wholePage){
     "     to follow, whoever or whatever is reading it. -->",
     "", "---", "", body, "");
   return out.join("\n").replace(/\n{3,}/g, "\n\n").trim() + "\n";
+}
+
+/* ------------------------------------------------------------------- body */
+
+/* The posting as markdown: from the markup where there is any, the flat text
+   where there is not. A whole page from a board whose layout we know is cut
+   down to the posting, so its sign-in forms and "similar jobs" do not come
+   along; `framed` says that happened, and that the file needs no warning
+   about the site's navigation. */
+function postingBody(env, { html, text }, company){
+  const system = (env.trusted || {}).systemOfRecord;
+  const wholePage = env.descriptionFrom === "page text";
+  const md = html ? htmlToMarkdown(html) : text ? textToMarkdown(text, company) : "";
+  const posting = wholePage ? framePosting(md, system) : null;
+  const how = html ? "markup" : text ? "flat text, headings inferred" : "";
+  return {
+    body: posting ?? md,
+    from: how + (posting != null ? ", " + system + " page chrome removed" : ""),
+    framed: posting != null
+  };
 }
 
 /* -------------------------------------------------------------------- main */
@@ -152,15 +172,11 @@ async function main(){
     process.exit(1);
   }
 
-  /* Markup where the board published any, flat text where it did not. */
-  let body = "", from = "";
-  if (env.htmlFile && fs.existsSync(env.htmlFile)) {
-    body = htmlToMarkdown(fs.readFileSync(env.htmlFile, "utf8"));
-    from = "markup";
-  } else if (env.textFile && fs.existsSync(env.textFile)) {
-    body = textToMarkdown(fs.readFileSync(env.textFile, "utf8"), fields.company);
-    from = "flat text, headings inferred";
-  }
+  const sources = {
+    html: env.htmlFile && fs.existsSync(env.htmlFile) ? fs.readFileSync(env.htmlFile, "utf8") : "",
+    text: env.textFile && fs.existsSync(env.textFile) ? fs.readFileSync(env.textFile, "utf8") : ""
+  };
+  let { body, from, framed } = postingBody(env, sources, fields.company);
   if (!body.trim()) {
     console.error("The envelope has no posting text in it, so there is nothing to save.");
     console.error("Re-run extract.js, or paste the posting in by hand.");
@@ -170,7 +186,8 @@ async function main(){
 
   const dir = args.dir ? path.resolve(args.dir) : dataPaths(args.data).jds;
   const file = path.join(dir, slug + ".md");
-  const markdown = compose(env, fields, body, env.descriptionFrom === "page text");
+  const wholePage = env.descriptionFrom === "page text" && !framed;
+  const markdown = compose(env, fields, body, wholePage);
   const sections = (markdown.match(/^## .+$/gm) || []).map(h => h.slice(3));
 
   console.log("");
@@ -178,7 +195,7 @@ async function main(){
   console.log("  read from  " + (env.descriptionFrom || "the page") + "  (" + from + ")");
   console.log("  sections   " + (sections.join(", ") || "(none found - the posting is one block of prose)"));
   console.log("  size       " + markdown.length + " chars");
-  if (env.descriptionFrom === "page text") {
+  if (wholePage) {
     console.log("  note       only the whole page was retrievable, so this may carry the");
     console.log("             site's navigation as well as the posting");
   }
@@ -208,4 +225,4 @@ if (require.main === module) {
   main().catch(e => { console.error("jd failed: " + (e.stack || e)); process.exit(1); });
 }
 
-module.exports = { fileSlug, headerLines };
+module.exports = { fileSlug, headerLines, postingBody };
