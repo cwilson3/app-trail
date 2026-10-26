@@ -82,6 +82,79 @@ describe("the Settings panel", () => {
   });
 });
 
+describe("the data folder in the Settings panel", () => {
+  let server;
+  beforeEach(async () => {
+    server = fakeServer({ "data.json": JSON.stringify(doc("Acme")) });
+    server.dataDir = "/Users/me/Library/Application Support/app-trail";
+    await loadApp(server);
+  });
+
+  it("shows the folder the server reports", async () => {
+    $("#btnSettings").click();
+
+    await vi.waitFor(() => expect($("#folderPath").textContent).toBe("/Users/me/Library/Application Support/app-trail"));
+  });
+
+  it("shows the new folder after the server moves to another one", async () => {
+    $("#btnSettings").click();
+    await vi.waitFor(() => expect($("#rowFolder").hidden).toBe(false));
+    $("#btnSettings").click();
+    server.dataDir = "/Users/me/Dropbox/app-trail";
+
+    $("#btnSettings").click();
+
+    await vi.waitFor(() => expect($("#folderPath").textContent).toBe("/Users/me/Dropbox/app-trail"));
+  });
+
+  it("keeps the newer folder when an earlier open's answer arrives late", async () => {
+    let release;
+    const gate = new Promise(resolve => { release = resolve; });
+    const answer = server.fetch;
+    let late = null;
+    server.fetch = (url, init) => {
+      const res = answer(url, init);
+      if (late || !String(url).startsWith("api/health")) return res;
+      late = res.then(async r => { await gate; return r; });
+      return late;
+    };
+    $("#btnSettings").click();
+    $("#btnSettings").click();
+    server.dataDir = "/Users/me/Dropbox/app-trail";
+    $("#btnSettings").click();
+    await vi.waitFor(() => expect($("#folderPath").textContent).toBe("/Users/me/Dropbox/app-trail"));
+
+    release();
+    await late;
+    await new Promise(resolve => setImmediate(resolve));             // the page reads the late answer
+
+    expect($("#folderPath").textContent).toBe("/Users/me/Dropbox/app-trail");
+  });
+
+  it("hides the folder while the server cannot be reached", async () => {
+    $("#btnSettings").click();
+    await vi.waitFor(() => expect($("#rowFolder").hidden).toBe(false));
+    $("#btnSettings").click();
+    server.down = true;
+
+    $("#btnSettings").click();
+
+    await vi.waitFor(() => expect($("#rowFolder").hidden).toBe(true));
+  });
+
+  it("copies the folder's path", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);         // the page's own window, thrown away after the test
+    Object.defineProperty(window, "isSecureContext", { value: true, configurable: true });
+    Object.defineProperty(window.navigator, "clipboard", { value: { writeText }, configurable: true });
+    $("#btnSettings").click();
+    await vi.waitFor(() => expect($("#rowFolder").hidden).toBe(false));
+
+    $("#btnCopyFolder").click();
+
+    await vi.waitFor(() => expect(writeText).toHaveBeenCalledWith("/Users/me/Library/Application Support/app-trail"));
+  });
+});
+
 /* Handed out from inside the app's IIFE. The card is opened directly, so the
    list under test does not depend on which rows the table is showing - the
    default filter hides the finished ones. `state` is reassigned during boot,

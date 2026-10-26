@@ -12,7 +12,7 @@ export type ApiResponse<T> = {
   operation: Operation;
 };
 
-export type HealthResponse = { ok: true; file: string };
+export type HealthResponse = { ok: true; file: string; dir: string };
 
 export type JobDescriptionsResponse = { ok: true; dir: "jds"; files: string[] };
 

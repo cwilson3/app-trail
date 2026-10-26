@@ -953,6 +953,18 @@
   /* fourteen themes do not fit a single row of icons, so the theme row stacks
      its label over a two-column grid of named swatches */
   .settings-row.row-theme{flex-direction:column;align-items:stretch;gap:7px}
+
+  /* the data folder: a long path, so it stacks like the theme row and wraps
+     anywhere rather than widening the panel. Only shown when a server answers. */
+  .settings-row[hidden]{display:none}
+  .settings-row.row-folder{flex-direction:column;align-items:stretch;gap:7px}
+  .folderctl{display:flex;align-items:center;gap:8px;max-width:300px}
+  .folderctl code{
+    flex:1;min-width:0;font-size:11.5px;line-height:1.35;color:var(--ink-2);
+    overflow-wrap:anywhere;user-select:all;
+  }
+  .folderctl .openbtn{width:30px;height:30px}
+  .folderctl .openbtn svg{width:14px;height:14px}
   .themectl{display:grid;grid-template-columns:1fr 1fr;gap:2px;padding:3px;border-radius:10px;background:var(--btn-hover)}
   .themectl button{
     height:26px;padding:0 7px;border:0;border-radius:7px;background:transparent;
@@ -1355,6 +1367,14 @@ document.body.dataset.route = routeFromHash();</script>
       <span class="lbl" id="lblTheme">Theme</span>
       <div class="themectl" id="themeCtl" role="group" aria-labelledby="lblTheme">
         <!-- one button per entry in THEMES, built when the page loads -->
+      </div>
+    </div>
+    <div class="settings-row row-folder" id="rowFolder" hidden>
+      <span class="lbl" id="lblFolder">Data folder</span>
+      <div class="folderctl" role="group" aria-labelledby="lblFolder">
+        <code id="folderPath"></code>
+        <button type="button" class="openbtn" id="btnCopyFolder" title="Copy to the clipboard"
+                aria-label="Copy the data folder path to the clipboard"></button>
       </div>
     </div>
   </div>
@@ -4037,12 +4057,36 @@ window.addEventListener("beforeunload", e => {
   if (saveTimer) persist({ keepalive:true });
 });
 
-/* ================= settings: content width and theme =================
+/* ================= settings: content width, theme and data folder =================
 
-   Both are kept in localStorage and put back by the script at the top of the
-   page, before anything is drawn. */
+   Width and theme are kept in localStorage and put back by the script at the
+   top of the page, before anything is drawn. */
 
-makePopover($("#btnSettings"), $("#settingsPanel"), $("#viewCtl"));
+makePopover($("#btnSettings"), $("#settingsPanel"), $("#viewCtl"), { onOpen: showDataFolder });
+
+/* Where the server keeps data.json and jds/ - APP_TRAIL_DATA_DIR, or the
+   platform's app-data folder. Asked again on every open rather than once, so a
+   server restarted with a different folder shows it without a reload. Hidden
+   when nothing answers: the data then lives in this browser, not a folder.
+   Only the latest open's answer is shown, so a slow one from an earlier open
+   cannot put back the folder the server has since moved away from. */
+$("#btnCopyFolder").innerHTML = ICONS.copy;
+let folderAsk = 0;
+async function showDataFolder(){
+  const ask = ++folderAsk;
+  let dir = "";
+  if (location.protocol.startsWith("http")){
+    try {
+      const res = await fetch("api/health", { cache:"no-store" });
+      if (res.ok) dir = String((await res.json()).dir || "");
+    } catch(e){ /* server gone - hide the row */ }
+  }
+  if (ask !== folderAsk) return;
+  $("#folderPath").textContent = dir;
+  $("#rowFolder").hidden = !dir;
+}
+$("#btnCopyFolder").addEventListener("click", e =>
+  copyLink(e.currentTarget, $("#folderPath").textContent, "Data folder path"));
 
 const WIDTHS = ["margins", "full"], DEFAULT_WIDTH = "margins";
 const widthBtns = [...document.querySelectorAll("#widthCtl button[data-width]")];
