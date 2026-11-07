@@ -8,6 +8,8 @@
     "test:api": "playwright test --project=api",
     "test:e2e": "playwright test --project=e2e-*",
     "test:pageload": "playwright test --project=pageload",
+    "auth:linkedin": "APP_TRAIL_AUTH_SETUP=1 playwright test --project=setup-linkedin",
+    "auth:ladders": "APP_TRAIL_AUTH_SETUP=1 playwright test --project=setup-ladders",
     "test:ui": "playwright test --ui",
     "report": "playwright show-report",
     "typecheck": "tsc -p ."

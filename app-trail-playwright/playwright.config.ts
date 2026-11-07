@@ -36,6 +36,15 @@ export default defineConfig({
     { name: "e2e-firefox", testMatch: "**/*.e2e.test.ts", use: { ...devices["Desktop Firefox"] } },
     { name: "e2e-webkit", testMatch: "**/*.e2e.test.ts", use: { ...devices["Desktop Safari"] } },
     { name: "pageload", testMatch: "**/*.pageload.test.ts", use: { ...devices["Desktop Chrome"] } },
+    // Manual sign-in: each opens a visible browser and waits for you to log in
+    // by hand, so they exist only when npm run auth:* sets APP_TRAIL_AUTH_SETUP,
+    // never in a normal test run.
+    ...(process.env.APP_TRAIL_AUTH_SETUP
+      ? [
+          { name: "setup-linkedin", testDir: "./setup", testMatch: /auth\.li\.setup\.ts/, use: { ...devices["Desktop Chrome"], headless: false } },
+          { name: "setup-ladders", testDir: "./setup", testMatch: /auth\.lad\.setup\.ts/, use: { ...devices["Desktop Chrome"], headless: false } },
+        ]
+      : []),
   ],
   webServer: {
     command: `node -e "require('fs').rmSync(process.argv[1], { recursive: true, force: true })" "${DATA_DIR}" && ${SERVER_COMMAND} ${PORT}`,
