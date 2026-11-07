@@ -308,7 +308,7 @@ to open its detail card).
 | --- | --- |
 | # | Row number in the current sort order |
 | Company | Company name |
-| Posting Status | Where **the opening** stands — Live, Reposted, Filled, Closed, Removed, or Unknown until checked. Read from the posting marked **Applied For Here**; Unknown when none is |
+| Posting Status | Where **the opening** stands — Live, Reposted, Filled, Closed, Removed, or Unknown until checked. Summed up from the row's postings, never from the application: Live or Reposted while any is still up, the most final of Filled, Closed and Removed once all are gone, Unknown until one is checked |
 | Applied | Date you applied |
 | Status | Where **your application** stands — Ready, Applied - Awaiting Response, Interview, Offer, Rejected, Ghosted, Missed, … A decision about you, by you or by them. Where *the role* stands is a separate column, **Posting Status** |
 | Interest | How much you want the role — High, Moderate or Low, or Interview XP for a role applied to for the interview practice rather than the job (blank until you set it) |
@@ -478,8 +478,9 @@ is recognisable against the browser's own chrome.
   and seeing that disagreement is the point of keeping the two apart. Each posting
   has its own because one role can be up on one board and gone from another; the
   posting's **Checked** date and time says when its status was read, so a stale *Live* can be
-  told from a fresh one. The table's **Posting Status** column is the status of the
-  posting marked **Applied For Here**. Changing a posting's status never changes your
+  told from a fresh one. The table's **Posting Status** column sums the postings up,
+  whichever one you applied through: *Live* or *Reposted* while any is still up, the
+  most final of *Filled*, *Closed* and *Removed* once all are gone. Changing a posting's status never changes your
   application's: the posting can say the opening is gone, but only you say what
   happened to your application.
 - **Company Details** — Company Name, Role Title, Company Type, Industry, Role Type,

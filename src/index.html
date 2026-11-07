@@ -1447,7 +1447,8 @@ const statusInfo = name => STATUS_TABLE.find(s => s.name === name) || {};
    Each posting carries its own, since one role can be up on one board and
    gone from another - a posting that 404s is gone from that board, which is
    not quite the same as the role being filled. The row's Posting Status is
-   that of the posting it was applied for through (see postingStatus()).
+   read off its postings alone (see postingStatus()): never off your
+   application, nor off which posting you applied through.
    Every posting is Unknown until something checks. */
 const ROLE_STATUS_TABLE = [
   { name:"Unknown",  tone:"" },
@@ -1657,10 +1658,15 @@ const rangeColumn = (key, label) => ({ key, label, cls:"money",
   text: app => rangeText(app[key]),
   compare: (a, b, dir) => sinkBlanks(rangeLow(a[key]), rangeLow(b[key]), dir, (p, q) => p - q) });
 
-/* The row's Posting Status: that of the posting it was applied for through,
-   since that is the opening the application waits on. Unknown until one is
-   marked. */
-const postingStatus = app => ((app.postings || []).find(p => p.applied) || {}).status || "Unknown";
+/* The row's Posting Status, from its postings and nothing about the
+   application. An opening still up on any board is open, so Live and then
+   Reposted win; once every posting read is gone, the most final reason says
+   why; and it is Unknown until some posting has been read. */
+const POSTING_ROLLUP = ["Live", "Reposted", "Filled", "Closed", "Removed"];
+const postingStatus = app => {
+  const read = new Set((app.postings || []).map(p => p.status));
+  return POSTING_ROLLUP.find(s => read.has(s)) || "Unknown";
+};
 
 const COLUMNS = [
   { key:"_row",        label:"#",            cls:"rownum", fixed:true, render: (app, i) => String(i + 1) },
@@ -3716,7 +3722,7 @@ $("#btnDocs").onclick = () => {
         "<p>One row per application, sorted by company. Click any column heading to re-sort; click any row to open its detail card.</p>" +
         "<table>" +
           "<tr><td>Status</td><td>Where <em>your application</em> stands &mdash; a decision about you, by you (<i>Withdrawn</i>) or by them (<i>Rejected</i>, <i>Offer</i>). <i>Ghosted</i> is for an application no answer ever reached, and <i>Missed</i> for a role that was removed or closed before you applied.</td></tr>" +
-          "<tr><td>Posting Status</td><td>Where <em>the opening</em> stands, which is a different thing: <i>Live</i>, <i>Reposted</i>, <i>Filled</i>, <i>Closed</i> or <i>Removed</i>. It is a reading of the posting, not of you, so a role can be <i>Filled</i> while your application is still <i>Interview</i>. Each posting has its own, with the date it was <i>Checked</i>; this column shows the one marked <i>Applied For Here</i>, and <i>Unknown</i> when none is.</td></tr>" +
+          "<tr><td>Posting Status</td><td>Where <em>the opening</em> stands, which is a different thing: <i>Live</i>, <i>Reposted</i>, <i>Filled</i>, <i>Closed</i> or <i>Removed</i>. It is a reading of the posting, not of you, so a role can be <i>Filled</i> while your application is still <i>Interview</i>. Each posting has its own, with the date it was <i>Checked</i>. This column sums them up without regard to your application: <i>Live</i> or <i>Reposted</i> while any posting is still up, the most final of <i>Filled</i>, <i>Closed</i> and <i>Removed</i> once all are gone, and <i>Unknown</i> until one has been checked.</td></tr>" +
           "<tr><td>Round</td><td>The round you&rsquo;re currently on &mdash; the latest round whose end state is still <i>Pending</i>.</td></tr>" +
           "<tr><td>#</td><td>Row number in the current sort order &mdash; it renumbers when you re-sort.</td></tr>" +
           "<tr><td>Posted</td><td>The date the role was posted, when the listing shows it.</td></tr>" +

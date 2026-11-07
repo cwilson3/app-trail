@@ -167,7 +167,8 @@ window.__app = {
 `;
 
 /* The role's status is no longer a section of the card: each posting holds
-   its own, and the table's Posting Status column reads the one applied for. */
+   its own, and the table's Posting Status column sums them up without regard
+   to the application - including which posting it went through. */
 describe("Posting Status on the detail card and in the table", () => {
   async function openCard(row){
     const app = await loadApp(null, { exports: CARD_EXPORTS });
@@ -212,14 +213,35 @@ describe("Posting Status on the detail card and in the table", () => {
     expect(document.querySelector('.card-body [data-bind="status"]:not([data-post])').value).toBe("Interview");
   });
 
-  it("shows the posting applied for's status in the table", async () => {
+  it("shows a role still up on any board as Live, though the posting applied for is Filled", async () => {
     await openCard(ROW);
+
+    expect(tableCell().textContent).toBe("Live");
+  });
+
+  it("shows a role not yet applied for by its postings' status", async () => {
+    await openCard({ id:"a1", company:"Acme", status:"Ready", postings:[{ board:"LinkedIn", status:"Live" }] });
+
+    expect(tableCell().textContent).toBe("Live");
+  });
+
+  it("shows Reposted when no posting is Live but one is Reposted", async () => {
+    await openCard({ id:"a1", company:"Acme", postings:[{ board:"LinkedIn", status:"Removed" },
+                                                        { board:"Company Board", status:"Reposted" }] });
+
+    expect(tableCell().textContent).toBe("Reposted");
+  });
+
+  it("shows the most final reason once every posting read is gone", async () => {
+    await openCard({ id:"a1", company:"Acme", postings:[{ board:"LinkedIn", status:"Removed" },
+                                                        { board:"Company Board", status:"Filled" },
+                                                        { board:"TheLadders", status:"Unknown" }] });
 
     expect(tableCell().textContent).toBe("Filled");
   });
 
-  it("shows Unknown in the table when no posting is marked applied for", async () => {
-    await openCard({ id:"a1", company:"Acme", postings:[{ board:"LinkedIn", status:"Live" }] });
+  it("shows Unknown until some posting has been read", async () => {
+    await openCard({ id:"a1", company:"Acme", postings:[{ board:"LinkedIn", status:"Unknown", applied:true }] });
 
     expect(tableCell().textContent).toBe("Unknown");
   });
@@ -266,17 +288,17 @@ describe("the Other Roles list on the detail card", () => {
     expect(headings()).toEqual(["Role Title", "Posting Status", "Status", "Last Update"]);
   });
 
-  it("shows each role's posting status as the table does - the posting applied for, else Unknown", async () => {
+  it("shows each role's posting status as the table does - summed up from its postings", async () => {
     await openCard(ACME_AND_GLOBEX, "Staff Engineer");
 
-    expect(listed().map(r => [r[0], r[1]])).toEqual([["Platform Lead", "Filled"], ["Developer Advocate", "Unknown"]]);
+    expect(listed().map(r => [r[0], r[1]])).toEqual([["Platform Lead", "Live"], ["Developer Advocate", "Unknown"]]);
   });
 
   it("lists only the company's other roles, newest update first", async () => {
     await openCard(ACME_AND_GLOBEX, "Staff Engineer");
 
     expect(listed()).toEqual([
-      ["Platform Lead", "Filled", "Offer", "2026-10-02"],
+      ["Platform Lead", "Live", "Offer", "2026-10-02"],
       ["Developer Advocate", "Unknown", "Ready", "2026-08-15"]
     ]);
   });

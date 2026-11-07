@@ -327,8 +327,9 @@ describe("the Posting Status filter", () => {
       { company:"Globex",  status:"Interview", postings:[{ board:"LinkedIn", status:"Live", applied:true }] },
       { company:"Initech", status:"Interview", postings:[{ board:"LinkedIn", status:"Filled", applied:true }] },
       { company:"Acme",    status:"Interview" },
-      /* only the posting applied for counts: Hooli is Live on LinkedIn but
-         applied for on its own board, where it is Removed */
+      /* every posting counts, not only the one applied for: Hooli was
+         applied for on its own board, where it is Removed, but is still Live
+         on LinkedIn */
       { company:"Hooli",   status:"Interview", postings:[{ board:"LinkedIn", status:"Live" },
                                                          { board:"Company Board", status:"Removed", applied:true }] }
     ]);
@@ -337,20 +338,20 @@ describe("the Posting Status filter", () => {
 
   it("lists every posting status in the app's order, with row counts", () => {
     expect(app.filterOptions("roleStatus").map(o => [o.value, o.n]))
-      .toEqual([["Unknown", 1], ["Live", 1], ["Reposted", 0], ["Filled", 1], ["Closed", 0], ["Removed", 1]]);
+      .toEqual([["Unknown", 1], ["Live", 2], ["Reposted", 0], ["Filled", 1], ["Closed", 0], ["Removed", 0]]);
   });
 
   it("shows only the rows whose posting status is ticked", () => {
     tick("roleStatus", "Live", true);
     tick("roleStatus", "Unknown", true);
 
-    expect(shown().sort()).toEqual(["Acme", "Globex"]);
+    expect(shown().sort()).toEqual(["Acme", "Globex", "Hooli"]);
   });
 
-  it("goes by the posting applied for, not a more hopeful one elsewhere", () => {
-    tick("roleStatus", "Removed", true);
+  it("counts a role Live while any posting is, whichever one was applied for", () => {
+    tick("roleStatus", "Live", true);
 
-    expect(shown()).toEqual(["Hooli"]);
+    expect(shown().sort()).toEqual(["Globex", "Hooli"]);
   });
 
   it("restricts nothing by default", () => {
