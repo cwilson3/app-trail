@@ -29,6 +29,7 @@ const ATS = [
   [/(^|\.)rippling\.com$/i,          "Rippling"],
   [/(^|\.)dover\.com$/i,             "Dover"],
   [/(^|\.)linkedin\.com$/i,          "LinkedIn"],
+  [/(^|\.)theladders\.com$/i,        "TheLadders"],
   [/(^|\.)indeed\.com$/i,            "Indeed"],
   [/(^|\.)wellfound\.com$/i,         "Wellfound"],
   [/(^|\.)builtin\.com$/i,           "Built In"],

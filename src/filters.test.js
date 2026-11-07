@@ -24,7 +24,7 @@ window.__app = {
   get state(){ return state; }, set state(v){ state = v; },
   filters, FILTER_FIELDS, CLOSED_STATUSES, OPEN_STATUSES, STATUSES, INTEREST_LEVELS, NO_INTEREST, ROLE_STATUSES, WORK_SETTINGS,
   defaultFilters, loadFilters, saveFilters, setFilter,
-  filterValue, passesFilter, filterOptions, activeFilterCount,
+  filterValues, passesFilter, filterOptions, activeFilterCount,
   normalize, renderTable, sorted, addApplication
 };
 `;
@@ -136,8 +136,8 @@ describe("how a row is matched", () => {
 describe("blank values", () => {
   it("reads a missing interest as the 'none' option", () => {
     const [none, low] = app.normalize({ applications:[{}, { interest:"Low" }] }).applications;
-    expect(app.filterValue(none, "interest")).toBe(app.NO_INTEREST);
-    expect(app.filterValue(low, "interest")).toBe("Low");
+    expect(app.filterValues(none, "interest")).toEqual([app.NO_INTEREST]);
+    expect(app.filterValues(low, "interest")).toEqual(["Low"]);
   });
 
   it("hides un-rated rows when a level is selected, and finds them on their own option", () => {
@@ -153,7 +153,7 @@ describe("blank values", () => {
 
   it("filters on a blank company like any other value", () => {
     seed(app, [{ company:"Globex", status:"Applied - Awaiting Response" }, { status:"Applied - Awaiting Response" }]);
-    expect(app.filterValue(app.state.applications[1], "company")).toBe("");
+    expect(app.filterValues(app.state.applications[1], "company")).toEqual([""]);
     app.setFilter("company", [""]);
     expect(rowCount()).toBe(1);
     expect(text("#tbody tr td.company")).toBe("—");
@@ -327,8 +327,9 @@ describe("the Posting Status filter", () => {
       { company:"Globex",  status:"Interview", postings:[{ board:"LinkedIn", status:"Live", applied:true }] },
       { company:"Initech", status:"Interview", postings:[{ board:"LinkedIn", status:"Filled", applied:true }] },
       { company:"Acme",    status:"Interview" },
-      /* only the posting applied for counts: Hooli is Live on LinkedIn but
-         applied for on its own board, where it is Removed */
+      /* every posting counts, not only the one applied for: Hooli was
+         applied for on its own board, where it is Removed, but is still Live
+         on LinkedIn */
       { company:"Hooli",   status:"Interview", postings:[{ board:"LinkedIn", status:"Live" },
                                                          { board:"Company Board", status:"Removed", applied:true }] }
     ]);
@@ -337,20 +338,31 @@ describe("the Posting Status filter", () => {
 
   it("lists every posting status in the app's order, with row counts", () => {
     expect(app.filterOptions("roleStatus").map(o => [o.value, o.n]))
-      .toEqual([["Unknown", 1], ["Live", 1], ["Reposted", 0], ["Filled", 1], ["Closed", 0], ["Removed", 1]]);
+      .toEqual([["Unknown", 1], ["Live", 2], ["Reposted", 0], ["Filled", 1], ["Closed", 0], ["Removed", 0],
+                ["__disagree__", 1]]);
+  });
+
+  it("labels the box for postings that disagree", () => {
+    expect(app.filterOptions("roleStatus").find(o => o.value === "__disagree__").label).toBe("Postings disagree");
+  });
+
+  it("shows only the roles whose postings disagree when that box alone is ticked", () => {
+    tick("roleStatus", "__disagree__", true);
+
+    expect(shown()).toEqual(["Hooli"]);
   });
 
   it("shows only the rows whose posting status is ticked", () => {
     tick("roleStatus", "Live", true);
     tick("roleStatus", "Unknown", true);
 
-    expect(shown().sort()).toEqual(["Acme", "Globex"]);
+    expect(shown().sort()).toEqual(["Acme", "Globex", "Hooli"]);
   });
 
-  it("goes by the posting applied for, not a more hopeful one elsewhere", () => {
-    tick("roleStatus", "Removed", true);
+  it("counts a role Live while any posting is, whichever one was applied for", () => {
+    tick("roleStatus", "Live", true);
 
-    expect(shown()).toEqual(["Hooli"]);
+    expect(shown().sort()).toEqual(["Globex", "Hooli"]);
   });
 
   it("restricts nothing by default", () => {
@@ -361,7 +373,7 @@ describe("the Posting Status filter", () => {
   it("ticks every posting status when All is clicked", () => {
     groupButton("all", "roleStatus").click();
 
-    expect(ticked("roleStatus")).toEqual(app.ROLE_STATUSES);
+    expect(ticked("roleStatus")).toEqual(app.ROLE_STATUSES.concat(["__disagree__"]));
   });
 
   it("unticks every posting status when None is clicked", () => {

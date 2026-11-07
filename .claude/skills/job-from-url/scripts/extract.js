@@ -3,7 +3,7 @@
  * Stage 1 of job-from-url: fetch one posting and read whatever can be read
  * without a model.
  *
- *   node extract.js <url> --out envelope.json [--timeout 15000]
+ *   node extract.js <url> --out envelope.json [--timeout 15000] [--browser]
  *
  * It tries, in order of how much we can trust the shape of the answer:
  *
@@ -11,6 +11,10 @@
  *      (Greenhouse, Lever, Ashby, Workday, SmartRecruiters)
  *   2. the schema.org/JobPosting JSON-LD most boards embed in the page
  *   3. the page text, left for a model to read in a later, sandboxed stage
+ *
+ * With --browser the page is rendered in a headless browser instead of
+ * fetched, signed in where app-trail-playwright has a saved session for the
+ * board (see browser.js). The same three steps then read what it rendered.
  *
  * Only (1) and (2) produce fields here, and even those are the *page's*
  * claims - typed, but not true. The one genuinely trustworthy output is the
@@ -27,6 +31,7 @@ const path = require("path");
 const {
   systemOfRecord, normalizeUrl, htmlToText, pageMarkup, decodeEntities, atsHost, ROLE_TYPES, FIELDS
 } = require("./lib.js");
+const browser = require("./browser.js");
 
 const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 " +
            "(KHTML, like Gecko) Chrome/124.0 Safari/537.36";
@@ -385,12 +390,26 @@ function fieldReport(fields){
   return { found: keys.filter(k => fields[k] != null), missing: keys.filter(k => fields[k] == null) };
 }
 
+/* What --browser did about signing in, in words the user can act on. Built
+   from the board's name, which comes from the URL, and from whether the
+   browser was sent to a sign-in page - never from what the page says. */
+function browserReport(rendered){
+  if (!rendered) return "not used - see the note below";
+  const { auth, signedOut } = rendered;
+  if (!auth) return "rendered; this board has no saved sign-in, so it was read signed out";
+  const fix = "run npm run " + auth.script + " in app-trail-playwright to sign in again";
+  if (!auth.saved) return "rendered signed out - there is no saved " + auth.board + " sign-in; " + fix.replace(" again", "");
+  if (signedOut) return "landed on a sign-in page - the saved " + auth.board + " sign-in has probably expired; " + fix;
+  return "rendered signed in to " + auth.board;
+}
+
 function parseArgs(argv){
-  const out = { url: null, out: null, timeout: 15000 };
+  const out = { url: null, out: null, timeout: 15000, browser: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--out") out.out = argv[++i];
     else if (a === "--timeout") out.timeout = Number(argv[++i]) || 15000;
+    else if (a === "--browser") out.browser = true;
     else if (!out.url && !a.startsWith("-")) out.url = a;
   }
   return out;
@@ -399,7 +418,7 @@ function parseArgs(argv){
 async function main(){
   const args = parseArgs(process.argv.slice(2));
   if (!args.url || !args.out) {
-    console.error("usage: extract.js <url> --out <file> [--timeout ms]");
+    console.error("usage: extract.js <url> --out <file> [--timeout ms] [--browser]");
     process.exit(2);
   }
 
@@ -413,15 +432,27 @@ async function main(){
   }
 
   const notes = [];
+  const outPath = path.resolve(args.out);
+  fs.mkdirSync(path.dirname(outPath), { recursive: true });
 
-  /* Independent round trips - the board API is addressed from the URL alone
-     and never looks at the page - so they overlap rather than queue. */
+  /* The board API is addressed from the URL alone and never looks at the
+     page, so it is asked while the page loads rather than after. */
+  const apiPending = fromApi(url, { timeout: args.timeout });
+
+  /* A browser that will not start or a page that will not load falls back
+     to a plain fetch, so --browser never leaves a run with less than it
+     would have had without it. */
+  let rendered = null;
+  if (args.browser) {
+    try { rendered = browser.render(url, { workDir: path.dirname(outPath), timeout: Math.max(args.timeout, 30000) }); }
+    catch (e) { notes.push("browser: " + (e.message || e) + "; fetched the page instead"); }
+  }
   const [page, api] = await Promise.all([
-    get(url.href, { timeout: args.timeout }).catch(e => {
+    rendered ? { body: rendered.body, finalUrl: rendered.finalUrl } : get(url.href, { timeout: args.timeout }).catch(e => {
       notes.push("page fetch failed: " + (e.message || e));
       return { body: "", finalUrl: url.href };
     }),
-    fromApi(url, { timeout: args.timeout })
+    apiPending
   ]);
 
   /* A JSON-LD block that trips us up costs only its own fields: the board API
@@ -444,9 +475,13 @@ async function main(){
      also contains the site's navigation, which jd.js cuts away for a board it
      knows the layout of and warns about in the file for one it does not. The
      page's markup is kept as well as its text, so its lists and headings
-     reach the file as lists and headings rather than as bare lines. */
+     reach the file as lists and headings rather than as bare lines.
+     A rendered page whose board has a description element keeps that
+     element's markup for the file, and the whole page's text for the reader,
+     which needs the title and company printed around it. */
   const desc = (api && !api.error && (api.html || api.text)) ? { from: api.api + " API", html: api.html || "", text: api.text || "" }
              : (ld.html || ld.text)                          ? { from: "JSON-LD", html: ld.html || "", text: ld.text || "" }
+             : (rendered && rendered.description)            ? { from: "page element", html: rendered.description, text: htmlToText(page.body) || "" }
              : { from: "page text", html: page.body ? pageMarkup(page.body) : "", text: htmlToText(page.body) || "" };
   const text = desc.text.slice(0, MAX_TEXT);
   const html = desc.html.slice(0, MAX_HTML);
@@ -456,7 +491,6 @@ async function main(){
                   Object.keys(ld.fields).length ? "JSON-LD" : null,
                   text ? "page text" : null].filter(Boolean).join(" + ") || "nothing";
 
-  const outPath = path.resolve(args.out);
   const stem = outPath.replace(/(\.json)?$/, "");
   const textPath = stem + ".text.txt";
   const htmlPath = stem + ".desc.html";
@@ -487,7 +521,6 @@ async function main(){
     htmlChars: html.length
   };
 
-  fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, JSON.stringify(envelope, null, 2));
   if (text) fs.writeFileSync(textPath, text);
   else if (fs.existsSync(textPath)) fs.unlinkSync(textPath);
@@ -511,6 +544,7 @@ async function main(){
   console.log("text       " + text.length + " chars" + (text ? "  -> " + textPath : ""));
   console.log("posting    " + (desc.from || "(none)") +
               (html ? "  -> " + html.length + " chars of markup" : "  (no markup, flat text only)"));
+  if (args.browser) console.log("browser    " + browserReport(rendered));
   for (const n of notes) console.log("note       " + n);
   console.log("needsModel " + needsModel);
   if (!text && missing.length) console.log("blocked    nothing readable was retrieved");
@@ -520,4 +554,4 @@ if (require.main === module) {
   main().catch(e => { console.error("extract failed: " + (e.stack || e)); process.exit(1); });
 }
 
-module.exports = { isoDay, fromJsonLd, fromApi, fieldReport };
+module.exports = { isoDay, fromJsonLd, fromApi, fieldReport, browserReport };
