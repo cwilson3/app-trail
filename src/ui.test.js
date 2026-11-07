@@ -240,6 +240,41 @@ describe("Posting Status on the detail card and in the table", () => {
     expect(tableCell().textContent).toBe("Filled");
   });
 
+  const pillClasses = () => tableCell().querySelector(".pill").classList;
+
+  it("marks a role up on one board and gone from another", async () => {
+    await openCard(ROW);
+
+    expect(pillClasses().contains("mixed")).toBe(true);
+  });
+
+  it("lists each posting's status on the marked pill", async () => {
+    await openCard(ROW);
+
+    expect(tableCell().querySelector(".pill").title).toBe("Postings disagree \u2014 LinkedIn: Live \u00b7 Company Board: Filled");
+  });
+
+  it("does not mark a role gone from every board in different ways", async () => {
+    await openCard({ id:"a1", company:"Acme", postings:[{ board:"LinkedIn", status:"Closed" },
+                                                        { board:"Company Board", status:"Removed" }] });
+
+    expect(pillClasses().contains("mixed")).toBe(false);
+  });
+
+  it("does not mark a role up on one board and Reposted on another", async () => {
+    await openCard({ id:"a1", company:"Acme", postings:[{ board:"LinkedIn", status:"Live" },
+                                                        { board:"Company Board", status:"Reposted" }] });
+
+    expect(pillClasses().contains("mixed")).toBe(false);
+  });
+
+  it("does not count a posting not yet read as disagreeing", async () => {
+    await openCard({ id:"a1", company:"Acme", postings:[{ board:"LinkedIn", status:"Live" },
+                                                        { board:"Company Board", status:"Unknown" }] });
+
+    expect(pillClasses().contains("mixed")).toBe(false);
+  });
+
   it("shows Unknown until some posting has been read", async () => {
     await openCard({ id:"a1", company:"Acme", postings:[{ board:"LinkedIn", status:"Unknown", applied:true }] });
 
