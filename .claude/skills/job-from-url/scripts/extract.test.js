@@ -8,7 +8,7 @@
  */
 
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { fieldReport, fromApi, fromJsonLd, isoDay } from "./extract.js";
+import { browserReport, fieldReport, fromApi, fromJsonLd, isoDay } from "./extract.js";
 
 /* Past the largest time Date can hold (8.64e15 ms), so toISOString() throws. */
 const OUT_OF_RANGE = 1e20;
@@ -97,5 +97,31 @@ describe("fieldReport", () => {
                      industry: "Logistics", companyWebsite: "https://acme.com" };
 
     expect(fieldReport(fields).missing).toEqual(["companyType"]);
+  });
+});
+
+describe("browserReport", () => {
+  const linkedIn = saved => ({ board: "LinkedIn", script: "auth:linkedin", saved });
+
+  it("says the page was read signed in when the saved sign-in held", () => {
+    expect(browserReport({ auth: linkedIn(true), signedOut: false })).toBe("rendered signed in to LinkedIn");
+  });
+
+  it("names the script to run when the board's sign-in was never saved", () => {
+    expect(browserReport({ auth: linkedIn(false), signedOut: false }))
+      .toBe("rendered signed out - there is no saved LinkedIn sign-in; run npm run auth:linkedin in app-trail-playwright to sign in");
+  });
+
+  it("says the sign-in has probably expired when the board sent the browser to sign in", () => {
+    expect(browserReport({ auth: linkedIn(true), signedOut: true }))
+      .toBe("landed on a sign-in page - the saved LinkedIn sign-in has probably expired; run npm run auth:linkedin in app-trail-playwright to sign in again");
+  });
+
+  it("says a board with no sign-in was read signed out", () => {
+    expect(browserReport({ auth: null, signedOut: false })).toBe("rendered; this board has no saved sign-in, so it was read signed out");
+  });
+
+  it("points at the note when the browser could not be used", () => {
+    expect(browserReport(null)).toBe("not used - see the note below");
   });
 });
