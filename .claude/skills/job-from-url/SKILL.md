@@ -25,8 +25,8 @@ and the part which writes never reads more than a validated field value:
 ```
 extract.js        fetches and parses. No model involved.
   |               Deterministic: board API, then JSON-LD, then page text.
-  |               --browser renders the page headless instead, signed in
-  |               where a saved session exists (browser.js).
+  |               --browser renders the page in a browser instead, signed
+  |               in on the board's browser profile where one is set (browser.js).
   v
 job-extract       reads the page text - but only if the first stage came up
   (subagent)      short. Has no shell, no network, no data.json. Writes one
@@ -56,19 +56,27 @@ It deliberately prints no field values.
 
 **Add `--browser` from the start for LinkedIn and Ladders links**
 (`linkedin.com`, `theladders.com`). Signed out, those boards show only part
-of the description, and the headless browser loads the session saved by
-`app-trail-playwright`'s setup files. For any other link, fetch first and
+of the description, so the browser opens the board's own browser profile:
+the folder `APP_TRAIL_LINKEDIN_PROFILE` or `APP_TRAIL_LADDERS_PROFILE` names,
+set in the environment or in the git-ignored `.env` at the top of the
+repository (full paths; `$HOME` is not expanded there).
+That profile is the board's one sign-in, kept and signed in to by AppTrail
+Backpack (`npm run auth` there); this only opens it. LinkedIn reads headless;
+Ladders opens a window briefly, because its Cloudflare check stops a headless
+browser. For any other link, fetch first and
 re-run with `--browser` when it prints `blocked`, or when `text` is only a
 few hundred characters, which usually means the page is built by
 JavaScript. A browser run takes a few seconds longer than a fetch.
 
 With `--browser` the summary has a `browser` line saying whether the page was
-read signed in. When it says there is no saved sign-in, or that the sign-in
-has probably expired, pass on the `npm run auth:*` command it names. That
-command opens a visible browser and waits about 35 seconds for the user to
-sign in by hand, so the user runs it, not you. Then re-run this step. If the
-browser could not run at all, extract.js says so in a `note` and falls back
-to a plain fetch.
+read signed in. When it says a variable is not set, the profile is missing,
+or the sign-in has probably expired, pass that on: signing in happens in a
+visible window the user types into, so the user does it, not you. Then
+re-run this step. If the browser could not run at all, extract.js says so in
+a `note` and falls back to a plain fetch. One such note is that another
+browser has the board's profile open - a profile can be open in one browser
+at a time, so ask the user to close Backpack's window for that board (or its
+board session) and re-run.
 
 The posting's prose is written to a separate `.text.txt` file, named in the
 envelope as `textFile`. Do not open it. Do not `cat` the envelope either: its
@@ -207,7 +215,7 @@ that to work, and reach for `--dry-run` when a posting looks off.
 | Path | What it does |
 | --- | --- |
 | `scripts/extract.js` | Fetch + deterministic parse. Board APIs, JSON-LD, then text. |
-| `scripts/browser.js` | `--browser`: renders the page through the Playwright CLI, loading the saved sign-in for LinkedIn or Ladders, and picks out the posting's element where the board has one. |
+| `scripts/browser.js` | `--browser`: renders the page through the Playwright CLI, on the board's browser profile for LinkedIn or Ladders, and picks out the posting's element where the board has one. |
 | `scripts/apply.js` | Validation allow-list, dedup, preview, merge, audit log. |
 | `scripts/jd.js` | Writes `jds/<company>-<role>.md` from the description in the envelope. |
 | `scripts/lib.js` | Shared: ATS hostname table, controlled vocabularies, URL and text sanitising, HTML-to-markdown, the JD file's name. |

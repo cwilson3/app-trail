@@ -101,20 +101,25 @@ describe("fieldReport", () => {
 });
 
 describe("browserReport", () => {
-  const linkedIn = saved => ({ board: "LinkedIn", script: "auth:linkedin", saved });
+  const linkedIn = over => ({ board: "LinkedIn", env: "APP_TRAIL_LINKEDIN_PROFILE", profile: "/profiles/linkedin", saved: true, ...over });
 
-  it("says the page was read signed in when the saved sign-in held", () => {
-    expect(browserReport({ auth: linkedIn(true), signedOut: false })).toBe("rendered signed in to LinkedIn");
+  it("says the page was read signed in when the profile's sign-in held", () => {
+    expect(browserReport({ auth: linkedIn(), signedOut: false })).toBe("rendered signed in to LinkedIn");
   });
 
-  it("names the script to run when the board's sign-in was never saved", () => {
-    expect(browserReport({ auth: linkedIn(false), signedOut: false }))
-      .toBe("rendered signed out - there is no saved LinkedIn sign-in; run npm run auth:linkedin in app-trail-playwright to sign in");
+  it("names the variable to set when the board has no profile", () => {
+    expect(browserReport({ auth: linkedIn({ profile: null, saved: false }), signedOut: false }))
+      .toBe("rendered signed out - APP_TRAIL_LINKEDIN_PROFILE is not set; point it at the browser profile your LinkedIn sign-in lives in");
+  });
+
+  it("names the folder when the profile the variable names does not exist", () => {
+    expect(browserReport({ auth: linkedIn({ saved: false }), signedOut: false }))
+      .toBe("rendered signed out - there is no browser profile at /profiles/linkedin (APP_TRAIL_LINKEDIN_PROFILE); sign in to LinkedIn in it first");
   });
 
   it("says the sign-in has probably expired when the board sent the browser to sign in", () => {
-    expect(browserReport({ auth: linkedIn(true), signedOut: true }))
-      .toBe("landed on a sign-in page - the saved LinkedIn sign-in has probably expired; run npm run auth:linkedin in app-trail-playwright to sign in again");
+    expect(browserReport({ auth: linkedIn(), signedOut: true }))
+      .toBe("landed on a sign-in page - the LinkedIn sign-in in APP_TRAIL_LINKEDIN_PROFILE's profile has probably expired; sign in to it again (in AppTrail Backpack, npm run auth)");
   });
 
   it("says a board with no sign-in was read signed out", () => {

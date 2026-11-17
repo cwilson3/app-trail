@@ -13,28 +13,36 @@
  * goes to a file, read only by extract.js. The only thing reported is which
  * step failed, if one does.
  *
- * The sessions themselves come from app-trail-playwright's setup files
- * (`npm run auth:linkedin`, `npm run auth:ladders`), which save the browser's
- * storage state after you sign in by hand.
+ * A board's sign-in is a browser profile, named by an environment variable
+ * (PROFILES below) and opened with the CLI's --profile. The profile belongs
+ * to whatever signs in to the board and reads it - on this machine,
+ * AppTrail Backpack, whose `npm run auth` signs in to it - so a board has one
+ * sign-in and one expiry. AppTrail only opens it. The variables can be set
+ * in the environment or in a git-ignored .env at the top of the repository
+ * (loadEnvFile); the environment wins.
  */
 
 const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
+const { parseEnv } = require("util");
 const { systemOfRecord } = require("./lib.js");
 
-const PLAYWRIGHT_DIR = path.resolve(__dirname, "..", "..", "..", "..", "app-trail-playwright");
+const REPO_ROOT = path.resolve(__dirname, "..", "..", "..", "..");
+const PLAYWRIGHT_DIR = path.join(REPO_ROOT, "app-trail-playwright");
+/* This machine's settings for the scripts, such as where each board's
+   browser profile is. Git-ignored: the paths are this machine's own. */
+const ENV_FILE = path.join(REPO_ROOT, ".env");
 const PLAYWRIGHT_BIN = path.join(PLAYWRIGHT_DIR, "node_modules", ".bin", "playwright");
 
-/* The boards with a saved sign-in, keyed by systemOfRecord, which comes from
-   the URL the user typed and never from the page. `file` is a copy of
-   AuthStates in app-trail-playwright/constants/authStates.ts, and `script`
-   is the package.json script that writes it. If you change them there,
-   change them here. */
-const AUTH_DIR = path.join(PLAYWRIGHT_DIR, "playwright", ".auth");
-const AUTH = {
-  LinkedIn:   { file: path.join(AUTH_DIR, "linkedin.json"), script: "auth:linkedin" },
-  TheLadders: { file: path.join(AUTH_DIR, "ladders.json"),  script: "auth:ladders" }
+/* The boards a sign-in can be read signed in to, keyed by systemOfRecord,
+   which comes from the URL the user typed and never from the page. `env`
+   names the variable holding the board's browser profile; unset, the board
+   is read signed out. Ladders sits behind Cloudflare, which stops a headless
+   browser, so its page is read in a window. */
+const PROFILES = {
+  LinkedIn:   { env: "APP_TRAIL_LINKEDIN_PROFILE", headed: false },
+  TheLadders: { env: "APP_TRAIL_LADDERS_PROFILE",  headed: true }
 };
 
 /* The element that holds the posting on a signed-in page, per board. When one
@@ -52,16 +60,68 @@ const DESCRIPTION_SELECTORS = {
 const SIGN_IN_PATH = /^\/(authwall|login|signin|sign-in|checkpoint|uas\/login)(\/|$)/i;
 
 /**
- * The saved sign-in for the board `url` is on, or null when there is none.
- * `exists` says whether its file has been written yet.
+ * Copies the .env file's values into env, leaving any already set alone. A
+ * missing file is no settings, not an error.
+ *
+ * @param {string} [file]
+ * @param {NodeJS.ProcessEnv} [env]
+ * @param {(file: string) => string} [readFile]
+ */
+function loadEnvFile(file = ENV_FILE, env = process.env, readFile = f => fs.readFileSync(f, "utf8")){
+  let text;
+  try { text = readFile(file); }
+  catch (e) {
+    if (e.code === "ENOENT") return;
+    throw e;
+  }
+  for (const [key, value] of Object.entries(parseEnv(text))) {
+    if (env[key] === undefined) env[key] = value;
+  }
+}
+
+/**
+ * The sign-in for the board `url` is on, or null when the board has none.
+ * `profile` is the folder its variable names, or null when it is unset;
+ * `saved` says whether that folder exists to be opened.
  *
  * @param {URL} url
- * @param {(file: string) => boolean} [exists]
+ * @param {{ env?: NodeJS.ProcessEnv, exists?: (dir: string) => boolean }} [opts]
  */
-function authFor(url, exists = fs.existsSync){
+function authFor(url, { env = process.env, exists = fs.existsSync } = {}){
   const board = systemOfRecord(url);
-  const auth = AUTH[board];
-  return auth ? { board, file: auth.file, script: auth.script, saved: exists(auth.file) } : null;
+  const known = PROFILES[board];
+  if (!known) return null;
+  const profile = env[known.env] ? path.resolve(env[known.env]) : null;
+  return { board, env: known.env, profile, headed: known.headed, saved: !!profile && exists(profile) };
+}
+
+/* The command line of every running process, one per line. */
+function processCommandLines(){
+  const res = spawnSync("ps", ["-Ao", "args="], { encoding: "utf8" });
+  return res.status === 0 ? res.stdout.split("\n") : [];
+}
+
+/**
+ * Whether a running browser has `dir` open as its profile. A profile can be
+ * open in one browser at a time - two write the same cookie files under each
+ * other - and Chrome under Playwright leaves no lock file, so the running
+ * processes are asked: each of a browser's carries --user-data-dir=<dir>.
+ * The same check AppTrail Backpack makes before it opens a board's profile.
+ * Windows has no `ps`, and there the answer is always no.
+ *
+ * @param {string} dir
+ * @param {string} [platform]
+ * @param {() => string[]} [commandLines]
+ */
+function profileInUse(dir, platform = process.platform, commandLines = processCommandLines){
+  if (platform === "win32") return false;
+  const flag = "--user-data-dir=" + path.resolve(dir);
+  return commandLines().some(line => {
+    const at = line.indexOf(flag);
+    if (at < 0) return false;
+    const next = line[at + flag.length];
+    return next === undefined || /\s/.test(next);
+  });
 }
 
 /** Did the browser end up on a sign-in page instead of the posting? */
@@ -105,9 +165,10 @@ function cliRunner(session, cwd, timeout){
  *
  * @param {URL} url
  * @param {{ workDir: string, timeout?: number, run?: (args: string[]) => {ok: boolean, error?: string},
- *           exists?: (file: string) => boolean }} opts
+ *           env?: NodeJS.ProcessEnv, exists?: (dir: string) => boolean, inUse?: (dir: string) => boolean }} opts
  *   workDir holds the rendered page and the snapshots the CLI writes - your
- *   scratchpad, never the repository. run replaces the CLI, for tests.
+ *   scratchpad, never the repository. run replaces the CLI, and env, exists
+ *   and inUse the machine, for tests.
  * @returns {{ body: string, description: string, finalUrl: string, auth: object|null,
  *             signedOut: boolean }}
  */
@@ -118,7 +179,11 @@ function render(url, opts){
     throw new Error("Playwright is not installed. Run npm install in " + PLAYWRIGHT_DIR);
   }
 
-  const auth = authFor(url, opts.exists);
+  const auth = authFor(url, { env: opts.env, exists: opts.exists });
+  const signedIn = !!(auth && auth.saved);
+  if (signedIn && (opts.inUse || profileInUse)(auth.profile)) {
+    throw new Error("another browser has the " + auth.board + " profile open (" + auth.profile + "); close that window and run this again");
+  }
   const pageFile = path.join(opts.workDir, "browser-page.json");
   const step = (name, args) => {
     const res = run(args);
@@ -126,8 +191,9 @@ function render(url, opts){
   };
 
   try {
-    step("opening the browser", ["open"]);
-    if (auth && auth.saved) step("loading the saved sign-in", ["state-load", auth.file]);
+    step("opening the browser", signedIn
+      ? ["open", "--profile=" + auth.profile].concat(auth.headed ? ["--headed"] : [])
+      : ["open"]);
     step("loading the page", ["goto", url.href]);
     /* goto returns at DOMContentLoaded; give a script-built page a moment to
        fill in, without failing a page that never goes quiet. */
@@ -150,4 +216,4 @@ function render(url, opts){
   };
 }
 
-module.exports = { authFor, landedOnSignIn, render, DESCRIPTION_SELECTORS };
+module.exports = { authFor, landedOnSignIn, loadEnvFile, profileInUse, render, DESCRIPTION_SELECTORS };

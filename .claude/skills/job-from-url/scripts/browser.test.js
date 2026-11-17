@@ -1,15 +1,19 @@
 /**
- * Unit tests for browser.js: which saved sign-in a URL gets, when a run is
- * taken to have been sent to a sign-in page, and that a failing step still
- * closes the browser. The CLI is replaced by a recorder - it is the boundary
- * to a real browser - so nothing here starts one.
+ * Unit tests for browser.js: which board profile a URL gets, when a profile
+ * is taken to be open in another browser, when a run is taken to have been
+ * sent to a sign-in page, and that a failing step still closes the browser.
+ * The CLI is replaced by a recorder - it is the boundary to a real browser -
+ * and the environment, the folders and the running processes are passed in,
+ * so nothing here starts a browser or reads the machine.
  */
 
+import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { authFor, landedOnSignIn, render } from "./browser.js";
+import { authFor, landedOnSignIn, loadEnvFile, profileInUse, render } from "./browser.js";
 
-const saved = () => true;
-const unsaved = () => false;
+const PROFILES = { APP_TRAIL_LINKEDIN_PROFILE: "/profiles/linkedin", APP_TRAIL_LADDERS_PROFILE: "/profiles/ladders" };
+const saved = { env: PROFILES, exists: () => true, inUse: () => false };
+const unsaved = { env: PROFILES, exists: () => false, inUse: () => false };
 
 /** A CLI that keeps every command it is given and fails the one named `failing`. */
 function cliFailing(failing){
@@ -21,25 +25,42 @@ function cliFailing(failing){
   return { commands, run };
 }
 
-/* The error `fn` throws. A run that does not fail is itself a failure here,
+/* A CLI that keeps every command line it is given and fails at goto, so a
+   render stops before it would read a page file. */
+function cliRecording(){
+  const calls = [];
+  const run = args => {
+    calls.push(args);
+    return args[0] === "goto" ? { ok: false, error: "stopped here" } : { ok: true };
+  };
+  return { calls, run };
+}
+
+/* The error `fn` throws. A call that does not fail is itself a failure here,
    so this throws in its place rather than returning nothing. */
 function errorFrom(fn){
   try { fn(); } catch (e) { return e; }
-  throw new Error("expected render to fail, and it did not");
+  throw new Error("expected the call to fail, and it did not");
 }
 
 describe("authFor", () => {
-  it("picks the LinkedIn sign-in for a LinkedIn posting", () => {
+  it("opens a LinkedIn posting on the profile APP_TRAIL_LINKEDIN_PROFILE names, headless", () => {
     expect(authFor(new URL("https://www.linkedin.com/jobs/view/123"), saved))
-      .toMatchObject({ board: "LinkedIn", script: "auth:linkedin", file: expect.stringMatching(/\.auth\/linkedin\.json$/) });
+      .toEqual({ board: "LinkedIn", env: "APP_TRAIL_LINKEDIN_PROFILE", profile: "/profiles/linkedin", headed: false, saved: true });
   });
 
-  it("picks the Ladders sign-in for a Ladders posting", () => {
+  it("opens a Ladders posting on the profile APP_TRAIL_LADDERS_PROFILE names, in a window", () => {
     expect(authFor(new URL("https://www.theladders.com/job/engineer-acme_123"), saved))
-      .toMatchObject({ board: "TheLadders", script: "auth:ladders", file: expect.stringMatching(/\.auth\/ladders\.json$/) });
+      .toEqual({ board: "TheLadders", env: "APP_TRAIL_LADDERS_PROFILE", profile: "/profiles/ladders", headed: true, saved: true });
   });
 
-  it("says when the board's sign-in has not been saved yet", () => {
+  it("has no profile to open when the board's variable is unset", () => {
+    const auth = authFor(new URL("https://www.linkedin.com/jobs/view/123"), { env: {}, exists: () => true });
+
+    expect(auth).toMatchObject({ profile: null, saved: false });
+  });
+
+  it("says when the profile the variable names does not exist", () => {
     expect(authFor(new URL("https://www.linkedin.com/jobs/view/123"), unsaved).saved).toBe(false);
   });
 
@@ -47,8 +68,75 @@ describe("authFor", () => {
     expect(authFor(new URL("https://acme.com/careers/123"), saved)).toBeNull();
   });
 
-  it("does not hand LinkedIn's sign-in to a host that only ends in its name", () => {
+  it("does not hand LinkedIn's profile to a host that only ends in its name", () => {
     expect(authFor(new URL("https://notlinkedin.com/jobs/view/123"), saved)).toBeNull();
+  });
+});
+
+/* Read from .env.test beside this file, never the repository's .env, which
+   holds this machine's real profile paths. */
+describe("loadEnvFile", () => {
+  const ENV_TEST = path.join(import.meta.dirname, ".env.test");
+
+  it("sets each variable .env.test names", () => {
+    const env = {};
+
+    loadEnvFile(ENV_TEST, env);
+
+    expect(env).toEqual({
+      APP_TRAIL_LINKEDIN_PROFILE: "/profiles/linkedin from env test",
+      APP_TRAIL_LADDERS_PROFILE: "/profiles/ladders-from-env-test"
+    });
+  });
+
+  it("leaves a variable the environment already sets", () => {
+    const env = { APP_TRAIL_LINKEDIN_PROFILE: "/profiles/from-the-shell" };
+
+    loadEnvFile(ENV_TEST, env);
+
+    expect(env.APP_TRAIL_LINKEDIN_PROFILE).toBe("/profiles/from-the-shell");
+  });
+
+  it("sets nothing when the file is not there", () => {
+    const env = {};
+
+    loadEnvFile(path.join(import.meta.dirname, ".env.missing"), env);
+
+    expect(env).toEqual({});
+  });
+
+  /* A folder is a path that exists but cannot be read as a file: a real
+     read error other than "not there", on every platform and for every user. */
+  it("raises a read error other than the file not being there, setting nothing", () => {
+    const env = {};
+
+    const error = errorFrom(() => loadEnvFile(import.meta.dirname, env));
+
+    expect(error).toMatchObject({ code: "EISDIR" });
+    expect(env).toEqual({});
+  });
+});
+
+describe("profileInUse", () => {
+  const PROFILE = "/Users/me/Library/Application Support/profiles/linkedin";
+  const running = (...lines) => () => lines;
+
+  it("is open when a running browser has it as its user data dir", () => {
+    const lines = running("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome --user-data-dir=" + PROFILE + " --headless");
+
+    expect(profileInUse(PROFILE, "darwin", lines)).toBe(true);
+  });
+
+  it("is not open when only a profile whose name starts the same is", () => {
+    expect(profileInUse(PROFILE, "darwin", running("chrome --user-data-dir=" + PROFILE + "-old"))).toBe(false);
+  });
+
+  it("is not open when no browser has it", () => {
+    expect(profileInUse(PROFILE, "darwin", running("node src/server.js"))).toBe(false);
+  });
+
+  it("is never taken for open on Windows, which has no ps to ask", () => {
+    expect(profileInUse(PROFILE, "win32", running("chrome --user-data-dir=" + PROFILE))).toBe(false);
   });
 });
 
@@ -76,7 +164,7 @@ describe("render", () => {
   it("names the step that failed", () => {
     const { run } = cliFailing("goto");
 
-    const error = errorFrom(() => render(url, { workDir: "/unused", run, exists: saved }));
+    const error = errorFrom(() => render(url, { workDir: "/unused", run, ...saved }));
 
     expect(error.message).toBe("loading the page failed: net::ERR_NAME_NOT_RESOLVED");
   });
@@ -84,24 +172,41 @@ describe("render", () => {
   it("closes the browser when a step fails", () => {
     const { commands, run } = cliFailing("goto");
 
-    errorFrom(() => render(url, { workDir: "/unused", run, exists: saved }));
+    errorFrom(() => render(url, { workDir: "/unused", run, ...saved }));
 
     expect(commands.at(-1)).toBe("close");
   });
 
-  it("loads the saved sign-in before it opens the posting", () => {
-    const { commands, run } = cliFailing("goto");
+  it("opens the browser on the board's profile", () => {
+    const { calls, run } = cliRecording();
 
-    errorFrom(() => render(url, { workDir: "/unused", run, exists: saved }));
+    errorFrom(() => render(url, { workDir: "/unused", run, ...saved }));
 
-    expect(commands.slice(0, 3)).toEqual(["open", "state-load", "goto"]);
+    expect(calls[0]).toEqual(["open", "--profile=/profiles/linkedin"]);
   });
 
-  it("opens the posting signed out when no sign-in has been saved", () => {
-    const { commands, run } = cliFailing("goto");
+  it("opens Ladders' profile in a window", () => {
+    const { calls, run } = cliRecording();
 
-    errorFrom(() => render(url, { workDir: "/unused", run, exists: unsaved }));
+    errorFrom(() => render(new URL("https://www.theladders.com/job/engineer-acme_123"), { workDir: "/unused", run, ...saved }));
 
-    expect(commands.slice(0, 2)).toEqual(["open", "goto"]);
+    expect(calls[0]).toEqual(["open", "--profile=/profiles/ladders", "--headed"]);
+  });
+
+  it("opens the posting signed out when the profile does not exist", () => {
+    const { calls, run } = cliRecording();
+
+    errorFrom(() => render(url, { workDir: "/unused", run, ...unsaved }));
+
+    expect(calls[0]).toEqual(["open"]);
+  });
+
+  it("refuses, without opening a browser, when another browser has the profile open", () => {
+    const { calls, run } = cliRecording();
+
+    const error = errorFrom(() => render(url, { workDir: "/unused", run, ...saved, inUse: () => true }));
+
+    expect(error.message).toBe("another browser has the LinkedIn profile open (/profiles/linkedin); close that window and run this again");
+    expect(calls).toEqual([]);
   });
 });

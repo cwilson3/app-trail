@@ -12,6 +12,10 @@ node_modules/
 /data/
 /config.json
 
+# This machine's settings for the scripts, such as each board's browser
+# profile - see job-from-url's browser.js
+/.env
+
 # Local code-review notes
 /REVIEW-FINDINGS.md
 

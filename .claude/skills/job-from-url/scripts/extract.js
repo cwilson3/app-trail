@@ -397,9 +397,9 @@ function browserReport(rendered){
   if (!rendered) return "not used - see the note below";
   const { auth, signedOut } = rendered;
   if (!auth) return "rendered; this board has no saved sign-in, so it was read signed out";
-  const fix = "run npm run " + auth.script + " in app-trail-playwright to sign in again";
-  if (!auth.saved) return "rendered signed out - there is no saved " + auth.board + " sign-in; " + fix.replace(" again", "");
-  if (signedOut) return "landed on a sign-in page - the saved " + auth.board + " sign-in has probably expired; " + fix;
+  if (!auth.profile) return "rendered signed out - " + auth.env + " is not set; point it at the browser profile your " + auth.board + " sign-in lives in";
+  if (!auth.saved) return "rendered signed out - there is no browser profile at " + auth.profile + " (" + auth.env + "); sign in to " + auth.board + " in it first";
+  if (signedOut) return "landed on a sign-in page - the " + auth.board + " sign-in in " + auth.env + "'s profile has probably expired; sign in to it again (in AppTrail Backpack, npm run auth)";
   return "rendered signed in to " + auth.board;
 }
 
@@ -444,6 +444,7 @@ async function main(){
      would have had without it. */
   let rendered = null;
   if (args.browser) {
+    browser.loadEnvFile();
     try { rendered = browser.render(url, { workDir: path.dirname(outPath), timeout: Math.max(args.timeout, 30000) }); }
     catch (e) { notes.push("browser: " + (e.message || e) + "; fetched the page instead"); }
   }
